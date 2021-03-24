@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/24 02:39:08 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/24 15:46:12 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,28 @@
 # include <unistd.h>
 # include <vector>
 
+//GET NEXT LINE
 # define	BUFFER_SIZE	1024
+
+//PARSER CHARACTERS SET
 # define	SPACES " \f\n\r\t\v"
+
+//SERVER KEYS
+# define	HOST "host"
+# define	NAME "name"
+# define	PORT "listen"
+# define	ERROR_PAGE "error"
+
+//LOCATION KEYS
+# define	METHOD "method"
+# define	ROOT "root"
+# define	INDEX "index"
+# define	CGI_PATH "cgi_path"
+# define	PHP_PATH "php_path"
+# define	CGI "cgi"
+# define	AUTO_INDEX "auto_index"
+# define	MAX_BODY "max_body"
+# define	AUTH "auth"
 
 //testing
 template <typename T>
@@ -41,12 +61,38 @@ void    printContainer(T &cont) {
 	std::cout << "]";
 }
 
+typedef struct					s_location
+{
+	std::string					uri;
+	std::vector<std::string>	method;
+	std::string					root;
+	std::string					index;
+	std::string					cgi_path;
+	std::string					php_path;
+	std::string					cgi;
+	int							auto_index;
+	int							max_body;
+	std::string					auth;
+	s_location() : auto_index(-1), max_body(-1) {}
+}								t_location;
+
+//Default config parsing is used instead of initiation function
+typedef struct					s_server
+{
+	std::string					host;
+	std::string					name;
+	std::string					port;
+	std::string					error_page;
+	std::vector<t_location> 	loc;
+}								t_server;
+
 class Config {
 private:
 	std::vector<std::string>	_raw_config;
+	std::vector<t_server>		_servers;
 
 public:
-	Config(void) : _raw_config() {};
+	Config(void) : _raw_config(), _servers() {};
 	Config(const Config &copy) {
 		*this = copy;
 	};
@@ -54,6 +100,7 @@ public:
 	Config	operator=(const Config &other) {
 		if (this != &other) {
 			_raw_config = other._raw_config;
+			_servers = other._servers;
 		}
 		return (*this);
 	};
