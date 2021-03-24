@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/24 15:46:12 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/24 15:48:51 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,27 +63,27 @@ void    printContainer(T &cont) {
 
 typedef struct					s_location
 {
-	std::string					uri;
-	std::vector<std::string>	method;
-	std::string					root;
 	std::string					index;
-	std::string					cgi_path;
+	std::string					root;
+	std::vector<std::string>	method;
+	std::string					uri;
 	std::string					php_path;
 	std::string					cgi;
+	std::string					cgi_path;
+	std::string					auth;
 	int							auto_index;
 	int							max_body;
-	std::string					auth;
 	s_location() : auto_index(-1), max_body(-1) {}
 }								t_location;
 
 //Default config parsing is used instead of initiation function
 typedef struct					s_server
 {
-	std::string					host;
 	std::string					name;
+	std::string					host;
 	std::string					port;
 	std::string					error_page;
-	std::vector<t_location> 	loc;
+	std::vector<t_location> 	location;
 }								t_server;
 
 class Config {
