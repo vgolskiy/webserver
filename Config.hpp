@@ -30,21 +30,21 @@
 # define	SPACES " \f\n\r\t\v"
 
 //SERVER KEYS
-# define	HOST "host"
-# define	NAME "name"
-# define	PORT "listen"
-# define	ERROR_PAGE "error"
+# define	HOST 		"host"
+# define	NAME 		"name"
+# define	PORT 		"listen"
+# define	ERR_PAGE 	"error"
 
 //LOCATION KEYS
-# define	METHOD "method"
-# define	ROOT "root"
-# define	INDEX "index"
-# define	CGI_PATH "cgi_path"
-# define	PHP_PATH "php_path"
-# define	CGI "cgi"
-# define	AUTO_INDEX "auto_index"
-# define	MAX_BODY "max_body"
-# define	AUTH "auth"
+# define	METHOD 		"method"
+# define	ROOT 		"root"
+# define	INDEX 		"index"
+# define	CGI_PATH 	"cgi_path"
+# define	PHP_PATH 	"php_path"
+# define	CGI 		"cgi"
+# define	AUTO_INDEX 	"auto_index"
+# define	MAX_BODY 	"max_body"
+# define	AUTH 		"auth"
 
 //testing
 template <typename T>
@@ -106,6 +106,7 @@ public:
 	};
 
 	void	parse_configuration_file(std::vector<std::string> file_lines);
+	void	parse_server_data(std::vector<std::string> &to_parse, int index);
 
 private:
 	std::vector<std::string>	parse_line(std::string line);

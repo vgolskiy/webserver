@@ -100,12 +100,41 @@ std::vector<std::string>	Config::parse_line(std::string line) {
 void		Config::parse_configuration_file(std::vector<std::string> file_lines) {
 	std::vector<std::string>::iterator	it;
 	std::vector<std::string>			tokens;
+	int									index;
 
 	for (it = file_lines.begin(); it != file_lines.end(); ++it) {
 		tokens = parse_line(*it);
+		index++;
 		if ((!tokens.size()) || (tokens[0][0] == 35))
 			continue ;
+
+		// parse_server_data(&tokens, index);
+		
 		printContainer(tokens);
 		std::cout << std::endl;
 	}
+};
+
+void	error_message(std::string message)
+{
+	std::cout << message << std::endl;
+	//TODO: exit if parse size or unknown/double tokens - invalid (close fd(?) + exit(1));
+};
+
+//Если мы юзаем контейнер - массив, то там несколько серверов может быть, следовательно нужен индекс?
+//Not tested
+void	Config::parse_server_data(std::vector<std::string> &to_parse, int index)
+{
+	if (to_parse.size() == 1 || (to_parse.size() > 2 && to_parse[2][0] != '#'))
+		error_message("Invalid arguments in config file!");
+	if (to_parse[0] == HOST && _servers[index].host.size() == 0)
+		_servers[index].host = to_parse[1];
+	else if (to_parse[0] == NAME && _servers[index].name.size() == 0)
+		_servers[index].name = to_parse[1];
+	else if (to_parse[0] == PORT && _servers[index].port.size() == 0)
+		_servers[index].port = to_parse[1];
+	else if (to_parse[0] == ERR_PAGE && _servers[index].error_page.size() == 0)
+		_servers[index].error_page = to_parse[1];
+	else
+		error_message("Unknown or double token!");
 };
