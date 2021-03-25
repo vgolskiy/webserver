@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/24 15:48:51 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/25 12:35:25 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,12 @@ public:
 		return (*this);
 	};
 
-	void	parse_configuration_file(std::vector<std::string> file_lines);
-	void	parse_server_data(std::vector<std::string> &to_parse, int index);
+	void	parse_configuration_file(std::vector<std::string> &file_lines);
 
 private:
-	std::vector<std::string>	parse_line(std::string line);
+	std::vector<std::string>	parse_line(std::string &line);
+	void						parse_servers_configurations(std::vector<std::string> &to_parse);
+	void						parse_servers_locations(std::vector<std::string> &to_parse);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
@@ -117,5 +118,6 @@ void						*ft_calloc(size_t nmemb, size_t size);
 int							ft_isspace(int c);
 std::string					read_file(const char *file_path);
 std::vector<std::string>	split_to_lines(const std::string &s, const std::string &delimiter);
+void						error_message(std::string message);
 
 #endif

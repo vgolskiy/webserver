@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/24 02:39:20 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/25 13:11:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ std::vector<std::string>	split_to_lines(const std::string &s, const std::string 
 	return (res);
 }
 
-std::vector<std::string>	Config::parse_line(std::string line) {
+std::vector<std::string>	Config::parse_line(std::string &line) {
 	std::vector<std::string>	res;
 	//positions of parameter description symbols in line
 	size_t						begin;
@@ -97,7 +97,7 @@ std::vector<std::string>	Config::parse_line(std::string line) {
 	return (res);
 };
 
-void		Config::parse_configuration_file(std::vector<std::string> file_lines) {
+void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 	std::vector<std::string>::iterator	it;
 	std::vector<std::string>			tokens;
 	int									index;
@@ -108,7 +108,7 @@ void		Config::parse_configuration_file(std::vector<std::string> file_lines) {
 		if ((!tokens.size()) || (tokens[0][0] == 35))
 			continue ;
 
-		// parse_server_data(&tokens, index);
+		// parse_servers_configurations(tokens);
 		
 		printContainer(tokens);
 		std::cout << std::endl;
@@ -117,24 +117,39 @@ void		Config::parse_configuration_file(std::vector<std::string> file_lines) {
 
 void	error_message(std::string message)
 {
-	std::cout << message << std::endl;
+	std::cerr << message << std::endl;
 	//TODO: exit if parse size or unknown/double tokens - invalid (close fd(?) + exit(1));
 };
 
-//Если мы юзаем контейнер - массив, то там несколько серверов может быть, следовательно нужен индекс?
-//Not tested
-void	Config::parse_server_data(std::vector<std::string> &to_parse, int index)
+/*
+** There could be a few servers configurations in one configuration file
+** so we are using a vector container to store information
+** If there were cases of double setting identification
+** we are using the first one value only
+** In case of no configuration file provided we are using the default one
+** so _servers will always have at least one server inside
+*/
+void	Config::parse_servers_configurations(std::vector<std::string> &to_parse)
 {
-	if (to_parse.size() == 1 || (to_parse.size() > 2 && to_parse[2][0] != '#'))
-		error_message("Invalid arguments in config file!");
-	if (to_parse[0] == HOST && _servers[index].host.size() == 0)
-		_servers[index].host = to_parse[1];
-	else if (to_parse[0] == NAME && _servers[index].name.size() == 0)
-		_servers[index].name = to_parse[1];
-	else if (to_parse[0] == PORT && _servers[index].port.size() == 0)
-		_servers[index].port = to_parse[1];
-	else if (to_parse[0] == ERR_PAGE && _servers[index].error_page.size() == 0)
-		_servers[index].error_page = to_parse[1];
+	t_server	server;
+
+	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35)))
+		error_message("Invalid arguments in config file");
+	if ((to_parse[0] == HOST) && (!server.host.size()))
+		server.host = to_parse[1];
+	else if ((to_parse[0] == NAME) && (!server.name.size()))
+		server.name = to_parse[1];
+	else if ((to_parse[0] == PORT) && (!server.port.size()))
+		server.port = to_parse[1];
+	else if ((to_parse[0] == ERR_PAGE) && (!server.error_page.size()))
+		server.error_page = to_parse[1];
 	else
-		error_message("Unknown or double token!");
+		error_message("Unknown or double parameter");
+	_servers.push_back(server);
+};
+
+void	Config::parse_servers_locations(std::vector<std::string> &to_parse) {
+	t_location	location;
+
+
 };
