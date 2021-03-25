@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/26 00:20:54 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/26 00:28:58 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,10 +203,9 @@ void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if (to_parse.size() == 1)
 		error_message("Invalid arguments in config file");
-	if ((to_parse[0] == METHOD) && (loc.method.size() != 0)
-			fail("Double token [" + std::to_string(line_count) + "]");
-		for (size_t i = 1; i < tokens.size(); ++i)
-			loc.method.push_back(tokens[i]);
+	if ((to_parse[0] == METHOD) && (!location.method.size())) {
+		for (size_t i = 1; i < to_parse.size(); ++i)
+			location.method.push_back(to_parse[i]);
 	}
 	else
 	{
