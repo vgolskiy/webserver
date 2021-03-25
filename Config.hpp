@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/25 12:35:25 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/26 00:13:12 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,14 @@
 # define	SPACES " \f\n\r\t\v"
 
 //SERVER KEYS
+# define	SERVER		"server"
 # define	HOST 		"host"
 # define	NAME 		"name"
 # define	PORT 		"listen"
 # define	ERR_PAGE 	"error"
 
 //LOCATION KEYS
+# define	LOCATION	"location"
 # define	METHOD 		"method"
 # define	ROOT 		"root"
 # define	INDEX 		"index"
@@ -96,7 +98,13 @@ public:
 	Config(const Config &copy) {
 		*this = copy;
 	};
-	~Config(void) {};
+	~Config(void) {
+		std::vector<t_server>::iterator	it;
+
+		for (it = _servers.begin(); it != _servers.end(); ++it)
+			it->location.clear();
+		_servers.clear();
+	};
 	Config	operator=(const Config &other) {
 		if (this != &other) {
 			_raw_config = other._raw_config;
@@ -109,8 +117,10 @@ public:
 
 private:
 	std::vector<std::string>	parse_line(std::string &line);
-	void						parse_servers_configurations(std::vector<std::string> &to_parse);
-	void						parse_servers_locations(std::vector<std::string> &to_parse);
+	void						parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server);
+	void						parse_servers_locations(std::vector<std::string> &to_parse, t_location &location);
+	void						clear_server(t_server &server);
+	void						clear_location(t_location &location);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);

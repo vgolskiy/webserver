@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/25 13:11:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/26 00:20:54 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,21 +97,75 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 	return (res);
 };
 
+//TODO: file_content verification {} before parsing
+
+//Need to clear server and location after each push
+void		Config::clear_server(t_server &server) {
+	server.error_page = "";
+	server.host = "";
+	server.name = "";
+	server.port = "";
+	server.location.clear();
+};
+
+void		Config::clear_location(t_location &location) {
+	location.auth = "";
+	location.auto_index = -1;
+	location.cgi = "";
+	location.cgi_path = "";
+	location.index = "";
+	location.max_body = -1;
+	location.method.clear();
+	location.php_path = "";
+	location.root = "";
+	location.uri = "";
+};
+
+/*
+** File content line by line is parsed into server
+** or server location parameters
+** In case of no location provided error message is shown
+** ascii 35 #, 123 {, 125 }
+*/
 void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 	std::vector<std::string>::iterator	it;
 	std::vector<std::string>			tokens;
-	int									index;
+	t_server							server;
+	t_location							location;
 
 	for (it = file_lines.begin(); it != file_lines.end(); ++it) {
 		tokens = parse_line(*it);
-		index++;
-		if ((!tokens.size()) || (tokens[0][0] == 35))
+		if ((!tokens.size()) || (tokens[0][0] == 35)
+			|| ((tokens[0] == SERVER) && (tokens[1][0] == 123)))
 			continue ;
-
-		// parse_servers_configurations(tokens);
-		
-		printContainer(tokens);
-		std::cout << std::endl;
+		if (tokens[0] == LOCATION) {
+			if (((tokens.size() == 3) && (tokens[2][0] == 123))
+				|| ((tokens.size() == 2) && (tokens[1][tokens[1].length() - 1] == 123))) {
+				location.uri = tokens[1];
+				it++;
+				tokens = parse_line(*it);				
+				while (tokens[0][0] != 125) {
+					parse_servers_locations(tokens, location);
+					it++;
+					tokens = parse_line(*it);
+				}
+				server.location.push_back(location);
+				clear_location(location);
+			}
+			else {
+				error_message("Wrong server location parameters");
+				while ((*it)[0] != 125)
+					it++;
+			continue ;
+			}
+		}
+		else if (tokens[0][0] != 125)
+			parse_servers_configurations(tokens, server);
+		if (tokens[0][0] == 125)
+			_servers.push_back(server);
+		clear_server(server);
+		//printContainer(tokens);
+		//std::cout << std::endl;
 	}
 };
 
@@ -128,11 +182,9 @@ void	error_message(std::string message)
 ** we are using the first one value only
 ** In case of no configuration file provided we are using the default one
 ** so _servers will always have at least one server inside
+** ascii 35 #
 */
-void	Config::parse_servers_configurations(std::vector<std::string> &to_parse)
-{
-	t_server	server;
-
+void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
 	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35)))
 		error_message("Invalid arguments in config file");
 	if ((to_parse[0] == HOST) && (!server.host.size()))
@@ -145,11 +197,62 @@ void	Config::parse_servers_configurations(std::vector<std::string> &to_parse)
 		server.error_page = to_parse[1];
 	else
 		error_message("Unknown or double parameter");
-	_servers.push_back(server);
 };
 
-void	Config::parse_servers_locations(std::vector<std::string> &to_parse) {
-	t_location	location;
-
-
+//ascii 123 {
+void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
+	if (to_parse.size() == 1)
+		error_message("Invalid arguments in config file");
+	if ((to_parse[0] == METHOD) && (loc.method.size() != 0)
+			fail("Double token [" + std::to_string(line_count) + "]");
+		for (size_t i = 1; i < tokens.size(); ++i)
+			loc.method.push_back(tokens[i]);
+	}
+	else
+	{
+		if (tokens.size() > 2 && tokens[2][0] != '#')
+			fail("too many arguments [" + std::to_string(line_count) + "]");
+		if (tokens[0] == _ROOT)
+		{
+			fail_double_token(loc.root);
+			loc.root = tokens[1];
+		}
+		else if (tokens[0] == _INDEX)
+		{
+			fail_double_token(loc.index);
+			loc.index = tokens[1];
+		}
+		else if (tokens[0] == _CGI_PATH)
+		{
+			fail_double_token(loc.cgi_path);
+			loc.cgi_path = tokens[1];
+		}
+		else if (tokens[0] == _PHP_PATH)
+		{
+			fail_double_token(loc.php_path);
+			loc.php_path = tokens[1];
+		}
+		else if (tokens[0] == _CGI)
+		{
+			fail_double_token(loc.cgi);
+			loc.cgi = tokens[1];
+		}
+		else if (tokens[0] == _AUTO_INDEX)
+		{
+			fail_double_token(loc.auto_index);
+			loc.auto_index = stoi(tokens[1]);
+		}
+		else if (tokens[0] == _MAX_BODY)
+		{
+			fail_double_token(loc.max_body);
+			loc.max_body = stoi(tokens[1]);
+		}
+		else if (tokens[0] == _AUTH)
+		{
+			fail_double_token(loc.auth);
+			loc.auth = tokens[1];
+		}	
+		else
+			fail("Token invalid (" + tokens[0] + ") [" + std::to_string(line_count) + "]");
+	}
 };
