@@ -1,0 +1,8 @@
+server {
+    listen 80
+    listen 999
+
+    location /wordpress {
+        index   index.php;
+    }
+}

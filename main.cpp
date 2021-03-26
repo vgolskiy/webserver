@@ -13,7 +13,7 @@
 #include "Config.hpp"
 
 int main() {
-	const char* 				file = "nginx.conf";
+	const char* 				file = "config";
 	std::string					file_content;
 	Config						config;
 	std::vector<std::string>	file_lines;

@@ -132,6 +132,7 @@ void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 	std::vector<std::string>			tokens;
 	t_server							server;
 	t_location							location;
+	int 								flag = 0;
 
 	for (it = file_lines.begin(); it != file_lines.end(); ++it) {
 		tokens = parse_line(*it);
@@ -160,12 +161,16 @@ void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 			}
 		}
 		else if (tokens[0][0] != 125)
+		{
 			parse_servers_configurations(tokens, server);
-		if (tokens[0][0] == 125)
+			flag = 1;
+		}
+		if (tokens[0][0] == 125 || flag == 1)
 			_servers.push_back(server);
+		flag = 0;
 		clear_server(server);
-		//printContainer(tokens);
-		//std::cout << std::endl;
+		// printContainer(tokens);
+		// std::cout << std::endl;
 	}
 };
 
