@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/26 00:28:58 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/26 03:10:12 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ void	error_message(std::string message)
 */
 void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
 	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35)))
-		error_message("Invalid arguments in config file");
+		error_message("Invalid arguments in configurations file");
 	if ((to_parse[0] == HOST) && (!server.host.size()))
 		server.host = to_parse[1];
 	else if ((to_parse[0] == NAME) && (!server.name.size()))
@@ -200,58 +200,31 @@ void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 };
 
 //ascii 123 {
+//TODO: verify stoi in approved for usage functions
 void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
-	if (to_parse.size() == 1)
-		error_message("Invalid arguments in config file");
+	if ((to_parse.size() == 1)
+		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD)))
+		error_message("Invalid arguments in configurations file");
 	if ((to_parse[0] == METHOD) && (!location.method.size())) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			location.method.push_back(to_parse[i]);
 	}
+	else if ((to_parse[0] == ROOT) && (!location.root.size()))
+		location.root = to_parse[1];
+	else if ((to_parse[0] == INDEX) && (!location.index.size()))
+		location.index = to_parse[1];
+	else if ((to_parse[0] == CGI_PATH) && (!location.cgi_path.size()))
+		location.cgi_path = to_parse[1];
+	else if ((to_parse[0] == PHP_PATH) && (!location.php_path.size()))
+		location.php_path = to_parse[1];
+	else if ((to_parse[0] == CGI) && (!location.cgi.size()))
+		location.cgi = to_parse[1];
+	else if ((to_parse[0] == AUTO_INDEX) && (location.auto_index == -1))
+		location.auto_index = stoi(to_parse[1]);
+	else if ((to_parse[0] == MAX_BODY) && (location.max_body == -1))
+		location.max_body = stoi(to_parse[1]);
+	else if ((to_parse[0] == AUTH) && (!location.auth.size()))
+		location.auth = to_parse[1];
 	else
-	{
-		if (tokens.size() > 2 && tokens[2][0] != '#')
-			fail("too many arguments [" + std::to_string(line_count) + "]");
-		if (tokens[0] == _ROOT)
-		{
-			fail_double_token(loc.root);
-			loc.root = tokens[1];
-		}
-		else if (tokens[0] == _INDEX)
-		{
-			fail_double_token(loc.index);
-			loc.index = tokens[1];
-		}
-		else if (tokens[0] == _CGI_PATH)
-		{
-			fail_double_token(loc.cgi_path);
-			loc.cgi_path = tokens[1];
-		}
-		else if (tokens[0] == _PHP_PATH)
-		{
-			fail_double_token(loc.php_path);
-			loc.php_path = tokens[1];
-		}
-		else if (tokens[0] == _CGI)
-		{
-			fail_double_token(loc.cgi);
-			loc.cgi = tokens[1];
-		}
-		else if (tokens[0] == _AUTO_INDEX)
-		{
-			fail_double_token(loc.auto_index);
-			loc.auto_index = stoi(tokens[1]);
-		}
-		else if (tokens[0] == _MAX_BODY)
-		{
-			fail_double_token(loc.max_body);
-			loc.max_body = stoi(tokens[1]);
-		}
-		else if (tokens[0] == _AUTH)
-		{
-			fail_double_token(loc.auth);
-			loc.auth = tokens[1];
-		}	
-		else
-			fail("Token invalid (" + tokens[0] + ") [" + std::to_string(line_count) + "]");
-	}
+		error_message("Unknown or double parameter");
 };
