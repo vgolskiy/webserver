@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/26 00:13:12 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/26 16:49:18 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,8 @@ typedef struct					s_server
 {
 	std::string					name;
 	std::string					host;
-	std::string					port;
-	std::string					error_page;
+	std::vector<std::string>	port;
+	std::vector<std::string>	error_page;
 	std::vector<t_location> 	location;
 }								t_server;
 

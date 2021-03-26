@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/26 03:13:02 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/26 16:53:18 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,10 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 
 //Need to clear server and location after each push
 void		Config::clear_server(t_server &server) {
-	server.error_page = "";
+	server.error_page.clear();
 	server.host = "";
 	server.name = "";
-	server.port = "";
+	server.port.clear();
 	server.location.clear();
 };
 
@@ -196,10 +196,14 @@ void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		server.host = to_parse[1];
 	else if ((to_parse[0] == NAME) && (!server.name.size()))
 		server.name = to_parse[1];
-	else if ((to_parse[0] == PORT) && (!server.port.size()))
-		server.port = to_parse[1];
-	else if ((to_parse[0] == ERR_PAGE) && (!server.error_page.size()))
-		server.error_page = to_parse[1];
+	else if ((to_parse[0] == PORT) && (!server.port.size())) {
+		for (size_t i = 1; i < to_parse.size(); ++i)
+			server.port.push_back(to_parse[i]);
+	}
+	else if ((to_parse[0] == ERR_PAGE) && (!server.error_page.size())) {
+		for (size_t i = 1; i < to_parse.size(); ++i)
+			server.error_page.push_back(to_parse[i]);
+	}
 	else
 		error_message("Unknown or double parameter");
 };
