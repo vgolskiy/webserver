@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/26 03:10:12 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/26 03:13:02 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 };
 
 //ascii 123 {
-//TODO: verify stoi in approved for usage functions
+//TODO: verify stoi in approved for usage functions / add stoi
 void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
 		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD)))
