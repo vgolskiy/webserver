@@ -43,7 +43,7 @@ int		ft_isspace(int c)
 
 std::string	read_file(const char *file_path) {
 	std::string		res;
-	int				readed;
+	int				was_read;
 	int				fd;
 	char			*buf;
 
@@ -52,11 +52,11 @@ std::string	read_file(const char *file_path) {
 		throw (errno);
 	if (!(buf = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char))))
 		throw (-1);
-	while ((readed = read(fd, buf, BUFFER_SIZE))> 0) {
-		buf[readed] = '\0';
+	while ((was_read = read(fd, buf, BUFFER_SIZE))> 0) {
+		buf[was_read] = '\0';
 		res.append(buf);
 	}
-	if (readed < 0)
+	if (was_read < 0)
 		throw (errno);
 	free(buf);
 	close(fd);
@@ -97,7 +97,7 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 	return (res);
 };
 
-//TODO: file_content verification {} before parsing
+//TODO: file_content verification {} before parsing - Adelina
 
 //Need to clear server and location after each push
 void		Config::clear_server(t_server &server) {
@@ -132,7 +132,6 @@ void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 	std::vector<std::string>			tokens;
 	t_server							server;
 	t_location							location;
-	int 								flag = 0;
 
 	for (it = file_lines.begin(); it != file_lines.end(); ++it) {
 		tokens = parse_line(*it);
@@ -161,14 +160,12 @@ void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 			}
 		}
 		else if (tokens[0][0] != 125)
-		{
 			parse_servers_configurations(tokens, server);
-			flag = 1;
-		}
-		if (tokens[0][0] == 125 || flag == 1)
+		if (tokens[0][0] == 125)
+		{
 			_servers.push_back(server);
-		flag = 0;
-		clear_server(server);
+			clear_server(server);
+		}
 		// printContainer(tokens);
 		// std::cout << std::endl;
 	}
@@ -192,7 +189,7 @@ void	error_message(std::string message)
 void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
 	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35)))
 		error_message("Invalid arguments in configurations file");
-	if ((to_parse[0] == HOST) && (!server.host.size()))
+	if ((to_parse[0] == HOST) && (!server.host.size())) //TODO: check how many listens should be
 		server.host = to_parse[1];
 	else if ((to_parse[0] == NAME) && (!server.name.size()))
 		server.name = to_parse[1];
@@ -209,7 +206,6 @@ void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 };
 
 //ascii 123 {
-//TODO: verify stoi in approved for usage functions / add stoi
 void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
 		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD)))
@@ -236,4 +232,12 @@ void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		location.auth = to_parse[1];
 	else
 		error_message("Unknown or double parameter");
+};
+
+void Config::config_check()
+{
+	for (size_t i = 0; i != _servers.size(); i++)
+	{
+		// check location inside
+	}
 };

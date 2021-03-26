@@ -22,6 +22,7 @@
 # include <fcntl.h>
 # include <unistd.h>
 # include <vector>
+# include <stack>
 
 //GET NEXT LINE
 # define	BUFFER_SIZE	1024
@@ -29,23 +30,42 @@
 //PARSER CHARACTERS SET
 # define	SPACES " \f\n\r\t\v"
 
+//DEFAULT CONFIG FILE
+# define	CONFIG "config"
+
 //SERVER KEYS
 # define	SERVER		"server"
+// The parameter to server_name can be a full (exact) name, a wildcard, or a regular expression.
+// If the Host header field does not match a server name, NGINX Plus routes
+// the request to the default server for the port on which the request arrived.
 # define	HOST 		"host"
 # define	NAME 		"name"
-# define	PORT 		"listen"
-# define	ERR_PAGE 	"error"
+# define	ERR_PAGE 	"error" // error_page - ?
+// To make an internal redirect when a file is not found.
+// we can return a custom page along with an error code,
+// substitute a different error code in the response, or redirect the browser to a different URI
+# define	PORT 		"listen" 
+// If a port is omitted, 
+// the standard port is used. 
+// Likewise, if an address is omitted, the server listens on all addresses. 
+// If the listen directive is not included at all, 
+// the “standard” port is 80/tcp and the “default” port is 8000/tcp
+// Ports cannot be the same within one server 
 
 //LOCATION KEYS
 # define	LOCATION	"location"
+// Inside each location block, it is usually possible (with a few exceptions)
+// to place even more location directives to further refine the processing for specific groups of requests.
+// In the location:  prefix strings (pathnames /) and regular expressions (~) or case-insensitive (~*)
 # define	METHOD 		"method"
 # define	ROOT 		"root"
 # define	INDEX 		"index"
+// The index directive defines the index file’s name (the default value is index.html).	
 # define	CGI_PATH 	"cgi_path"
 # define	PHP_PATH 	"php_path"
 # define	CGI 		"cgi"
-# define	AUTO_INDEX 	"auto_index"
-# define	MAX_BODY 	"max_body"
+# define	AUTO_INDEX 	"auto_index" // autoindex
+# define	MAX_BODY 	"max_body" // should limit client body size
 # define	AUTH 		"auth"
 
 //testing
@@ -98,13 +118,7 @@ public:
 	Config(const Config &copy) {
 		*this = copy;
 	};
-	~Config(void) {
-		std::vector<t_server>::iterator	it;
-
-		for (it = _servers.begin(); it != _servers.end(); ++it)
-			it->location.clear();
-		_servers.clear();
-	};
+	~Config(void) {};
 	Config	operator=(const Config &other) {
 		if (this != &other) {
 			_raw_config = other._raw_config;
@@ -114,6 +128,7 @@ public:
 	};
 
 	void	parse_configuration_file(std::vector<std::string> &file_lines);
+	void	config_check();
 
 private:
 	std::vector<std::string>	parse_line(std::string &line);
