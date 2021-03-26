@@ -169,6 +169,7 @@ void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 		// printContainer(tokens);
 		// std::cout << std::endl;
 	}
+	config_check();
 };
 
 void	error_message(std::string message)
@@ -193,11 +194,11 @@ void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		server.host = to_parse[1];
 	else if ((to_parse[0] == NAME) && (!server.name.size()))
 		server.name = to_parse[1];
-	else if ((to_parse[0] == PORT) && (!server.port.size())) {
+	else if ((to_parse[0] == PORT)) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			server.port.push_back(to_parse[i]);
 	}
-	else if ((to_parse[0] == ERR_PAGE) && (!server.error_page.size())) {
+	else if ((to_parse[0] == ERR_PAGE)) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			server.error_page.push_back(to_parse[i]);
 	}
@@ -210,7 +211,7 @@ void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 	if ((to_parse.size() == 1)
 		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD)))
 		error_message("Invalid arguments in configurations file");
-	if ((to_parse[0] == METHOD) && (!location.method.size())) {
+	if ((to_parse[0] == METHOD)) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			location.method.push_back(to_parse[i]);
 	}
@@ -234,10 +235,24 @@ void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		error_message("Unknown or double parameter");
 };
 
+// check number of listens port - not the same within one port
+// check uri (so it starts with '/' only)
+// check error pages order
+
 void Config::config_check()
 {
+	std::list<std::string>::iterator it;
 	for (size_t i = 0; i != _servers.size(); i++)
 	{
-		// check location inside
+		int check_uri = 0;
+		for (int j = 0; j != _servers[i].location.size(); j++)
+			if (_servers[i].location[j].uri.find_first_of("/", 0) != std::string::npos) //doesn't work though
+				check_uri = 1;
+		if (check_uri == 0)
+			error_message("There should be at least one uri '/'");
+		_servers[i].port.sort();
+		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++)
+			if (*it == *(++it))
+				error_message("The same ports are forbidden!");
 	}
 };

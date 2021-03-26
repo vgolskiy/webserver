@@ -1,8 +1,48 @@
 server {
-    listen 80
-    listen 999
+    listen       8080;
+    server_name  localhost;
 
-    location /wordpress{
-        index   index.php;
+    #charset koi8-r;
+
+    #access_log  logs/host.access.log  main;
+
+    location / {
+        root   html;
+        index  index.html;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    
+    #default
+    error_page   500 502 503 504  /50x.html;
+
+    #OK
+    #error_page   500 502 503 504  ;
+
+    #KO -> because of /50x.html
+    #error_page   500 502 503 904  /50x.html;
+    
+    #OK
+    #error_page   500 502 503 904  ;
+
+    #KO -> need to be in an ascending order
+    #error_page   800 502 503 504  /50x.html;
+    
+    # '=' sign means exact request of uri
+    location = /50x.html {
+        root   html;
+    }
+}
+
+server {
+    listen       8080;
+    listen       localhost:8080;
+    server_name  somename  alias  another.alias;
+
+    location / {
+        root   html;
+        index  index.html index.htm;
     }
 }

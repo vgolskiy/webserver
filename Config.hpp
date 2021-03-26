@@ -23,6 +23,7 @@
 # include <unistd.h>
 # include <vector>
 # include <stack>
+# include <list>
 
 //GET NEXT LINE
 # define	BUFFER_SIZE	1024
@@ -31,7 +32,7 @@
 # define	SPACES " \f\n\r\t\v"
 
 //DEFAULT CONFIG FILE
-# define	CONFIG "config"
+# define	CONFIG "default"
 
 //SERVER KEYS
 # define	SERVER		"server"
@@ -40,7 +41,7 @@
 // the request to the default server for the port on which the request arrived.
 # define	HOST 		"host"
 # define	NAME 		"name"
-# define	ERR_PAGE 	"error" // error_page - ?
+# define	ERR_PAGE 	"error_page"
 // To make an internal redirect when a file is not found.
 // we can return a custom page along with an error code,
 // substitute a different error code in the response, or redirect the browser to a different URI
@@ -64,7 +65,7 @@
 # define	CGI_PATH 	"cgi_path"
 # define	PHP_PATH 	"php_path"
 # define	CGI 		"cgi"
-# define	AUTO_INDEX 	"auto_index" // autoindex
+# define	AUTO_INDEX 	"autoindex"
 # define	MAX_BODY 	"max_body" // should limit client body size
 # define	AUTH 		"auth"
 
@@ -103,7 +104,7 @@ typedef struct					s_server
 {
 	std::string					name;
 	std::string					host;
-	std::vector<std::string>	port;
+	std::list<std::string>		port;
 	std::vector<std::string>	error_page;
 	std::vector<t_location> 	location;
 }								t_server;
