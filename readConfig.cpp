@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/26 16:53:18 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/29 12:36:10 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,6 +242,7 @@ void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 void Config::config_check()
 {
 	std::list<std::string>::iterator it;
+
 	for (size_t i = 0; i != _servers.size(); i++)
 	{
 		int check_uri = 0;
@@ -253,6 +254,6 @@ void Config::config_check()
 		_servers[i].port.sort();
 		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++)
 			if (*it == *(++it))
-				error_message("The same ports are forbidden!");
+				error_message("The same ports are forbidden");
 	}
 };

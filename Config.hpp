@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/26 16:49:18 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/29 13:06:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,16 @@
 # define	BUFFER_SIZE	1024
 
 //PARSER CHARACTERS SET
-# define	SPACES " \f\n\r\t\v"
+# define	SPACES		" \f\n\r\t\v"
 
 //DEFAULT CONFIG FILE
-# define	CONFIG "default"
+# define	CONFIG		"default"
 
 //SERVER KEYS
 # define	SERVER		"server"
 // The parameter to server_name can be a full (exact) name, a wildcard, or a regular expression.
+// REGEX is not the subject of this project
+// TODO: wildcards (?) https://www.prodevelopertutorial.com/wildcard-matching-in-c/
 // If the Host header field does not match a server name, NGINX Plus routes
 // the request to the default server for the port on which the request arrived.
 # define	HOST 		"host"
@@ -109,6 +111,26 @@ typedef struct					s_server
 	std::vector<t_location> 	location;
 }								t_server;
 
+//Server parameters structure for global configurations structure
+typedef struct					s_server_global
+{
+	std::string					name;
+	std::string					host;
+	std::vector<unsigned short>	port;
+	std::vector<std::string>	error_page;
+	std::vector<t_location> 	location;
+}								t_server_global;
+
+//Global server configuration parameters structure
+typedef struct						s_config
+{
+	std::vector<t_server_global*>	server;
+}									t_config;
+
+//Allowing configuration be accessible withing multiple files
+//https://stackoverflow.com/questions/3627941/global-variable-within-multiple-files
+extern t_config						g_config;
+
 class Config {
 private:
 	std::vector<std::string>	_raw_config;
@@ -129,7 +151,7 @@ public:
 	};
 
 	void	parse_configuration_file(std::vector<std::string> &file_lines);
-	void	config_check();
+	void	init_global_configuration(void);
 
 private:
 	std::vector<std::string>	parse_line(std::string &line);
@@ -137,6 +159,8 @@ private:
 	void						parse_servers_locations(std::vector<std::string> &to_parse, t_location &location);
 	void						clear_server(t_server &server);
 	void						clear_location(t_location &location);
+	void						config_check(void);
+	void						convert_port(void);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
