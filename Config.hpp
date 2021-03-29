@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/29 13:06:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/30 00:00:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,9 @@
 // Likewise, if an address is omitted, the server listens on all addresses. 
 // If the listen directive is not included at all, 
 // the “standard” port is 80/tcp and the “default” port is 8000/tcp
-// Ports cannot be the same within one server 
+// Ports cannot be the same within one server
+# define	LOCALHOST	"localhost"
+# define	LOCALHOST_IP	"127.0.0.1"
 
 //LOCATION KEYS
 # define	LOCATION	"location"
@@ -160,6 +162,7 @@ private:
 	void						clear_server(t_server &server);
 	void						clear_location(t_location &location);
 	void						config_check(void);
+	std::string					verify_localhost(std::string &s);
 	void						convert_port(void);
 };
 

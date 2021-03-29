@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/29 13:03:24 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/30 00:15:28 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,16 +106,46 @@ void	Config::convert_port(void) {
 }
 
 
+std::string	Config::verify_localhost(std::string &s) {
+	if (s == LOCALHOST)
+		return (LOCALHOST_IP);
+	return (s);
+}
+
 /*
 ** Global configuration is stored on HEAP
+** Making localhost verification for naming instead of IP (key name localhost vs 127.0.0.1)
+** Additionally searching for port notation (localhost:port)
+** Port is added to other ports if there was no such port mention before
+** Adding new port to the top of the list (priority listening)
+** ascii 58 :
 */
 void	Config::init_global_configuration(void) {
+	size_t								position;
+	std::string							tmp;
+	std::list<std::string>::iterator	it;
+	bool								mark = false;
+
 	for (size_t i = 0; i < _servers.size(); ++i) {
 		t_server_global *server = new t_server_global;
 
 		server->name = _servers[i].name;
 		server->location = _servers[i].location;
-		server->host = _servers[i].host;
+		if ((position = _servers[i].host.find(58)) == std::string::npos)
+			server->host = verify_localhost(_servers[i].host);
+		else {
+			tmp = _servers[i].host.substr(0, position);
+			server->host = verify_localhost(tmp);
+			tmp = _servers[i].host.substr(position + 1);
+			for (it = _servers[i].port.begin(); it != _servers[i].port.end(); ++it) {
+				if (*it == tmp) {
+					mark = true;
+					break ;
+				}
+			}
+			if (!mark)
+				_servers[i].port.push_front(tmp);
+		}
 		server->error_page = _servers[i].error_page;
 		g_config.server.push_back(server);
 	}
