@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/30 00:15:28 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/30 00:20:43 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,8 +143,12 @@ void	Config::init_global_configuration(void) {
 					break ;
 				}
 			}
-			if (!mark)
-				_servers[i].port.push_front(tmp);
+			if (!mark) {
+				if (is_all_numbers(tmp))
+					_servers[i].port.push_front(tmp);
+				else
+					error_message("Only numbers are allowed in ports naming");
+			}
 		}
 		server->error_page = _servers[i].error_page;
 		g_config.server.push_back(server);
