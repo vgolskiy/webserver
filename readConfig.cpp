@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/29 12:36:10 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/30 17:35:46 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ int		ft_isspace(int c)
 	return (0);
 }
 
-std::string	read_file(const char *file_path) {
-	std::string		res;
+std::string*	read_file(const char *file_path, std::string *res) {
 	int				was_read;
 	int				fd;
 	char			*buf;
@@ -54,7 +53,7 @@ std::string	read_file(const char *file_path) {
 		throw (-1);
 	while ((was_read = read(fd, buf, BUFFER_SIZE))> 0) {
 		buf[was_read] = '\0';
-		res.append(buf);
+		res->append(buf);
 	}
 	if (was_read < 0)
 		throw (errno);
@@ -127,12 +126,14 @@ void		Config::clear_location(t_location &location) {
 ** In case of no location provided error message is shown
 ** ascii 35 #, 123 {, 125 }
 */
-void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
+bool		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 	std::vector<std::string>::iterator	it;
 	std::vector<std::string>			tokens;
 	t_server							server;
 	t_location							location;
 
+	if (check_brackets(file_lines))
+		return (EXIT_FAILURE);
 	for (it = file_lines.begin(); it != file_lines.end(); ++it) {
 		tokens = parse_line(*it);
 		if ((!tokens.size()) || (tokens[0][0] == 35)
@@ -145,7 +146,8 @@ void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 				it++;
 				tokens = parse_line(*it);				
 				while (tokens[0][0] != 125) {
-					parse_servers_locations(tokens, location);
+					if (parse_servers_locations(tokens, location))
+						return (EXIT_FAILURE);
 					it++;
 					tokens = parse_line(*it);
 				}
@@ -154,20 +156,19 @@ void		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 			}
 			else {
 				error_message("Wrong server location parameters");
-				while ((*it)[0] != 125)
-					it++;
-			continue ;
+				return (EXIT_FAILURE);
 			}
+			continue ;
 		}
-		else if (tokens[0][0] != 125)
-			parse_servers_configurations(tokens, server);
+		else if (tokens[0][0] != 125) {
+			if (parse_servers_configurations(tokens, server))
+				return (EXIT_FAILURE);
+		}
 		if (tokens[0][0] == 125)
 		{
 			_servers.push_back(server);
 			clear_server(server);
 		}
-		// printContainer(tokens);
-		// std::cout << std::endl;
 	}
 	config_check();
 };
@@ -187,9 +188,11 @@ void	error_message(std::string message)
 ** so _servers will always have at least one server inside
 ** ascii 35 #
 */
-void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
-	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35)))
+bool	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
+	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35))) {
 		error_message("Invalid arguments in configurations file");
+		return (EXIT_FAILURE);
+	}
 	if ((to_parse[0] == HOST) && (!server.host.size())) //TODO: check how many listens should be
 		server.host = to_parse[1];
 	else if ((to_parse[0] == NAME) && (!server.name.size()))
@@ -204,13 +207,16 @@ void	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 	}
 	else
 		error_message("Unknown or double parameter");
+	return (EXIT_SUCCESS);
 };
 
 //ascii 123 {
-void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
+bool	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
-		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD)))
+		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD))) {
 		error_message("Invalid arguments in configurations file");
+		return (EXIT_FAILURE);
+	}
 	if ((to_parse[0] == METHOD)) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			location.method.push_back(to_parse[i]);
@@ -233,13 +239,42 @@ void	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		location.auth = to_parse[1];
 	else
 		error_message("Unknown or double parameter");
+	return (EXIT_SUCCESS);
+};
+
+//Verify that all brackets were closed
+bool	Config::check_brackets(std::vector<std::string> &lines)
+{
+	std::stack<std::string>		to_check;
+
+	for (int i = 0; i != lines.size(); i++)
+	{
+		for (int j = 0; j != lines[i].size(); j++)
+		{
+			if (lines[i][j] == '{')
+				to_check.push(&lines[i][j]);
+			else if (lines[i][j] == '}' && !to_check.empty())
+				to_check.pop();
+			else if (lines[i][j] == '}' && to_check.empty())
+			{
+				std::cerr << "Invalid brackets\n";
+				return (EXIT_FAILURE);
+			}
+		}
+	}
+	if (to_check.size())
+	{
+		std::cerr << "Invalid brackets\n";
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
 };
 
 // check number of listens port - not the same within one port
 // check uri (so it starts with '/' only)
 // check error pages order
 
-void Config::config_check()
+bool	Config::config_check()
 {
 	std::list<std::string>::iterator it;
 
@@ -249,11 +284,17 @@ void Config::config_check()
 		for (int j = 0; j != _servers[i].location.size(); j++)
 			if (_servers[i].location[j].uri.find_first_of("/", 0) != std::string::npos) //doesn't work though
 				check_uri = 1;
-		if (check_uri == 0)
+		if (check_uri == 0) {
 			error_message("There should be at least one uri '/'");
+			return (EXIT_FAILURE);
+		}
 		_servers[i].port.sort();
-		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++)
-			if (*it == *(++it))
+		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++) {
+			if (*it == *(++it)) {
 				error_message("The same ports are forbidden");
+				return (EXIT_FAILURE);
+			}
+		}
 	}
+	return (EXIT_SUCCESS);
 };

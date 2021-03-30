@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/30 00:00:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/30 17:34:45 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,16 +152,17 @@ public:
 		return (*this);
 	};
 
-	void	parse_configuration_file(std::vector<std::string> &file_lines);
+	bool	parse_configuration_file(std::vector<std::string> &file_lines);
 	void	init_global_configuration(void);
 
 private:
 	std::vector<std::string>	parse_line(std::string &line);
-	void						parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server);
-	void						parse_servers_locations(std::vector<std::string> &to_parse, t_location &location);
+	bool						parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server);
+	bool						parse_servers_locations(std::vector<std::string> &to_parse, t_location &location);
 	void						clear_server(t_server &server);
 	void						clear_location(t_location &location);
-	void						config_check(void);
+	bool						check_brackets(std::vector<std::string> &lines);
+	bool						config_check(void);
 	std::string					verify_localhost(std::string &s);
 	void						convert_port(void);
 };
@@ -169,7 +170,7 @@ private:
 void						*ft_memset(void *dest, int c, size_t len);
 void						*ft_calloc(size_t nmemb, size_t size);
 int							ft_isspace(int c);
-std::string					read_file(const char *file_path);
+std::string*				read_file(const char *file_path, std::string *file_content);
 std::vector<std::string>	split_to_lines(const std::string &s, const std::string &delimiter);
 void						error_message(std::string message);
 
