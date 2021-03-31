@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Config.hpp"
+t_config						g_config;
 
 int	ft_isalpha(int c)
 {
@@ -85,6 +86,7 @@ int	is_all_numbers(std::string s) {
 	return (1);
 }
 
+
 //TODO: verify htons is avaliable function / add source code
 /*
 ** After verification that port consist of numbers
@@ -92,19 +94,18 @@ int	is_all_numbers(std::string s) {
 ** then pushing result to ports vector
 ** In case of wrong symbols error occurs
 */
-void	Config::convert_port(void) {
-	std::list<std::string>::iterator it;
+unsigned short	Config::convert_port(std::string &to_convert)
+{
+	int	res;
 
-	for (size_t i = 0; i < _servers.size(); ++i) {
-		for (it = _servers[i].port.begin(); it != _servers[i].port.end(); it++) {
-			if (is_all_numbers(*it))
-				g_config.server[i]->port.push_back(htons(atoi((*it).c_str())));
-			else
-				error_message("Only numbers are allowed in ports naming");
-		}
-	}
+	if (is_all_numbers(to_convert) == 0)
+		return EXIT_FAILURE;
+
+	res = atoi(to_convert.c_str());
+	if (res > USHRT_MAX || res < 1) // TODO: check if we should start with 1024
+		return EXIT_FAILURE;
+	return (htons(res));
 }
-
 
 std::string	Config::verify_localhost(std::string &s) {
 	if (s == LOCALHOST)
@@ -120,38 +121,31 @@ std::string	Config::verify_localhost(std::string &s) {
 ** Adding new port to the top of the list (priority listening)
 ** ascii 58 :
 */
-void	Config::init_global_configuration(void) {
-	size_t								position;
-	std::string							tmp;
-	std::list<std::string>::iterator	it;
-	bool								mark = false;
+// void	Config::init_global_configuration(void) {
+// 	size_t								position;
+// 	std::string							tmp;
+// 	std::list<unsigned short>::iterator	it;
+// 	// bool								mark = false;
 
-	for (size_t i = 0; i < _servers.size(); ++i) {
-		t_server_global *server = new t_server_global;
+// 	for (size_t i = 0; i < _servers.size(); ++i) {
+// 		t_server_global *server = new t_server_global;
 
-		server->name = _servers[i].name;
-		server->location = _servers[i].location;
-		if ((position = _servers[i].host.find(58)) == std::string::npos)
-			server->host = verify_localhost(_servers[i].host);
-		else {
-			tmp = _servers[i].host.substr(0, position);
-			server->host = verify_localhost(tmp);
-			tmp = _servers[i].host.substr(position + 1);
-			for (it = _servers[i].port.begin(); it != _servers[i].port.end(); ++it) {
-				if (*it == tmp) {
-					mark = true;
-					break ;
-				}
-			}
-			if (!mark) {
-				if (is_all_numbers(tmp))
-					_servers[i].port.push_front(tmp);
-				else
-					error_message("Only numbers are allowed in ports naming");
-			}
-		}
-		server->error_page = _servers[i].error_page;
-		g_config.server.push_back(server);
-	}
-	convert_port();
-}
+// 		server->name = _servers[i].name;
+// 		server->location = _servers[i].location;
+// 		if ((position = _servers[i].host.find(58)) == std::string::npos)
+// 			server->host = verify_localhost(_servers[i].host);
+// 		else {
+// 			tmp = _servers[i].host.substr(0, position);
+// 			server->host = verify_localhost(tmp);
+// 			tmp = _servers[i].host.substr(position + 1);
+// 			// for (it = _servers[i].port.begin(); it != _servers[i].port.end(); ++it) {
+// 			// 	if (*it == tmp) {
+// 			// 		mark = true;
+// 			// 		break ;
+// 			// 	}
+// 			// }
+// 		}
+// 		server->error_page = _servers[i].error_page;
+// 		g_config.server.push_back(server);
+// 	}
+// }

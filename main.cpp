@@ -14,12 +14,12 @@
 
 int main() {
 	const char* 				file = CONFIG;
-	std::string*				file_content = NULL;
+	std::string					file_content;
 	Config						config;
 	std::vector<std::string>	file_lines;
 
 	try {
-		file_content = read_file(file, file_content);
+		file_content = read_file(file);
 	}
 	catch (int e) {
 		if (e < 0)
@@ -27,11 +27,9 @@ int main() {
 		else
 			std::cerr << file << ": " << strerror(e) << std::endl;
 	}
-	if (file_content) {
-		file_lines = split_to_lines(*file_content, "\n");
-		if (config.parse_configuration_file(file_lines))
-			return (EXIT_FAILURE);
-	}
+	file_lines = split_to_lines(file_content, "\n");
+	if (config.parse_configuration_file(file_lines))
+		return (EXIT_FAILURE);
 	else
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
