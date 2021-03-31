@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/30 17:34:45 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:57:35 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@
 # define	SERVER		"server"
 // The parameter to server_name can be a full (exact) name, a wildcard, or a regular expression.
 // REGEX is not the subject of this project
-// TODO: wildcards (?) https://www.prodevelopertutorial.com/wildcard-matching-in-c/
 // If the Host header field does not match a server name, NGINX Plus routes
 // the request to the default server for the port on which the request arrived.
 # define	HOST 		"host"
