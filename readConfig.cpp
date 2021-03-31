@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   readConfig.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 18:33:27 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 21:28:24 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 
-void	*ft_memset(void *dest, int c, size_t len)
-{
+void	*ft_memset(void *dest, int c, size_t len) {
 	unsigned char	*dest_str;
 
 	if (len == 0)
@@ -24,8 +23,7 @@ void	*ft_memset(void *dest, int c, size_t len)
 	return (dest);
 }
 
-void	*ft_calloc(size_t nmemb, size_t size)
-{
+void	*ft_calloc(size_t nmemb, size_t size) {
 	unsigned char	*res;
 
 	if (!(res = (unsigned char *)malloc(size * nmemb)))
@@ -34,11 +32,10 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return ((void *)res);
 }
 
-int		ft_isspace(int c)
-{
+bool	ft_isspace(int c) {
 	if ((c == 32) || ((c >= 9) && (c <= 13)))
-		return (1);
-	return (0);
+		return (true);
+	return (false);
 }
 
 std::string		read_file(const char *file_path) {
@@ -63,7 +60,7 @@ std::string		read_file(const char *file_path) {
 	return (res);
 };
 
-std::vector<std::string>	split_to_lines(const std::string &s, const std::string &delimiter) {
+std::vector<std::string>	split(const std::string &s, const std::string &delimiter) {
 	std::vector<std::string>	res;
 	size_t						pos;
 	size_t						prev;
@@ -125,13 +122,13 @@ void		Config::clear_location(t_location &location) {
 ** In case of no location provided error message is shown
 ** ascii 35 #, 123 {, 125 }
 */
-bool		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
+int		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 	std::vector<std::string>::iterator	it;
 	std::vector<std::string>			tokens;
 	t_server							server;
 	t_location							location;
 
-	if (check_brackets(file_lines))
+	if (!verify_brackets(file_lines))
 		return (EXIT_FAILURE);
 	for (it = file_lines.begin(); it != file_lines.end(); ++it) {
 		tokens = parse_line(*it);
@@ -169,8 +166,9 @@ bool		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 			clear_server(server);
 		}
 	}
-	config_check();
-	return EXIT_SUCCESS;
+	if (!verify_config())
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 };
 
 void	error_message(std::string message)
@@ -187,7 +185,7 @@ void	error_message(std::string message)
 ** so _servers will always have at least one server inside
 ** ascii 35 #
 */
-bool	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
+int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
 	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35))) {
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
@@ -197,10 +195,13 @@ bool	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 	else if ((to_parse[0] == NAME) && (!server.name.size()))
 		server.name = to_parse[1];
 	else if ((to_parse[0] == PORT)) {
-		for (size_t i = 1; i < to_parse.size(); ++i)
-		{
-			//TODO: convert port_string to port_short
-			server.port.push_back(convert_port(to_parse[i]));
+		for (size_t i = 1; i < to_parse.size(); ++i) {
+			if (verify_port(to_parse[i]))
+				server.port.push_back(htons(atoi(to_parse[i].c_str())));
+			else {
+				error_message("Invalid arguments in configurations file");
+				return (EXIT_FAILURE);
+			}
 		}
 	}
 	else if ((to_parse[0] == ERR_PAGE)) {
@@ -213,7 +214,7 @@ bool	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 };
 
 //ascii 123 {
-bool	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
+int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
 		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD))) {
 		error_message("Invalid arguments in configurations file");
@@ -245,7 +246,7 @@ bool	Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 };
 
 //Verify that all brackets were closed
-bool	Config::check_brackets(std::vector<std::string> &lines)
+bool		Config::verify_brackets(std::vector<std::string> &lines)
 {
 	std::stack<std::string>		to_check;
 
@@ -260,23 +261,23 @@ bool	Config::check_brackets(std::vector<std::string> &lines)
 			else if (lines[i][j] == '}' && to_check.empty())
 			{
 				std::cerr << "Invalid brackets\n";
-				return (EXIT_FAILURE);
+				return (false);
 			}
 		}
 	}
 	if (to_check.size())
 	{
 		std::cerr << "Invalid brackets\n";
-		return (EXIT_FAILURE);
+		return (false);
 	}
-	return (EXIT_SUCCESS);
+	return (true);
 };
 
 // check number of listens port - not the same within one port
 // check uri (so it starts with '/' only)
 // check error pages order
 
-bool	Config::config_check()
+bool	Config::verify_config()
 {
 	std::list<unsigned short>::iterator it;
 
@@ -286,9 +287,9 @@ bool	Config::config_check()
 		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++) {
 			if (*it == *(++it)) {
 				error_message("The same ports are forbidden");
-				return (EXIT_FAILURE);
+				return (false);
 			}
 		}
 	}
-	return (EXIT_SUCCESS);
+	return (true);
 };

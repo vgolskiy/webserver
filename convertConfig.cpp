@@ -3,28 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   convertConfig.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 18:59:52 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 21:40:09 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 t_config						g_config;
 
-int	ft_isalpha(int c)
-{
+bool	ft_isalpha(int c) {
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-		return (1);
-	return (0);
+		return (true);
+	return (false);
 }
 
-int	ft_isdigit(int c)
-{
+bool	ft_isdigit(int c) {
 	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
+		return (true);
+	return (false);
 }
 
 static char	*ft_rewind(const char *str)
@@ -64,8 +62,7 @@ static int	ft_get_num(const char *str, int sign)
 	return (tmp);
 }
 
-int			ft_atoi(const char *str)
-{
+int			ft_atoi(const char *str) {
 	int	sign;
 
 	sign = 1;
@@ -77,13 +74,13 @@ int			ft_atoi(const char *str)
 	return (sign * ft_get_num(str, sign));
 }
 
-int	is_all_numbers(std::string s) {
+bool	is_all_numbers(std::string s) {
 	std::string::iterator	it;
 
 	for (it = s.begin(); it != s.end(); ++it)
 		if (!ft_isdigit(*it))
-			return (0);
-	return (1);
+			return (false);
+	return (true);
 }
 
 
@@ -94,45 +91,72 @@ int	is_all_numbers(std::string s) {
 ** then pushing result to ports vector
 ** In case of wrong symbols error occurs
 */
-unsigned short	Config::convert_port(std::string &to_convert)
-{
+bool	Config::verify_port(std::string &s) {
 	int	res;
 
-	if (is_all_numbers(to_convert) == 0)
-		return (EXIT_FAILURE);
-	res = atoi(to_convert.c_str());
+	if (!is_all_numbers(s))
+		return (false);
+	res = atoi(s.c_str());
 	if (res > USHRT_MAX || res < 1) // TODO: check if we should start with 1024
-		return (EXIT_FAILURE);
-	return (htons(res));
+		return (false);
+	return (true);
 }
 
-std::string	Config::verify_localhost(std::string &s) {
+std::string	Config::replace_localhost(std::string &s) {
 	if (s == LOCALHOST)
 		return (LOCALHOST_IP);
 	return (s);
 }
 
+bool		Config::verify_localhost(std::string &s) {
+	std::vector<std::string>			parts;
+	std::vector<std::string>::iterator	it;
+	int									n;
+
+	parts = split(s, ".");
+	if (parts.size() != 4)
+		return (false);
+	for (it = parts.begin(); it != parts.end(); ++it) {
+		if (!is_all_numbers(*it))
+			return (false);
+		n = atoi((*it).c_str());
+		if ((n < 0) || (n > 255))
+			return (false);
+	}
+	return (true);
+}
+
 std::string	Config::convert_localhost(void) {
 	size_t								position;
+	unsigned short						port;
 	std::string							res;
 	std::string							tmp;
 	std::list<unsigned short>::iterator	it;
 	bool								add = true;
 
 	for (size_t i = 0; i < _servers.size(); ++i) {
-		if ((position = _servers[i].host.find(58)) == std::string::npos)
-			return (verify_localhost(_servers[i].host));
+		res = "";
+		if ((position = _servers[i].host.find(58)) == std::string::npos) {
+			res = replace_localhost(_servers[i].host);
+			if (verify_localhost(res))
+				return (res);
 		else {
 			tmp = _servers[i].host.substr(0, position);
 			res = verify_localhost(tmp);
 			tmp = _servers[i].host.substr(position + 1);
-
+			if (verify_port(tmp))
+				port = htons(atoi(tmp.c_str()));
+			else {
+				error_message("Invalid arguments in configurations file");
+				return (EXIT_FAILURE);
+			}
 			for (it = _servers[i].port.begin(); it != _servers[i].port.end(); ++it) {
-				if (*it == tmp) {
+				if (*it == port) {
 					add = false;
-			// 		break ;
-			// 	}
-			// }
+					break ;
+				}
+
+			}
 		}
 	}
 }

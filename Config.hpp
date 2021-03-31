@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 18:53:55 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 21:26:23 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,27 +149,32 @@ public:
 		return (*this);
 	};
 
-	bool	parse_configuration_file(std::vector<std::string> &file_lines);
+	int		parse_configuration_file(std::vector<std::string> &file_lines);
 	void	init_global_configuration(void);
 
 private:
 	std::vector<std::string>	parse_line(std::string &line);
-	bool						parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server);
-	bool						parse_servers_locations(std::vector<std::string> &to_parse, t_location &location);
+	int							parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server);
+	int							parse_servers_locations(std::vector<std::string> &to_parse, t_location &location);
 	void						clear_server(t_server &server);
 	void						clear_location(t_location &location);
-	bool						check_brackets(std::vector<std::string> &lines);
-	bool						config_check(void);
-	std::string					verify_localhost(std::string &s);
-	unsigned short				convert_port(std::string &to_convert);
+	bool						verify_brackets(std::vector<std::string> &lines);
+	bool						verify_config(void);
+	std::string					replace_localhost(std::string &s);
+	bool						verify_localhost(std::string &s);
+	bool						verify_port(std::string &s);
 	std::string					convert_localhost(void);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
 void						*ft_calloc(size_t nmemb, size_t size);
-int							ft_isspace(int c);
+bool						ft_isspace(int c);
+bool						ft_isdigit(int c);
+bool						ft_isalpha(int c);
+bool						is_all_numbers(std::string s);
+int							ft_atoi(const char *str);
 std::string					read_file(const char *file_path);
-std::vector<std::string>	split_to_lines(const std::string &s, const std::string &delimiter);
+std::vector<std::string>	split(const std::string &s, const std::string &delimiter);
 void						error_message(std::string message);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/30 17:37:08 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 21:18:06 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int main() {
 		else
 			std::cerr << file << ": " << strerror(e) << std::endl;
 	}
-	file_lines = split_to_lines(file_content, "\n");
+	file_lines = split(file_content, "\n");
 	if (config.parse_configuration_file(file_lines))
 		return (EXIT_FAILURE);
 	else
