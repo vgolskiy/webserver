@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   readConfig.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/30 17:35:46 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 18:01:43 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,7 +282,7 @@ bool	Config::config_check()
 	{
 		int check_uri = 0;
 		for (int j = 0; j != _servers[i].location.size(); j++)
-			if (_servers[i].location[j].uri.find_first_of("/", 0) != std::string::npos) //doesn't work though
+			if (_servers[i].location[j].uri.find_first_of('/', 0) != std::string::npos) //doesn't work though
 				check_uri = 1;
 		if (check_uri == 0) {
 			error_message("There should be at least one uri '/'");

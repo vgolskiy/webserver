@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/30 17:34:45 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 18:09:44 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 # include <vector>
 # include <stack>
 # include <list>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 //GET NEXT LINE
 # define	BUFFER_SIZE	1024
@@ -126,6 +129,7 @@ typedef struct					s_server_global
 //Global server configuration parameters structure
 typedef struct						s_config
 {
+	struct sockaddr_in 				address;
 	std::vector<t_server_global*>	server;
 }									t_config;
 
