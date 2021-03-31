@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/30 00:20:43 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:57:35 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ int	is_all_numbers(std::string s) {
 	return (1);
 }
 
-//TODO: verify htons is avaliable function / add source code
 /*
 ** After verification that port consist of numbers
 ** we starting convertion: string -> char* -> integer -> unsigned short

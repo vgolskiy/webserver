@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/30 17:35:46 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:57:35 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,6 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 	return (res);
 };
 
-//TODO: file_content verification {} before parsing - Adelina
-
 //Need to clear server and location after each push
 void		Config::clear_server(t_server &server) {
 	server.error_page.clear();
@@ -176,7 +174,6 @@ bool		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 void	error_message(std::string message)
 {
 	std::cerr << message << std::endl;
-	//TODO: exit if parse size or unknown/double tokens - invalid (close fd(?) + exit(1));
 };
 
 /*
@@ -193,7 +190,7 @@ bool	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
 	}
-	if ((to_parse[0] == HOST) && (!server.host.size())) //TODO: check how many listens should be
+	if ((to_parse[0] == HOST) && (!server.host.size()))
 		server.host = to_parse[1];
 	else if ((to_parse[0] == NAME) && (!server.name.size()))
 		server.name = to_parse[1];
