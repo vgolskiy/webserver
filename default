@@ -3,5 +3,9 @@ server {
 
     location /wordpress {
         index   index.php;
-    }   
+    }
+
+    location / {
+        index   index.php;
+    }
 }

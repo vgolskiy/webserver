@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 18:09:44 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 18:33:27 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # define _CONFIG_HPP_
 
 # include <stdlib.h>
+# include <limits>
 # include <iostream>
 # include <string>
 # include <errno.h>
@@ -41,7 +42,6 @@
 # define	SERVER		"server"
 // The parameter to server_name can be a full (exact) name, a wildcard, or a regular expression.
 // REGEX is not the subject of this project
-// TODO: wildcards (?) https://www.prodevelopertutorial.com/wildcard-matching-in-c/
 // If the Host header field does not match a server name, NGINX Plus routes
 // the request to the default server for the port on which the request arrived.
 # define	HOST 		"host"
@@ -111,26 +111,17 @@ typedef struct					s_server
 {
 	std::string					name;
 	std::string					host;
-	std::list<std::string>		port;
+	std::list<unsigned short>	port;
 	std::vector<std::string>	error_page;
 	std::vector<t_location> 	location;
 }								t_server;
 
 //Server parameters structure for global configurations structure
-typedef struct					s_server_global
-{
-	std::string					name;
-	std::string					host;
-	std::vector<unsigned short>	port;
-	std::vector<std::string>	error_page;
-	std::vector<t_location> 	location;
-}								t_server_global;
 
 //Global server configuration parameters structure
 typedef struct						s_config
 {
-	struct sockaddr_in 				address;
-	std::vector<t_server_global*>	server;
+	std::vector<t_server*>	server;
 }									t_config;
 
 //Allowing configuration be accessible withing multiple files
@@ -168,13 +159,13 @@ private:
 	bool						check_brackets(std::vector<std::string> &lines);
 	bool						config_check(void);
 	std::string					verify_localhost(std::string &s);
-	void						convert_port(void);
+	unsigned short				convert_port(std::string &to_convert);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
 void						*ft_calloc(size_t nmemb, size_t size);
 int							ft_isspace(int c);
-std::string*				read_file(const char *file_path, std::string *file_content);
+std::string					read_file(const char *file_path);
 std::vector<std::string>	split_to_lines(const std::string &s, const std::string &delimiter);
 void						error_message(std::string message);
 

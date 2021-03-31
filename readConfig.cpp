@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 18:01:43 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 18:33:27 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,11 @@ int		ft_isspace(int c)
 	return (0);
 }
 
-std::string*	read_file(const char *file_path, std::string *res) {
+std::string		read_file(const char *file_path) {
 	int				was_read;
 	int				fd;
 	char			*buf;
+	std::string		res;
 
 	fd = open(file_path, O_RDONLY);
 	if (errno)
@@ -53,7 +54,7 @@ std::string*	read_file(const char *file_path, std::string *res) {
 		throw (-1);
 	while ((was_read = read(fd, buf, BUFFER_SIZE))> 0) {
 		buf[was_read] = '\0';
-		res->append(buf);
+		res.append(buf);
 	}
 	if (was_read < 0)
 		throw (errno);
@@ -95,8 +96,6 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 	}
 	return (res);
 };
-
-//TODO: file_content verification {} before parsing - Adelina
 
 //Need to clear server and location after each push
 void		Config::clear_server(t_server &server) {
@@ -171,12 +170,12 @@ bool		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 		}
 	}
 	config_check();
+	return EXIT_SUCCESS;
 };
 
 void	error_message(std::string message)
 {
 	std::cerr << message << std::endl;
-	//TODO: exit if parse size or unknown/double tokens - invalid (close fd(?) + exit(1));
 };
 
 /*
@@ -193,13 +192,16 @@ bool	Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
 	}
-	if ((to_parse[0] == HOST) && (!server.host.size())) //TODO: check how many listens should be
+	if ((to_parse[0] == HOST) && (!server.host.size()))
 		server.host = to_parse[1];
 	else if ((to_parse[0] == NAME) && (!server.name.size()))
 		server.name = to_parse[1];
 	else if ((to_parse[0] == PORT)) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
-			server.port.push_back(to_parse[i]);
+		{
+			//TODO: convert port_string to port_short
+			server.port.push_back(convert_port(to_parse[i]));
+		}
 	}
 	else if ((to_parse[0] == ERR_PAGE)) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
@@ -247,9 +249,9 @@ bool	Config::check_brackets(std::vector<std::string> &lines)
 {
 	std::stack<std::string>		to_check;
 
-	for (int i = 0; i != lines.size(); i++)
+	for (size_t i = 0; i != lines.size(); i++)
 	{
-		for (int j = 0; j != lines[i].size(); j++)
+		for (size_t j = 0; j != lines[i].size(); j++)
 		{
 			if (lines[i][j] == '{')
 				to_check.push(&lines[i][j]);
@@ -276,18 +278,10 @@ bool	Config::check_brackets(std::vector<std::string> &lines)
 
 bool	Config::config_check()
 {
-	std::list<std::string>::iterator it;
+	std::list<unsigned short>::iterator it;
 
 	for (size_t i = 0; i != _servers.size(); i++)
 	{
-		int check_uri = 0;
-		for (int j = 0; j != _servers[i].location.size(); j++)
-			if (_servers[i].location[j].uri.find_first_of('/', 0) != std::string::npos) //doesn't work though
-				check_uri = 1;
-		if (check_uri == 0) {
-			error_message("There should be at least one uri '/'");
-			return (EXIT_FAILURE);
-		}
 		_servers[i].port.sort();
 		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++) {
 			if (*it == *(++it)) {
