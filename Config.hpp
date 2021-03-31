@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 18:33:27 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/03/31 18:53:55 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #ifndef _CONFIG_HPP_
 # define _CONFIG_HPP_
 
+//Configuration
 # include <stdlib.h>
 # include <limits>
 # include <iostream>
@@ -26,6 +27,7 @@
 # include <stack>
 # include <list>
 
+//Server
 #include <sys/socket.h>
 #include <netinet/in.h>
 
@@ -160,6 +162,7 @@ private:
 	bool						config_check(void);
 	std::string					verify_localhost(std::string &s);
 	unsigned short				convert_port(std::string &to_convert);
+	std::string					convert_localhost(void);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
