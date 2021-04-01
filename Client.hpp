@@ -12,13 +12,10 @@
 
 #pragma once
 
-#ifndef _CLIENT_HPP_
-# define _CLIENT_HPP_
-
 # include "Config.hpp"
 
-extern t_config						g_config;
 
+class Config;
 class Client
 {
 private:
@@ -26,8 +23,4 @@ private:
 public:
 	Client(/* args */);
 	~Client();
-
-	bool init_sockaddr_in(struct sockaddr_in &address, unsigned short port, std::string host);
 };
-
-#endif

@@ -12,6 +12,15 @@
 
 #include "Config.hpp"
 
+int select_loop(Config config)
+{
+	fd_set	read_fd_sets;
+	fd_set	write_fd_sets;
+	
+	// TODO: разобраться с select
+	
+}
+
 int main() {
 	const char* 				file = CONFIG;
 	std::string					file_content;
@@ -32,5 +41,6 @@ int main() {
 		return (EXIT_FAILURE);
 	else
 		return (EXIT_FAILURE);
+	select_loop(config);
 	return (EXIT_SUCCESS);
 }
