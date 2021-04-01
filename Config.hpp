@@ -119,6 +119,7 @@ typedef struct						s_server
 	std::vector<t_location> 		location;
 	std::string						host;
 	std::list<unsigned short>		port;
+	// Socket						*serv_socket;
 }									t_server;
 
 //Server parameters structure for global configurations structure

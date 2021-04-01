@@ -15,10 +15,3 @@
 Client::Client() {}
 
 Client::~Client() {}
-
-void    Client::init_sockaddr_in(struct sockaddr_in &address, unsigned short port, std::string host)
-{
-    address.sin_family = AF_INET;
-    address.sin_port = htons(port);
-    address.sin_addr.s_addr = inet_addr(host.c_str());
-}

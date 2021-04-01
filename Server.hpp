@@ -12,10 +12,9 @@
 
 #pragma once
 
-#ifndef _SERVER_HPP_
-# define _SERVER_HPP_
-
 # include "Config.hpp"
+
+extern t_config						g_config;
 
 class Server
 {
@@ -25,5 +24,3 @@ public:
 	Server(void);
 	~Server();
 };
-
-#endif
