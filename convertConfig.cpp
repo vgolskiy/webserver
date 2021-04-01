@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/01 13:53:23 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:05:46 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,6 @@ bool	is_all_numbers(std::string s) {
 	return (true);
 }
 
-
-//TODO: verify htons is avaliable function / add source code
 /*
 ** After verification that port consist of numbers
 ** we starting convertion: string -> char* -> integer -> unsigned short
@@ -165,9 +163,9 @@ std::string	Config::convert_localhost(void) {
 					add = false;
 					break ;
 				}
-			if (add)
-
 			}
+			if (add)
+				_servers[i].port.push_front(port);
 		}
 	}
 }
