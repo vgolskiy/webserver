@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 21:28:24 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/01 12:05:47 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ std::vector<std::string>	split(const std::string &s, const std::string &delimite
 	prev = 0;
 	while ((pos = s.find(delimiter, prev)) != std::string::npos) {
 		res.push_back(s.substr(prev, pos - prev));
-		prev = pos + 1;
+		prev = pos + delimiter.length();
 	}
 	// To get the last substring (or only, if delimiter is not found)
     res.push_back(s.substr(prev));

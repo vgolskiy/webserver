@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 21:40:09 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/01 13:53:23 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,12 +102,20 @@ bool	Config::verify_port(std::string &s) {
 	return (true);
 }
 
+// Replacing "localhost" key name with IP "127.0.0.1"
 std::string	Config::replace_localhost(std::string &s) {
 	if (s == LOCALHOST)
 		return (LOCALHOST_IP);
 	return (s);
 }
 
+/*
+** Host verification for:
+** - number of IP parts (should be 4)
+** - all parts consist of numbers only
+** - all numbers in parts should be in range(0..255)
+** - IPs "0.0.0.0" and "255.255.255.255" are forbidden (reserved)
+*/
 bool		Config::verify_localhost(std::string &s) {
 	std::vector<std::string>			parts;
 	std::vector<std::string>::iterator	it;
@@ -123,38 +131,41 @@ bool		Config::verify_localhost(std::string &s) {
 		if ((n < 0) || (n > 255))
 			return (false);
 	}
+	if ((s == ZEROES_IP) || (s == BROADCAST_IP))
+		return (false);
 	return (true);
 }
 
+// Replacing,  verification  of host, host and port splitting
+// In case of error empty line is returned
 std::string	Config::convert_localhost(void) {
-	size_t								position;
 	unsigned short						port;
 	std::string							res;
-	std::string							tmp;
+	std::vector<std::string>			tmp;
 	std::list<unsigned short>::iterator	it;
 	bool								add = true;
 
 	for (size_t i = 0; i < _servers.size(); ++i) {
 		res = "";
-		if ((position = _servers[i].host.find(58)) == std::string::npos) {
+		if ((_servers[i].host.find(58)) == std::string::npos) {
 			res = replace_localhost(_servers[i].host);
-			if (verify_localhost(res))
-				return (res);
+			if (!verify_localhost(res))
+				return ("");
 		else {
-			tmp = _servers[i].host.substr(0, position);
-			res = verify_localhost(tmp);
-			tmp = _servers[i].host.substr(position + 1);
-			if (verify_port(tmp))
-				port = htons(atoi(tmp.c_str()));
-			else {
-				error_message("Invalid arguments in configurations file");
-				return (EXIT_FAILURE);
-			}
+			tmp = split(_servers[i].host, ":");
+			res = replace_localhost(tmp[0]);
+			if (!verify_localhost(res))
+				return ("");
+			if (verify_port(tmp[1]))
+				port = htons(atoi(tmp[1].c_str()));
+			else
+				return ("");
 			for (it = _servers[i].port.begin(); it != _servers[i].port.end(); ++it) {
 				if (*it == port) {
 					add = false;
 					break ;
 				}
+			if (add)
 
 			}
 		}

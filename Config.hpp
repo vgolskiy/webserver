@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 21:26:23 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/01 12:13:24 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@
 // Ports cannot be the same within one server
 # define	LOCALHOST	"localhost"
 # define	LOCALHOST_IP	"127.0.0.1"
+# define	ZEROES_IP		"0.0.0.0"
+# define	BROADCAST_IP	"255.255.255.255"
 
 //LOCATION KEYS
 # define	LOCATION	"location"
