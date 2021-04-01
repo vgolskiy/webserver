@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/01 15:30:22 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/01 15:35:37 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,13 +111,13 @@ typedef struct					s_location
 }								t_location;
 
 //Default config parsing is used instead of initiation function
-typedef struct					s_server
+typedef struct						s_server
 {
-	std::string					name;
-	std::vector<std::string>	error_page;
-	std::vector<t_location> 	location;
-	struct sockaddr_in 			address; //address includes htons(port) and htonl(ip)
-}								t_server;
+	std::string						name;
+	std::vector<std::string>		error_page;
+	std::vector<t_location> 		location;
+	std::vector<struct sockaddr_in> address; //address includes htons(port) and htonl(ip)
+}									t_server;
 
 //Server parameters structure for global configurations structure
 
