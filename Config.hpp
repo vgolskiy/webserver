@@ -116,7 +116,8 @@ typedef struct						s_server
 	std::string						name;
 	std::vector<std::string>		error_page;
 	std::vector<t_location> 		location;
-	std::vector<struct sockaddr_in> address; //address includes htons(port) and htonl(ip)
+	std::string						host;
+	std::list<unsigned short>		port;
 }									t_server;
 
 //Server parameters structure for global configurations structure
