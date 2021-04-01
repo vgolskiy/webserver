@@ -197,7 +197,7 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 	else if ((to_parse[0] == PORT)) {
 		for (size_t i = 1; i < to_parse.size(); ++i) {
 			if (verify_port(to_parse[i]))
-				server.port.push_back(htons(atoi(to_parse[i].c_str())));
+				server.port.push_back(htons(atoi(to_parse[i].c_str()))); // remove htons (?)
 			else {
 				error_message("Invalid arguments in configurations file");
 				return (EXIT_FAILURE);

@@ -29,6 +29,7 @@
 
 //Server
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 
 //GET NEXT LINE
