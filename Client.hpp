@@ -27,7 +27,7 @@ public:
 	Client(/* args */);
 	~Client();
 
-	void init_sockaddr_in(struct sockaddr_in &address, unsigned short port, std::string host);
+	bool init_sockaddr_in(struct sockaddr_in &address, unsigned short port, std::string host);
 };
 
 #endif
