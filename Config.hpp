@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/01 12:13:24 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/01 15:30:22 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,10 +114,9 @@ typedef struct					s_location
 typedef struct					s_server
 {
 	std::string					name;
-	std::string					host;
-	std::list<unsigned short>	port;
 	std::vector<std::string>	error_page;
 	std::vector<t_location> 	location;
+	struct sockaddr_in 			address; //address includes htons(port) and htonl(ip)
 }								t_server;
 
 //Server parameters structure for global configurations structure
@@ -125,7 +124,7 @@ typedef struct					s_server
 //Global server configuration parameters structure
 typedef struct						s_config
 {
-	std::vector<t_server*>	server;
+	std::vector<t_server*>			server;
 }									t_config;
 
 //Allowing configuration be accessible withing multiple files
