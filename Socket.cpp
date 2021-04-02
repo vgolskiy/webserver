@@ -1,5 +1,14 @@
 #include "Socket.hpp"
 
+// non-blocking - "non-blocking" mode, 
+// which means that a read() on a slow file will return immediately, even if no bytes are available.
+
+// протокол HTTP сам по себе синхронный (пакеты отправляются синхронно),
+// но при наличии неблокирующего ввода-вывода программа, работающая с HTTP,
+// может оставаться асинхронной, то есть успевать совершить какую-либо
+// полезную работу между отправкой HTTP-запроса и получением ответа на него.
+// Полезная ссылка: https://ps-group.github.io/os/nonblocking_io_posix
+
 Socket::Socket(int port, std::string host)
 {
     _port = port;
@@ -7,7 +16,12 @@ Socket::Socket(int port, std::string host)
     _opt = 1;
     init_socket();
 
-    if((_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) // TODO: check arguments
+    if((_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) // TODO: close sockets (where?)
+    {
+        std::cerr << strerror(errno) << "\n";
+        exit(EXIT_FAILURE);
+    }
+    if (fcntl(_fd, F_SETFL, O_NONBLOCK) == -1)
     {
         std::cerr << strerror(errno) << "\n";
         exit(EXIT_FAILURE);

@@ -31,6 +31,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+# include "Socket.hpp"
 
 //GET NEXT LINE
 # define	BUFFER_SIZE	1024
@@ -112,6 +113,7 @@ typedef struct					s_location
 	s_location() : auto_index(-1), max_body(-1) {}
 }								t_location;
 
+class Socket;
 //Default config parsing is used instead of initiation function
 typedef struct						s_server
 {
@@ -120,7 +122,7 @@ typedef struct						s_server
 	std::vector<t_location> 		location;
 	std::string						host;
 	std::list<unsigned short>		port;
-	// Socket						*serv_socket;
+	Socket							*serv_socket;
 }									t_server;
 
 //Server parameters structure for global configurations structure

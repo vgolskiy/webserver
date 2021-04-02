@@ -12,14 +12,7 @@
 
 #include "Config.hpp"
 
-int select_loop(Config config)
-{
-	fd_set	read_fd_sets;
-	fd_set	write_fd_sets;
-	
-	// TODO: разобраться с select
-	
-}
+int select_loop();
 
 int main() {
 	const char* 				file = CONFIG;
@@ -39,6 +32,9 @@ int main() {
 	file_lines = split(file_content, "\n");
 	if (config.parse_configuration_file(file_lines))
 		return (EXIT_FAILURE);
-	select_loop(config);
+
+	void init_Servers();
+	select_loop();
+	
 	return (EXIT_SUCCESS);
 }
