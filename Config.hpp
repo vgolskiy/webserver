@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/01 15:35:37 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/02 02:34:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,9 @@
 //PARSER CHARACTERS SET
 # define	SPACES		" \f\n\r\t\v"
 
-//DEFAULT CONFIG FILE
+//DEFAULT VALUES
 # define	CONFIG		"default"
+# define	SERVER_NAME	""
 
 //SERVER KEYS
 # define	SERVER		"server"
@@ -114,7 +115,7 @@ typedef struct					s_location
 //Default config parsing is used instead of initiation function
 typedef struct						s_server
 {
-	std::string						name;
+	std::vector<std::string>		name;
 	std::vector<std::string>		error_page;
 	std::vector<t_location> 		location;
 	std::string						host;
@@ -136,20 +137,17 @@ extern t_config						g_config;
 
 class Config {
 private:
-	std::vector<std::string>	_raw_config;
 	std::vector<t_server>		_servers;
 
 public:
-	Config(void) : _raw_config(), _servers() {};
+	Config(void) : _servers() {};
 	Config(const Config &copy) {
 		*this = copy;
 	};
 	~Config(void) {};
 	Config	operator=(const Config &other) {
-		if (this != &other) {
-			_raw_config = other._raw_config;
+		if (this != &other)
 			_servers = other._servers;
-		}
 		return (*this);
 	};
 
@@ -167,7 +165,7 @@ private:
 	std::string					replace_localhost(std::string &s);
 	bool						verify_localhost(std::string &s);
 	bool						verify_port(std::string &s);
-	std::string					convert_localhost(void);
+	int							convert_localhost(std::string &s, t_server &server);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);

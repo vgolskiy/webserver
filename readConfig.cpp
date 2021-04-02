@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/01 12:05:47 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/02 03:07:51 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 void		Config::clear_server(t_server &server) {
 	server.error_page.clear();
 	server.host = "";
-	server.name = "";
+	server.name.clear();
 	server.port.clear();
 	server.location.clear();
 };
@@ -160,8 +160,9 @@ int		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 			if (parse_servers_configurations(tokens, server))
 				return (EXIT_FAILURE);
 		}
-		if (tokens[0][0] == 125)
-		{
+		if (tokens[0][0] == 125) {
+			if (convert_localhost(server.host, server))
+				return (EXIT_FAILURE);
 			_servers.push_back(server);
 			clear_server(server);
 		}
@@ -192,9 +193,11 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 	}
 	if ((to_parse[0] == HOST) && (!server.host.size()))
 		server.host = to_parse[1];
-	else if ((to_parse[0] == NAME) && (!server.name.size()))
-		server.name = to_parse[1];
-	else if ((to_parse[0] == PORT)) {
+	else if ((to_parse[0] == NAME) && (!server.name.size())) {
+		for (size_t	i = 1; i != to_parse.size(); ++i)
+			server.name.push_back(to_parse[i]);
+	}
+	else if (to_parse[0] == PORT) {
 		for (size_t i = 1; i < to_parse.size(); ++i) {
 			if (verify_port(to_parse[i]))
 				server.port.push_back(htons(atoi(to_parse[i].c_str()))); // remove htons (?)
@@ -204,7 +207,7 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 			}
 		}
 	}
-	else if ((to_parse[0] == ERR_PAGE)) {
+	else if (to_parse[0] == ERR_PAGE) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			server.error_page.push_back(to_parse[i]);
 	}
@@ -283,6 +286,12 @@ bool	Config::verify_config()
 
 	for (size_t i = 0; i != _servers.size(); i++)
 	{
+		if (!_servers[i].host.length())
+			return (false);
+		if (!_servers[i].port.size())
+			return (false);
+		if (!_servers[i].name.size())
+			_servers[i].name.push_back(SERVER_NAME);
 		_servers[i].port.sort();
 		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++) {
 			if (*it == *(++it)) {

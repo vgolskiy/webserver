@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/01 20:05:46 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/02 03:15:24 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,10 @@ static int	ft_get_num(const char *str, int sign)
 
 	i = 0;
 	tmp = 0;
-	while (str[i] != '\0')
-	{
-		if (ft_isdigit(str[i]))
-		{
+	while (str[i] != '\0') {
+		if (ft_isdigit(str[i])) {
 			tmp = tmp * 10 + str[i] - '0';
-			if (tmp < 0)
-			{
+			if (tmp < 0) {
 				if (sign < 0)
 					return (0);
 				return (-1);
@@ -136,38 +133,39 @@ bool		Config::verify_localhost(std::string &s) {
 
 // Replacing,  verification  of host, host and port splitting
 // In case of error empty line is returned
-std::string	Config::convert_localhost(void) {
+int	Config::convert_localhost(std::string &s, t_server &server) {
 	unsigned short						port;
-	std::string							res;
 	std::vector<std::string>			tmp;
 	std::list<unsigned short>::iterator	it;
 	bool								add = true;
 
-	for (size_t i = 0; i < _servers.size(); ++i) {
-		res = "";
-		if ((_servers[i].host.find(58)) == std::string::npos) {
-			res = replace_localhost(_servers[i].host);
-			if (!verify_localhost(res))
-				return ("");
-		else {
-			tmp = split(_servers[i].host, ":");
-			res = replace_localhost(tmp[0]);
-			if (!verify_localhost(res))
-				return ("");
-			if (verify_port(tmp[1]))
-				port = htons(atoi(tmp[1].c_str()));
-			else
-				return ("");
-			for (it = _servers[i].port.begin(); it != _servers[i].port.end(); ++it) {
-				if (*it == port) {
-					add = false;
-					break ;
-				}
-			}
-			if (add)
-				_servers[i].port.push_front(port);
+	if ((s.find(58)) == std::string::npos) {
+		s = replace_localhost(s);
+		if (!verify_localhost(s)) {
+			error_message("Invalid arguments in configurations file");
+			return (EXIT_FAILURE);
 		}
+		server.host = s;
 	}
+	else {
+		tmp = split(s, ":");
+		s = replace_localhost(tmp[0]);
+		if ((!verify_localhost(s)) || (!verify_port(tmp[1]))) {
+			error_message("Invalid arguments in configurations file");
+			return (EXIT_FAILURE);
+		}
+		server.host = s;
+		port = htons(atoi(tmp[1].c_str()));
+		for (it = server.port.begin(); it != server.port.end(); ++it) {
+			if (*it == port) {
+				add = false;
+				break ;
+			}
+		}
+		if (add)
+			server.port.push_front(port);
+	}
+	return (EXIT_SUCCESS);
 }
 
 /*
@@ -178,7 +176,8 @@ std::string	Config::convert_localhost(void) {
 ** Adding new port to the top of the list (priority listening)
 ** ascii 58 :
 */
-void	Config::init_global_configuration(void) {
+void	Config::init_global_configuration(void)
+{
 	for (size_t i = 0; i < _servers.size(); ++i) {
 		t_server *server = new t_server;
 
