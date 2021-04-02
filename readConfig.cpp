@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/02 22:40:57 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/02 22:52:22 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,6 +305,8 @@ bool	Config::verify_config()
 			return (false);
 		if (!_servers[i].name.size())
 			_servers[i].name.push_back(SERVER_NAME);
+		if (!_servers[i].port.size())
+			return (false);
 		_servers[i].port.sort();
 		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++) {
 			if (*it == *(++it)) {
