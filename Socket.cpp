@@ -35,7 +35,7 @@ void Socket::init_socket()
     _address.sin_family = AF_INET; // TODO: check if it's always like this?
     _address.sin_port = htons(_port); // TODO: htons already applied?
     if((_address.sin_addr.s_addr = inet_addr(_host.c_str())) <= 0) {
-		std::cerr << "\nInvalid address/ Address not supported \n";
+		std::cerr << "Invalid or not supported address\n";
 		exit(EXIT_FAILURE); // TODO: IS IT OK??????
     }
 }

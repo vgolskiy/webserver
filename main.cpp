@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/02 03:12:17 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/02 22:38:54 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,12 @@ int main() {
 		file_content = read_file(file);
 	}
 	catch (int e) {
-		if (e < 0)
+		if (e == -1)
 			std::cerr << "Malloc failed" << std::endl;
+		else if (e == -2)
+			std::cerr << file << ": file is empty" << std::endl;
+		else if (e == -3)
+			std::cerr << file << ": can not read file" << std::endl;
 		else
 			std::cerr << file << ": " << strerror(e) << std::endl;
 	}

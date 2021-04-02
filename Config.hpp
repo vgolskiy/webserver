@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/02 02:34:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/02 22:32:53 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,13 @@
 # include <vector>
 # include <stack>
 # include <list>
+# include <sys/types.h>
+# include <sys/stat.h>
 
 //Server
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+# include <sys/socket.h>
+# include <arpa/inet.h>
+# include <netinet/in.h>
 # include "Socket.hpp"
 
 //GET NEXT LINE

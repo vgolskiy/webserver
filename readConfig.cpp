@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/02 03:07:51 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/02 22:40:57 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,19 +42,32 @@ std::string		read_file(const char *file_path) {
 	int				was_read;
 	int				fd;
 	char			*buf;
+	struct stat 	file_statistics;
 	std::string		res;
 
 	fd = open(file_path, O_RDONLY);
 	if (errno)
 		throw (errno);
-	if (!(buf = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char))))
+	if (fstat(fd, &file_statistics) == -1) {
+		close(fd);
+		throw (errno);
+	}
+	if (!file_statistics.st_size) {
+		close(fd);
+		throw (-2);
+	}
+	if (!(buf = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char)))) {
+		close(fd);
 		throw (-1);
+	}
 	while ((was_read = read(fd, buf, BUFFER_SIZE))> 0) {
 		buf[was_read] = '\0';
 		res.append(buf);
 	}
-	if (was_read < 0)
-		throw (errno);
+	if (was_read < 0) {
+		close(fd);
+		throw (-3);
+	}
 	free(buf);
 	close(fd);
 	return (res);
