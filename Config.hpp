@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/02 22:32:53 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/03 19:52:26 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,15 +145,9 @@ private:
 
 public:
 	Config(void) : _servers() {};
-	Config(const Config &copy) {
-		*this = copy;
-	};
+	Config(const Config &copy);
 	~Config(void) {};
-	Config	operator=(const Config &other) {
-		if (this != &other)
-			_servers = other._servers;
-		return (*this);
-	};
+	Config	operator=(const Config &other);
 
 	int		parse_configuration_file(std::vector<std::string> &file_lines);
 	void	init_global_configuration(void);
@@ -182,5 +176,6 @@ int							ft_atoi(const char *str);
 std::string					read_file(const char *file_path);
 std::vector<std::string>	split(const std::string &s, const std::string &delimiter);
 void						error_message(std::string message);
+void						clear_global_configuration(void);
 
 #endif

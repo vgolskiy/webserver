@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/02 22:52:22 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/03 19:56:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,14 @@ std::vector<std::string>	split(const std::string &s, const std::string &delimite
     res.push_back(s.substr(prev));
 	return (res);
 }
+
+Config::Config(const Config &copy) {*this = copy;};
+
+Config	Config::operator=(const Config &other) {
+		if (this != &other)
+			_servers = other._servers;
+		return (*this);
+};
 
 std::vector<std::string>	Config::parse_line(std::string &line) {
 	std::vector<std::string>	res;

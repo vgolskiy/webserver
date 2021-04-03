@@ -34,11 +34,22 @@ extern t_config						g_config;
 // write -> return (-1);
 // errno(EPIPE);
 
-// Если процесс пытается записать данные в оборванный сокет при помощи вы­ зова write или send,
-// то он получит сигнал SIGPIPE, который может быть пере­ хвачен соответствующим обработчиком сигнала
-void signals();
+// Если процесс пытается записать данные в оборванный сокет при помощи вы­зова write или send,
+// то он получит сигнал SIGPIPE, который может быть пере­хвачен соответствующим обработчиком сигнала
+void	signals(void) {
+	signal(SIGPIPE, SIG_IGN);
+	signal(SIGINT, signal_handler);
+};
 
-// и использовании и вызова read, и вызова write может возникнуть блокирование:
+void	signal_handler(int signal)
+{
+	if (signal == SIGINT) {
+		clear_global_configuration();
+		exit(EXIT_SUCCESS);
+	}
+}
+
+// при вызове read или write может возникнуть блокирование:
 
 // Shall we check if any of servers have been initiated?
 void init_Servers()
@@ -96,4 +107,16 @@ int select_loop()
         }
 	}
 	return EXIT_SUCCESS;
+}
+
+void	exit_error(int err) {
+	error_message(strerror(err));
+	clear_global_configuration();
+	exit(EXIT_FAILURE);
+}
+
+void	exit_error_msg(std::string msg) {
+	error_message(msg);
+	clear_global_configuration();
+	exit(EXIT_FAILURE);
 }

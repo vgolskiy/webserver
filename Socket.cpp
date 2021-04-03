@@ -1,5 +1,26 @@
 #include "Socket.hpp"
 
+Socket::Socket(void) : _fd(-1), _port(0), _opt(1), _host(""), _address() {};
+
+Socket::Socket(const Socket &copy) {*this = copy;};
+
+Socket::~Socket() {}
+
+Socket	Socket::operator=(const Socket &other) {
+	if (this != &other) {
+		_fd = other._fd;
+		_port = other._port;
+		_opt = other._opt;
+		_host = other._host;
+		_address = other._address;
+	}
+	return (*this);
+};
+
+int		Socket::get_fd(void) {
+	return (_fd);
+}
+
 // non-blocking - "non-blocking" mode, 
 // which means that a read() on a slow file will return immediately, even if no bytes are available.
 
@@ -9,55 +30,56 @@
 // полезную работу между отправкой HTTP-запроса и получением ответа на него.
 // Полезная ссылка: https://ps-group.github.io/os/nonblocking_io_posix
 
-Socket::Socket(int port, std::string host)
-{
-    _port = port;
-    _host = host;
-    _opt = 1;
+/*
+** Creating socket file descriptor
+** For TCP/IP sockets, we want to specify the IP address family (AF_INET)
+** and virtual circuit service (SOCK_STREAM). Since there’s only one form
+** of virtual circuit service, there are no variations of the protocol,
+** so the last argument, protocol, is zero.
+*/
+Socket::Socket(int port, std::string host) : _port(port), _host(host), _opt(1) {
     init_socket();
 
-    if((_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) // TODO: close sockets (where?)
-    {
-        std::cerr << strerror(errno) << "\n";
-        exit(EXIT_FAILURE);
-    }
-    if (fcntl(_fd, F_SETFL, O_NONBLOCK) == -1)
-    {
-        std::cerr << strerror(errno) << "\n";
-        exit(EXIT_FAILURE);
-    }
+    if((_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) //After that moment we are closing fds' during global structure cleaning
+		exit_error(errno);
+    if (fcntl(_fd, F_SETFL, O_NONBLOCK) < 0)
+		exit_error(errno);
 }
 
-Socket::~Socket(){}
-
-void Socket::init_socket()
-{
-    _address.sin_family = AF_INET; // TODO: check if it's always like this?
-    _address.sin_port = htons(_port); // TODO: htons already applied?
-    if((_address.sin_addr.s_addr = inet_addr(_host.c_str())) <= 0) {
-		std::cerr << "Invalid or not supported address\n";
-		exit(EXIT_FAILURE); // TODO: IS IT OK??????
-    }
+/*
+** In global structure we are storing port in unsigned short format after htons()
+** AF_INET is used as we are implementing Internet Protocol v4 addresses only
+** INADDR_NONE - the string does not contain a legitimate Internet address
+*/
+void Socket::init_socket() {
+    _address.sin_family = AF_INET;
+    _address.sin_port = _port;
+    if((_address.sin_addr.s_addr = inet_addr(_host.c_str())) == INADDR_NONE)
+		exit_error(errno);
 }
 
+/*
+** Forcefully attaching socket to the port 8080
+** Binding an address - assigning a transport address to the socket (a port number in IP networking)
+** sockaddr is a generic container that allows the OS to be able to read the first couple of bytes
+** that identify the address family, which determines what variant of the sockaddr struct to use
+** that contains elements that make sense for that specific communication type. 
+** For IP networking, struct sockaddr_in used, which is defined in the header netinet/in.h
+*/
 void Socket::to_bind()
 {
-    if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &_opt, sizeof(_opt)))
-    {
-        std::cerr << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-    }
-    if (bind(_fd, (struct sockaddr*)&_address, sizeof(_address)) < 0) {
-		std::cerr << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-    }
+    if ((setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &_opt, sizeof(_opt)))
+		|| (bind(_fd, (struct sockaddr*)&_address, sizeof(_address))))
+		exit_error(errno);
 }
 
+/*
+** Listen tells a socket that it should be capable of accepting incoming connections
+** The second parameter (num_ports) defines the maximum number of pending connections
+** that can be queued up before connections are refused.
+*/
 void Socket::to_listen(int num_ports)
 {
-    if (listen(_fd, num_ports) < 0)
-    {
-        std::cerr << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-    }
+    if (listen(_fd, num_ports))
+		exit_error(errno);
 }

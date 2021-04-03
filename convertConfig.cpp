@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/02 03:15:24 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/03 20:42:19 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,5 +186,17 @@ void	Config::init_global_configuration(void)
 		server->host = _servers[i].host;
 		server->error_page = _servers[i].error_page;
 		g_config.server.push_back(server);
+	}
+}
+
+// Out of Config class so we are able to free it in any moment
+void	clear_global_configuration(void) {
+	int	fd;
+
+	for (size_t i = 0; i < g_config.server.size(); ++i) {
+		if ((fd = g_config.server[i]->serv_socket->get_fd()) >= 0)
+			close (fd);
+		delete g_config.server[i]->serv_socket;
+		delete g_config.server[i];
 	}
 }
