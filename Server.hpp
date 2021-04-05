@@ -6,16 +6,15 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/05 13:16:37 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/05 15:07:46 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+# include "Config.hpp"
 # include "Socket.hpp"
 # include "Client.hpp"
-
-extern t_config						g_config;
 
 class Client;
 class Server {
@@ -29,3 +28,5 @@ public:
 
 void	exit_error(int err);
 void	exit_error_msg(std::string msg);
+void	signal_handler(int signal);
+void	signals(void);

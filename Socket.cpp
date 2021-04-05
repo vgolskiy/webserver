@@ -37,7 +37,7 @@ int		Socket::get_fd(void) const {
 ** of virtual circuit service, there are no variations of the protocol,
 ** so the last argument, protocol, is zero.
 */
-Socket::Socket(int port, std::string host) : _port(port), _host(host), _opt(1) {
+Socket::Socket(int port, std::string host) : _port(port), _opt(1), _host(host) {
     init_socket();
 
     if((_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) //After that moment we are closing fds' during global structure cleaning
