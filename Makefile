@@ -1,7 +1,10 @@
 NAME = webserv
 
 INCLUDE = ./includes/
-HEADERS = Client.hpp	Server.hpp	Config.hpp	Socket.hpp
+HEADERS = 	Client.hpp \
+			Server.hpp \
+			Config.hpp \
+			Socket.hpp \
 #HEADERS = $(addprefix $(INCLUDE), $(HEADERS))
 
 SRC_DIR = ./srcs/
