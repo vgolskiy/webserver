@@ -116,6 +116,7 @@ typedef struct					s_location
 }								t_location;
 
 class Socket;
+class Client;
 //Default config parsing is used instead of initiation function
 typedef struct						s_server
 {
@@ -125,6 +126,7 @@ typedef struct						s_server
 	std::string						host;
 	std::list<unsigned short>		port;
 	Socket							*serv_socket;
+	std::list<Client*> 				_num_clients;
 }									t_server;
 
 //Server parameters structure for global configurations structure

@@ -13,18 +13,19 @@
 #pragma once
 
 # include "Socket.hpp"
+# include "Client.hpp"
 
+extern t_config						g_config;
+
+class Client;
 class Server {
 private:
 
 public:
 	Server(void);
 	~Server(void);
+
 };
 
-void	signals(void);
 void	exit_error(int err);
 void	exit_error_msg(std::string msg);
-void	init_Servers(void);
-int		select_loop(void);
-void	set_fds(fd_set &read_fd_sets, fd_set &write_fd_sets);

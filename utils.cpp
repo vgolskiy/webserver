@@ -11,7 +11,7 @@
 void	signals(void) {
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGINT, signal_handler);
-};
+}
 
 void	signal_handler(int signal)
 {
@@ -19,6 +19,20 @@ void	signal_handler(int signal)
 		clear_global_configuration();
 		exit(EXIT_SUCCESS);
 	}
+}
+
+// Shall we check if any of servers have been initiated?
+void init_servers()
+{
+    for (size_t i = 0; i < g_config.server.size(); i++) // TODO: error checking!
+    {
+		//primary port is the first port in list by default
+        unsigned short port = g_config.server[i]->port.front();
+        std::string host = g_config.server[i]->host;
+        g_config.server[i]->serv_socket = new Socket(port, host);
+        g_config.server[i]->serv_socket->to_bind();
+        g_config.server[i]->serv_socket->to_listen(SOMAXCONN); // Max length for listen (?)
+    }
 }
 
 void	exit_error(int err) {

@@ -14,7 +14,11 @@
 #include "Socket.hpp"
 #include "Server.hpp"
 
-int main() {
+void	init_servers(void); // utils.cpp
+void	signals(void);
+int 	select_loop(void);
+
+int		main() {
 	const char* 				file = CONFIG;
 	std::string					file_content;
 	Config						config;
@@ -37,7 +41,8 @@ int main() {
 	if (config.parse_configuration_file(file_lines))
 		return (EXIT_FAILURE);
 
-	void init_Servers();
+	init_servers();
+	signals();	
 	select_loop();
 	
 	return (EXIT_SUCCESS);

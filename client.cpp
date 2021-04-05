@@ -12,6 +12,8 @@
 
 #include "Client.hpp"
 
-Client::Client() {}
+Client::Client(Socket *listen_sock) : _listen_sock(listen_sock) {}
 
 Client::~Client() {}
+
+

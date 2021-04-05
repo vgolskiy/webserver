@@ -16,11 +16,15 @@
 
 
 class Config;
+class Socket;
 class Client
 {
 private:
-	/* data */
+	Socket			*_listen_sock;
+	Client();
 public:
-	Client(/* args */);
+	Client(Socket *listen_sock);
 	~Client();
+
+	// void accept_connection();
 };
