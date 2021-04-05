@@ -14,17 +14,23 @@
 
 # include "Config.hpp"
 
-
 class Config;
 class Socket;
 class Client
 {
 private:
-	Socket			*_listen_sock;
-	Client();
+	int					_fd;
+	unsigned short		_port;
+	std::string			_host;
+	struct sockaddr_in	_address;
+	in_addr_t			_inet;
+	Socket				*_listen_sock;
+
 public:
 	Client(Socket *listen_sock);
+	Client(const Client &copy);
 	~Client();
+	Client	operator=(const Client &other);
 
-	// void accept_connection();
+	bool accept_connection();
 };
