@@ -5,7 +5,15 @@ HEADERS = Client.hpp	Server.hpp	Config.hpp	Socket.hpp
 #HEADERS = $(addprefix $(INCLUDE), $(HEADERS))
 
 SRC_DIR = ./srcs/
-SRCS = utils.cpp	Socket.cpp	convertConfig.cpp	readConfig.cpp	Server.cpp	Client.cpp	main.cpp
+SRCS = 	main.cpp \
+		utils.cpp \
+		Socket.cpp \
+		Server.cpp \
+		Client.cpp \
+		readConfig.cpp \
+		server_tools.cpp \
+		convertConfig.cpp \
+		
 #SRC = $(addprefix $(SRC_DIR), $(SRC))
 
 OBJ_DIR = ./obj/
