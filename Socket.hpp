@@ -1,6 +1,7 @@
 #pragma once
 
 # include "Config.hpp"
+# include "Server.hpp"
 
 class Config;
 
@@ -23,8 +24,5 @@ class Socket // add this class to struct service
 		void	init_socket();
 		void	to_bind();
 		void	to_listen(int num_ports);
-		int		get_fd(void);
+		int		get_fd(void) const;
 };
-
-void	exit_error(int err);
-void	exit_error_msg(std::string msg);

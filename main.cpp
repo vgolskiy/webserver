@@ -6,13 +6,13 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/02 22:38:54 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/05 13:17:26 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-
-int select_loop();
+#include "Socket.hpp"
+#include "Server.hpp"
 
 int main() {
 	const char* 				file = CONFIG;

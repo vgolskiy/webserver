@@ -17,7 +17,7 @@ Socket	Socket::operator=(const Socket &other) {
 	return (*this);
 };
 
-int		Socket::get_fd(void) {
+int		Socket::get_fd(void) const {
 	return (_fd);
 }
 
@@ -65,6 +65,7 @@ void Socket::init_socket() {
 ** that identify the address family, which determines what variant of the sockaddr struct to use
 ** that contains elements that make sense for that specific communication type. 
 ** For IP networking, struct sockaddr_in used, which is defined in the header netinet/in.h
+** 2) Timeout implementation: https://stackoverflow.com/questions/4181784/how-to-set-socket-timeout-in-c-when-making-multiple-connections
 */
 void Socket::to_bind()
 {
