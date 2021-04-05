@@ -47,6 +47,7 @@ void add_new_client(fd_set &read_fd_sets)
 
 //Set socket fds for every server
 void	set_fds(fd_set &read_fd_sets, fd_set &write_fd_sets) {
+	(void) write_fd_sets;
 	for (size_t i = 0; i < g_config.server.size(); i++) {
 		if (!(FD_ISSET(g_config.server[i]->serv_socket->get_fd(), &read_fd_sets)))
 			FD_SET(g_config.server[i]->serv_socket->get_fd(), &read_fd_sets);

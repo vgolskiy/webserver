@@ -23,7 +23,7 @@ OBJ_DIR = ./obj/
 OBJECTS = $(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRCS))
 
 CL = clang++
-FLAGS = -std=c++98 -Wall -Wextra -Werror
+FLAGS = -std=c++98 -g -Wall -Wextra -Werror
 
 all: $(NAME)
 

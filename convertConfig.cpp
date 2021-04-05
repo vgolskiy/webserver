@@ -92,7 +92,7 @@ bool	Config::verify_port(std::string &s) {
 	if (!is_all_numbers(s))
 		return (false);
 	res = atoi(s.c_str());
-	if (res > USHRT_MAX || res < 1) // TODO: check if we should start with 1024
+	if (res > USHRT_MAX || res < 1024) // https://en.wikipedia.org/wiki/Registered_port
 		return (false);
 	return (true);
 }
@@ -198,5 +198,6 @@ void	clear_global_configuration(void) {
 			close (fd);
 		delete g_config.server[i]->serv_socket;
 		delete g_config.server[i];
+		// TODO: delete client
 	}
 }
