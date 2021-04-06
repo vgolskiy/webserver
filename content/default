@@ -1,0 +1,10 @@
+server {
+    listen 8080;
+	listen localhost:8000;
+
+	server_name	webserv;
+
+    location /wordpress {
+        index   index.php;
+    }
+}
