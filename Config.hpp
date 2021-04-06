@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/03 19:52:26 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 17:29:47 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@
 # define	SPACES		" \f\n\r\t\v"
 
 //DEFAULT VALUES
-# define	CONFIG		"default"
+# define	CONFIG		"content/default"
 # define	SERVER_NAME	""
 
 //SERVER KEYS
@@ -51,8 +51,7 @@
 // REGEX is not the subject of this project
 // If the Host header field does not match a server name, NGINX Plus routes
 // the request to the default server for the port on which the request arrived.
-# define	HOST 		"host"
-# define	NAME 		"name"
+# define	NAME 		"server_name"
 # define	ERR_PAGE 	"error_page"
 // To make an internal redirect when a file is not found.
 // we can return a custom page along with an error code,
