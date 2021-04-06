@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 00:27:21 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/07 00:29:43 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -342,6 +342,7 @@ bool	verify_file(std::string &file_path) {
 	return (true);
 }
 
+// Directory should be accessible
 int		Config::parse_directory(std::string &dir, std::string &s) {
 	if (verify_directory(s))
 		dir = s;
@@ -352,7 +353,10 @@ int		Config::parse_directory(std::string &dir, std::string &s) {
 	return (EXIT_SUCCESS);
 }
 
-// ascii 58 :
+/*
+** Login:pass - both should not be empty and separated by symbol :
+** ascii 58 :
+*/
 int		Config::parse_auth(t_location &location, std::string &s) {
 	std::vector<std::string>	tmp;
 
