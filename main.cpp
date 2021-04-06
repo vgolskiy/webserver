@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 17:35:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/07 00:36:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,10 @@ int		main() {
 		return (EXIT_FAILURE);
 	}
 	file_lines = split(file_content, "\n");
+	file_content.clear();
 	if (config.parse_configuration_file(file_lines))
 		return (EXIT_FAILURE);
-
+	file_lines.clear();
 	config.init_global_configuration();
 	init_servers();
 	signals();	
