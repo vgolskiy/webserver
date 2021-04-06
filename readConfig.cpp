@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 20:09:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 20:25:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,6 +303,18 @@ int		Config::parse_method(t_location &location, std::string &s) {
 	return (EXIT_SUCCESS);
 }
 
+int		Config::parse_autoindex(t_location &location, std::string &s) {
+	if (s == "on")
+		location.auto_index = true;
+	else if (s == "off")
+		location.auto_index = false;
+	else {
+		error_message("Directive autoindex is invalid");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
 //ascii 123 {
 int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
@@ -316,9 +328,9 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 	}
 	to_parse[to_parse.size() - 1] = to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
 	if ((to_parse[0] == METHOD) && (!location.root.size())) {
-		to_parse[0] = "";
+		to_parse[0] = ""; //this value is no longer needed, so using it as a temporary value holder
 		for (size_t i = 1; i < to_parse.size(); ++i)
-			to_parse[0]+=to_parse[i];
+			to_parse[0]+=to_parse[i]; //concatenating parts to one line for futher parsing
 		if (parse_method(location, to_parse[0]))
 			return (EXIT_FAILURE);
 	}
@@ -332,8 +344,10 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		location.php_path = to_parse[1];
 	else if ((to_parse[0] == CGI) && (!location.cgi.size()))
 		location.cgi = to_parse[1];
-	else if ((to_parse[0] == AUTO_INDEX) && (location.auto_index == -1))
-		location.auto_index = stoi(to_parse[1]);
+	else if ((to_parse[0] == AUTO_INDEX) && (location.auto_index == -1)) {
+		if (parse_autoindex(location, to_parse[1]))
+			return (EXIT_FAILURE);
+	}
 	else if ((to_parse[0] == MAX_BODY) && (location.max_body == -1))
 		location.max_body = stoi(to_parse[1]);
 	else if ((to_parse[0] == AUTH) && (!location.auth.size()))

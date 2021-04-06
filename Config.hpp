@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 19:58:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 20:26:41 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ private:
 	int							convert_localhost(std::string &s, t_server &server);
 	bool						verify_method(std::string &s);
 	int							parse_method(t_location &location, std::string &s);
+	int							parse_autoindex(t_location &location, std::string &s);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
