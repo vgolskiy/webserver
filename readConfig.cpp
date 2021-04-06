@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 17:10:08 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 19:52:15 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,45 @@ void		Config::clear_location(t_location &location) {
 	location.uri = "";
 };
 
+//Lists for parsing
+std::string const	Config::_methods[] = {
+	"GET",
+	"HEAD",
+	"POST",
+	"PUT",
+	"DELETE",
+	"CONNECT",
+	"OPTIONS",
+	"TRACE",
+	"PATCH"
+};
+
+std::string const	Config::_protocols[] = {
+	"HTTP/1.1"
+};
+
+std::string const	Config::_headers[] = {
+	"Accept-Charsets",
+	"Accept-Language",
+	"Allow",
+	"Authorization",
+	"Content-Language",
+	"Content-Length",
+	"Content-Location",
+	"Content-Type",
+	"Date",
+	"Host",
+	"Last-Modified",
+	"Location",
+	"Referer",
+	"Retry-After",
+	"Server",
+	"Transfer-Encoding",
+	"User-Agent",
+	"WWW-Authenticate"
+};
+
+
 /*
 ** File content line by line is parsed into server
 ** or server location parameters
@@ -232,7 +271,7 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 			return (EXIT_FAILURE);
 		}
 	}
-	else if (to_parse[0] == ERR_PAGE) {
+	else if ((to_parse[0] == ERR_PAGE) && (!server.error_page.size())) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			server.error_page.push_back(to_parse[i]);
 	}
@@ -240,6 +279,29 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		error_message("Unknown or double parameter");
 	return (EXIT_SUCCESS);
 };
+
+bool	Config::verify_method(std::string &s) {
+	for (int i = 0; i < N_ELEMS(_methods); ++i)
+		if (_methods[i] == s)
+			return (true);
+	return (false);
+}
+
+//Searching for provided method among avaliable
+int		Config::parse_method(t_location &location, std::string &s) {
+	std::vector<std::string>	tmp;
+
+	tmp = split(s, ",");
+	for (size_t i = 0; i < tmp.size(); ++i) {
+		if ((tmp[i].length()) && (verify_method(tmp[i])))
+			location.method.push_back(tmp[i]);
+		else {
+			error_message("Invalid arguments in configurations file");
+			return (EXIT_FAILURE);
+		}
+	}
+	return (EXIT_SUCCESS);
+}
 
 //ascii 123 {
 int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
@@ -253,9 +315,10 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		return (EXIT_FAILURE);
 	}
 	to_parse[to_parse.size() - 1] = to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
-	if ((to_parse[0] == METHOD)) {
+	if ((to_parse[0] == METHOD) && (!location.root.size())) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
-			location.method.push_back(to_parse[i]);
+			if (parse_method(location, to_parse[i]))
+				return (EXIT_FAILURE);
 	}
 	else if ((to_parse[0] == ROOT) && (!location.root.size()))
 		location.root = to_parse[1];

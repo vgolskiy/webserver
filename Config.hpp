@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 17:29:47 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 19:52:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,9 @@
 # define	MAX_BODY 	"max_body" // should limit client body size
 # define	AUTH 		"auth"
 
+//For iteration of static lists - elements quantity getter
+# define	N_ELEMS(a) (int)(sizeof(a) / sizeof((a)[0]))
+
 //testing
 template <typename T>
 void    printContainer(T &cont) {
@@ -143,6 +146,10 @@ extern t_config						g_config;
 class Config {
 private:
 	std::vector<t_server>		_servers;
+	//Lists of constant values for parsing
+	static std::string const 	_methods[];
+	static std::string const 	_protocols[];
+	static std::string const 	_headers[];
 
 public:
 	Config(void) : _servers() {};
@@ -165,6 +172,8 @@ private:
 	bool						verify_localhost(std::string &s);
 	bool						verify_port(std::string &s);
 	int							convert_localhost(std::string &s, t_server &server);
+	bool						verify_method(std::string &s);
+	int							parse_method(t_location &location, std::string &s);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
