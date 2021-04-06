@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 20:25:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 23:50:36 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,7 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		error_message("directive " + to_parse[0] + " is not terminated by ;");
 		return (EXIT_FAILURE);
 	}
-	to_parse[to_parse.size() - 1] = to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
+	to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
 	if ((to_parse[0] == NAME) && (!server.name.size())) {
 		for (size_t	i = 1; i != to_parse.size(); ++i)
 			server.name.push_back(to_parse[i]);
@@ -315,6 +315,63 @@ int		Config::parse_autoindex(t_location &location, std::string &s) {
 	return (EXIT_SUCCESS);
 }
 
+bool	verify_directory(std::string &dir) {
+	struct stat	info;
+
+	if ((!stat(dir.c_str(), &info)) && (info.st_mode & S_IFDIR))
+		return (true);
+	return (false);
+}
+
+//Verifies that file is accessible and not empty
+bool	verify_file(std::string &file_path) {
+	int			fd;
+	struct stat file_statistics;
+
+	fd = open(file_path.c_str(), O_RDONLY);
+	if (errno)
+		return (false);
+	if (fstat(fd, &file_statistics) == -1) {
+		close(fd);
+		return (false);
+	}
+	if (!file_statistics.st_size) {
+		close(fd);
+		return (false);
+	}
+	return (true);
+}
+
+int		Config::parse_root(t_location &location, std::string &s) {
+	if (verify_directory(s))
+		location.root = s;
+	else {
+		error_message("Invalid arguments in configurations file");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
+int		Config::parse_php_path(t_location &location, std::string &s) {
+	if (verify_directory(s))
+		location.php_path = s;
+	else {
+		error_message("Invalid arguments in configurations file");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
+int		Config::parse_cgi_path(t_location &location, std::string &s) {
+	if (verify_directory(s))
+		location.cgi_path = s;
+	else {
+		error_message("Invalid arguments in configurations file");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
 //ascii 123 {
 int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
@@ -326,34 +383,45 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		error_message("Directive " + to_parse[0] + " is not terminated by ;");
 		return (EXIT_FAILURE);
 	}
-	to_parse[to_parse.size() - 1] = to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
-	if ((to_parse[0] == METHOD) && (!location.root.size())) {
+	to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);//removing the closing symbol ;
+	if ((to_parse[0] == METHOD) && (!location.root.length())) {
 		to_parse[0] = ""; //this value is no longer needed, so using it as a temporary value holder
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			to_parse[0]+=to_parse[i]; //concatenating parts to one line for futher parsing
 		if (parse_method(location, to_parse[0]))
 			return (EXIT_FAILURE);
 	}
-	else if ((to_parse[0] == ROOT) && (!location.root.size()))
-		location.root = to_parse[1];
-	else if ((to_parse[0] == INDEX) && (!location.index.size()))
+	else if ((to_parse[0] == ROOT) && (!location.root.length())) {
+		if (parse_root(location, to_parse[1]))
+			return (EXIT_FAILURE);
+	}
+	else if ((to_parse[0] == INDEX) && (!location.index.length()))
 		location.index = to_parse[1];
-	else if ((to_parse[0] == CGI_PATH) && (!location.cgi_path.size()))
-		location.cgi_path = to_parse[1];
-	else if ((to_parse[0] == PHP_PATH) && (!location.php_path.size()))
-		location.php_path = to_parse[1];
-	else if ((to_parse[0] == CGI) && (!location.cgi.size()))
+	else if ((to_parse[0] == CGI_PATH) && (!location.cgi_path.length())) {
+		if (parse_cgi_path(location, to_parse[1]))
+			return (EXIT_FAILURE);
+	}
+	else if ((to_parse[0] == PHP_PATH) && (!location.php_path.length())) {
+		if (parse_php_path(location, to_parse[1]))
+			return (EXIT_FAILURE);
+	}
+	else if ((to_parse[0] == CGI) && (!location.cgi.length()) && (to_parse[0][0] == '.')
+		&& (std::count(to_parse[0].begin(), to_parse[0].end(), '.') == 1)) //file extention verification
 		location.cgi = to_parse[1];
+	else if ((to_parse[0] == EXEC) && (!location.exec.length()))
+		location.exec = to_parse[1];
 	else if ((to_parse[0] == AUTO_INDEX) && (location.auto_index == -1)) {
 		if (parse_autoindex(location, to_parse[1]))
 			return (EXIT_FAILURE);
 	}
 	else if ((to_parse[0] == MAX_BODY) && (location.max_body == -1))
 		location.max_body = stoi(to_parse[1]);
-	else if ((to_parse[0] == AUTH) && (!location.auth.size()))
+	else if ((to_parse[0] == AUTH) && (!location.auth.length()))
 		location.auth = to_parse[1];
-	else
+	else {
 		error_message("Unknown or double parameter");
+		return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 };
 

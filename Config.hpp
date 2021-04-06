@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 20:26:41 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 23:44:28 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@
 # define	AUTO_INDEX 	"autoindex"
 # define	MAX_BODY 	"max_body" // should limit client body size
 # define	AUTH 		"auth"
+# define	EXEC		"exec"
 
 //For iteration of static lists - elements quantity getter
 # define	N_ELEMS(a) (int)(sizeof(a) / sizeof((a)[0]))
@@ -112,6 +113,7 @@ typedef struct					s_location
 	std::string					cgi;
 	std::string					cgi_path;
 	std::string					auth;
+	std::string					exec;
 	int							auto_index;
 	int							max_body;
 	s_location() : auto_index(-1), max_body(-1) {}
@@ -175,6 +177,9 @@ private:
 	bool						verify_method(std::string &s);
 	int							parse_method(t_location &location, std::string &s);
 	int							parse_autoindex(t_location &location, std::string &s);
+	int							parse_root(t_location &location, std::string &s);
+	int							parse_cgi_path(t_location &location, std::string &s);
+	int							parse_php_path(t_location &location, std::string &s);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
@@ -188,5 +193,7 @@ std::string					read_file(const char *file_path);
 std::vector<std::string>	split(const std::string &s, const std::string &delimiter);
 void						error_message(std::string message);
 void						clear_global_configuration(void);
+bool						verify_directory(std::string &dir);
+bool						verify_file(std::string &file_path);
 
 #endif
