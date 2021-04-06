@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 23:50:36 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/07 00:27:21 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void		Config::clear_server(t_server &server) {
 };
 
 void		Config::clear_location(t_location &location) {
-	location.auth = "";
+	location.auth.clear();
 	location.auto_index = -1;
 	location.cgi = "";
 	location.cgi_path = "";
@@ -342,9 +342,9 @@ bool	verify_file(std::string &file_path) {
 	return (true);
 }
 
-int		Config::parse_root(t_location &location, std::string &s) {
+int		Config::parse_directory(std::string &dir, std::string &s) {
 	if (verify_directory(s))
-		location.root = s;
+		dir = s;
 	else {
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
@@ -352,27 +352,23 @@ int		Config::parse_root(t_location &location, std::string &s) {
 	return (EXIT_SUCCESS);
 }
 
-int		Config::parse_php_path(t_location &location, std::string &s) {
-	if (verify_directory(s))
-		location.php_path = s;
+// ascii 58 :
+int		Config::parse_auth(t_location &location, std::string &s) {
+	std::vector<std::string>	tmp;
+
+	tmp = split(s, ":");
+	if ((std::count(s.begin(), s.end(), 58) == 1) 
+		&& (tmp[0].length()) && (tmp[1].length())) {
+		location.auth.insert(std::pair<std::string, std::string>(tmp[0], tmp[1]));
+	}
 	else {
-		error_message("Invalid arguments in configurations file");
-		return (EXIT_FAILURE);
+		error_message("Directive auth is invalid");
+		return (EXIT_FAILURE);	
 	}
 	return (EXIT_SUCCESS);
 }
 
-int		Config::parse_cgi_path(t_location &location, std::string &s) {
-	if (verify_directory(s))
-		location.cgi_path = s;
-	else {
-		error_message("Invalid arguments in configurations file");
-		return (EXIT_FAILURE);
-	}
-	return (EXIT_SUCCESS);
-}
-
-//ascii 123 {
+//ascii 123 { 46 .
 int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
 		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD))) {
@@ -385,28 +381,28 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 	}
 	to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);//removing the closing symbol ;
 	if ((to_parse[0] == METHOD) && (!location.root.length())) {
-		to_parse[0] = ""; //this value is no longer needed, so using it as a temporary value holder
+		to_parse[0].clear(); //this value is no longer needed, so using it as a temporary value holder
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			to_parse[0]+=to_parse[i]; //concatenating parts to one line for futher parsing
 		if (parse_method(location, to_parse[0]))
 			return (EXIT_FAILURE);
 	}
 	else if ((to_parse[0] == ROOT) && (!location.root.length())) {
-		if (parse_root(location, to_parse[1]))
+		if (parse_directory(location.root, to_parse[1]))
 			return (EXIT_FAILURE);
 	}
 	else if ((to_parse[0] == INDEX) && (!location.index.length()))
 		location.index = to_parse[1];
 	else if ((to_parse[0] == CGI_PATH) && (!location.cgi_path.length())) {
-		if (parse_cgi_path(location, to_parse[1]))
+		if (parse_directory(location.cgi_path, to_parse[1]))
 			return (EXIT_FAILURE);
 	}
 	else if ((to_parse[0] == PHP_PATH) && (!location.php_path.length())) {
-		if (parse_php_path(location, to_parse[1]))
+		if (parse_directory(location.php_path, to_parse[1]))
 			return (EXIT_FAILURE);
 	}
 	else if ((to_parse[0] == CGI) && (!location.cgi.length()) && (to_parse[0][0] == '.')
-		&& (std::count(to_parse[0].begin(), to_parse[0].end(), '.') == 1)) //file extention verification
+		&& (std::count(to_parse[0].begin(), to_parse[0].end(), 46) == 1)) //file extention verification
 		location.cgi = to_parse[1];
 	else if ((to_parse[0] == EXEC) && (!location.exec.length()))
 		location.exec = to_parse[1];
@@ -414,10 +410,13 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		if (parse_autoindex(location, to_parse[1]))
 			return (EXIT_FAILURE);
 	}
-	else if ((to_parse[0] == MAX_BODY) && (location.max_body == -1))
-		location.max_body = stoi(to_parse[1]);
-	else if ((to_parse[0] == AUTH) && (!location.auth.length()))
-		location.auth = to_parse[1];
+	else if ((to_parse[0] == MAX_BODY) && (location.max_body == -1)
+		&& (is_all_numbers(to_parse[1])))
+		location.max_body = std::stoi(to_parse[1]);
+	else if ((to_parse[0] == AUTH) && (!location.auth.size())) {
+		if (parse_auth(location, to_parse[1]))
+			return (EXIT_FAILURE);
+	}
 	else {
 		error_message("Unknown or double parameter");
 		return (EXIT_FAILURE);

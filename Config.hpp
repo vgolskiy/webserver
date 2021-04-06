@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 23:44:28 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/07 00:18:28 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <vector>
 # include <stack>
 # include <list>
+# include <map>
 # include <sys/types.h>
 # include <sys/stat.h>
 
@@ -103,19 +104,19 @@ void    printContainer(T &cont) {
 	std::cout << "]";
 }
 
-typedef struct					s_location
-{
-	std::string					index;
-	std::string					root;
-	std::vector<std::string>	method;
-	std::string					uri;
-	std::string					php_path;
-	std::string					cgi;
-	std::string					cgi_path;
-	std::string					auth;
-	std::string					exec;
-	int							auto_index;
-	int							max_body;
+typedef struct							s_location
+{		
+	std::string							index;
+	std::string							root;
+	std::vector<std::string>			method;
+	std::string							uri;
+	std::string							php_path;
+	std::string							cgi;
+	std::string							cgi_path;
+	std::map<std::string, std::string>	auth;
+	std::string							exec;
+	int									auto_index;
+	int									max_body;
 	s_location() : auto_index(-1), max_body(-1) {}
 }								t_location;
 
@@ -177,9 +178,8 @@ private:
 	bool						verify_method(std::string &s);
 	int							parse_method(t_location &location, std::string &s);
 	int							parse_autoindex(t_location &location, std::string &s);
-	int							parse_root(t_location &location, std::string &s);
-	int							parse_cgi_path(t_location &location, std::string &s);
-	int							parse_php_path(t_location &location, std::string &s);
+	int							parse_directory(std::string &dir, std::string &s);
+	int							parse_auth(t_location &location, std::string &s);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
