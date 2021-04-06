@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 00:29:43 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/07 00:54:50 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -456,9 +456,16 @@ bool		Config::verify_brackets(std::vector<std::string> &lines)
 	return (true);
 };
 
-// check number of listens port - not the same within one port
-// check uri (so it starts with '/' only)
-// check error pages order
+/* TODO!!!
+** Verifies:
+** check all provided files accessibility
+** check number of listens port - not the same within one port ???
+** - uri starts with '/' only
+** - localhost is filled
+** - ports are defined
+** - ports are not the same within one server
+** check error pages order ???
+*/
 
 bool	Config::verify_config()
 {
@@ -476,9 +483,13 @@ bool	Config::verify_config()
 			return (false);
 		_servers[i].port.sort();
 		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++) {
-			if (*it == *(++it)) {
-				error_message("The same ports are forbidden");
+			if (*it == *(++it))
 				return (false);
+		}
+		for (size_t i = 0; i != _servers.size(); ++i) {
+			for (size_t j = 0; j != _servers[i].location.size(); ++j) {
+				if (_servers[i].location[j].uri.front() != '/')
+					return (false);
 			}
 		}
 	}
