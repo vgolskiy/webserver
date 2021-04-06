@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 17:23:27 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 17:35:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int		main() {
 	if (config.parse_configuration_file(file_lines))
 		return (EXIT_FAILURE);
 
+	config.init_global_configuration();
 	init_servers();
 	signals();	
 	select_loop();
