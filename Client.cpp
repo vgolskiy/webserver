@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Сlient.cpp                                         :+:      :+:    :+:   */
+/*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 18:01:43 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 11:15:22 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
 Client::Client(Socket *listen_sock) 
-: _listen_sock(listen_sock), _fd(-1), _port(0) {}
+: _fd(-1), _port(0), _listen_sock(listen_sock) {}
 
 Client::Client(const Client &copy) {*this = copy;};
 
