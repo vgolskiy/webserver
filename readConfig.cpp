@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/03 19:56:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 11:08:45 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,24 +208,23 @@ void	error_message(std::string message)
 ** ascii 35 #
 */
 int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
-	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35))) {
+	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35) 
+		&& (to_parse[0] != NAME))) {
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
 	}
-	if ((to_parse[0] == HOST) && (!server.host.size()))
-		server.host = to_parse[1];
-	else if ((to_parse[0] == NAME) && (!server.name.size())) {
+	if ((to_parse[0] == NAME) && (!server.name.size())) {
 		for (size_t	i = 1; i != to_parse.size(); ++i)
 			server.name.push_back(to_parse[i]);
 	}
 	else if (to_parse[0] == PORT) {
-		for (size_t i = 1; i < to_parse.size(); ++i) {
-			if (verify_port(to_parse[i]))
-				server.port.push_back(htons(atoi(to_parse[i].c_str()))); // remove htons (?)
-			else {
-				error_message("Invalid arguments in configurations file");
-				return (EXIT_FAILURE);
-			}
+		if (verify_port(to_parse[1]))
+			server.port.push_back(htons(atoi(to_parse[1].c_str())));
+		else if (to_parse[1].find(":") != std::string::npos)
+			server.host = to_parse[1];
+		else {
+			error_message("Invalid arguments in configurations file");
+			return (EXIT_FAILURE);
 		}
 	}
 	else if (to_parse[0] == ERR_PAGE) {
@@ -308,7 +307,7 @@ bool	Config::verify_config()
 	for (size_t i = 0; i != _servers.size(); i++)
 	{
 		if (!_servers[i].host.length())
-			return (false);
+			_servers[i].host = LOCALHOST_IP;
 		if (!_servers[i].port.size())
 			return (false);
 		if (!_servers[i].name.size())

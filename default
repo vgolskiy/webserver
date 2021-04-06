@@ -1,7 +1,7 @@
 server {
     listen 8080
 
-    server_name  localhost;
+    #server_name  localhost;
 
     location /wordpress {
         index   index.php;
