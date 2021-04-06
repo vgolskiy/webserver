@@ -28,7 +28,11 @@ void add_client(t_server* server)
     Client *new_cl = new Client(server->serv_socket);
     server->_num_clients.push_back(new_cl);
 
-	// client->accept_connection();
+	if ((server->_num_clients.back()->accept_connection()) == false)
+	{
+		server->_num_clients.pop_back();
+		std::cerr << "Failed to establish connection with a client!\n";
+	}
 }
 
 void add_new_client(fd_set &read_fd_sets)
@@ -36,12 +40,7 @@ void add_new_client(fd_set &read_fd_sets)
     for (size_t i = 0; i < g_config.server.size(); i++)
     {
         if (FD_ISSET(g_config.server[i]->serv_socket->get_fd(), &read_fd_sets))
-        {
             add_client(g_config.server[i]);
-            // add new Client to server (either in class or separate function)
-            // accept connection -> if not connected -> "Fail to connect"
-            ;
-        }
     }
 }
 
