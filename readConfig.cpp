@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 11:08:45 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 15:15:53 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,12 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 		if (begin == std::string::npos)
 			return (res);
 		end = line.find_first_of(SPACES, begin);
+		end = end < line.find_first_of(";", begin) ? end : line.find_first_of(";", begin); 
 		if (end == std::string::npos)
 			end = line.length();
 		res.push_back(line.substr(begin, (end - begin)));
+		if (end == line.find_first_of(";", begin))
+			end = line.length();
 	}
 	return (res);
 };
