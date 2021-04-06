@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 19:52:15 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 20:09:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,7 +296,7 @@ int		Config::parse_method(t_location &location, std::string &s) {
 		if ((tmp[i].length()) && (verify_method(tmp[i])))
 			location.method.push_back(tmp[i]);
 		else {
-			error_message("Invalid arguments in configurations file");
+			error_message("Directive methods is invalid");
 			return (EXIT_FAILURE);
 		}
 	}
@@ -311,14 +311,16 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		return (EXIT_FAILURE);
 	}
 	if (to_parse[to_parse.size() - 1].back() != 59) {
-		error_message("directive " + to_parse[0] + " is not terminated by ;");
+		error_message("Directive " + to_parse[0] + " is not terminated by ;");
 		return (EXIT_FAILURE);
 	}
 	to_parse[to_parse.size() - 1] = to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
 	if ((to_parse[0] == METHOD) && (!location.root.size())) {
+		to_parse[0] = "";
 		for (size_t i = 1; i < to_parse.size(); ++i)
-			if (parse_method(location, to_parse[i]))
-				return (EXIT_FAILURE);
+			to_parse[0]+=to_parse[i];
+		if (parse_method(location, to_parse[0]))
+			return (EXIT_FAILURE);
 	}
 	else if ((to_parse[0] == ROOT) && (!location.root.size()))
 		location.root = to_parse[1];

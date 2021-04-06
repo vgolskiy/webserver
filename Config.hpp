@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 19:52:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/06 19:58:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@
 // Inside each location block, it is usually possible (with a few exceptions)
 // to place even more location directives to further refine the processing for specific groups of requests.
 // In the location:  prefix strings (pathnames /) and regular expressions (~) or case-insensitive (~*)
-# define	METHOD 		"method"
+# define	METHOD 		"methods"
 # define	ROOT 		"root"
 # define	INDEX 		"index"
 // The index directive defines the index file’s name (the default value is index.html).	

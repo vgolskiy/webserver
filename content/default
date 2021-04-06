@@ -6,5 +6,6 @@ server {
 
     location /wordpress {
         index   index.php;
+		methods GET,PUT,POST;
     }
 }
