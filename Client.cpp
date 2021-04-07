@@ -42,6 +42,15 @@ bool Client::accept_connection()
     _port = _address.sin_port;
     _inet = _address.sin_addr.s_addr;
 
+    // TEST message:
+	char buffer[1024] = {0};
+	const char* hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 13\n\nTest message!";
+    read(_fd, buffer, 1024);
+	std::cout << buffer << std::endl;
+    send(_fd, hello, strlen(hello), 0);
+	std::cout << "Hello message sent\n\n";
+    // END of Test;
+
     if (fcntl(_fd, F_SETFL, O_NONBLOCK) < 0)
 		exit_error(errno);
     return true; 
