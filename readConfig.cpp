@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 09:46:26 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/07 09:50:09 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -476,8 +476,6 @@ bool	Config::verify_config()
 	{
 		if (!_servers[i].host.length())
 			_servers[i].host = LOCALHOST_IP;
-		if (!_servers[i].port.size())
-			return (false);
 		if (!_servers[i].name.size())
 			_servers[i].name.push_back(SERVER_NAME);
 		if (!_servers[i].port.size())
