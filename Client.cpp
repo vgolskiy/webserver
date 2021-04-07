@@ -31,6 +31,11 @@ Client	Client::operator=(const Client &other) {
 	return (*this);
 };
 
+int Client::get_socket_fd()
+{
+    return _fd;
+}
+
 bool Client::accept_connection()
 {
     int addrlen = sizeof(_address);
@@ -44,7 +49,7 @@ bool Client::accept_connection()
 
     // TEST message:
 	char buffer[1024] = {0};
-	const char* hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 13\n\nTest message!";
+	const char* hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 20\n\nServer-Test message!";
     read(_fd, buffer, 1024);
 	std::cout << buffer << std::endl;
     send(_fd, hello, strlen(hello), 0);
@@ -54,4 +59,19 @@ bool Client::accept_connection()
     if (fcntl(_fd, F_SETFL, O_NONBLOCK) < 0)
 		exit_error(errno);
     return true; 
+}
+
+void Client::readRequest()
+{
+    // check length of request -> put into buf;
+    // use recv(_fd, &buf, size(buf), 0);
+
+    // simple read from client (less than or equal to 1024):
+    int buf = 1024;
+    char buffer[buf];
+    if (recv(_fd, &buffer, buf, 0) == 0) // TODO: check (ret < 0)!
+        std::cout << "Nothing to read!\n";
+    _to_parse += buffer;
+    _request->parse_request(_to_parse);
+    // parse request;
 }

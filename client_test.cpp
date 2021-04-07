@@ -22,7 +22,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string>
-#define PORT 8080 
+#define PORT 8000 
    
 int main() { 
 	int sock = 0;

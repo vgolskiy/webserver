@@ -13,9 +13,11 @@
 #pragma once
 
 # include "Config.hpp"
+# include "Request.hpp"
 
 class Config;
 class Socket;
+class Request;
 class Client
 {
 private:
@@ -25,6 +27,8 @@ private:
 	struct sockaddr_in	_address;
 	in_addr_t			_inet;
 	Socket				*_listen_sock;
+	std::string			_to_parse;
+	Request				*_request;
 
 public:
 	Client(Socket *listen_sock);
@@ -32,5 +36,8 @@ public:
 	~Client();
 	Client	operator=(const Client &other);
 
+	int get_socket_fd();
+
 	bool accept_connection();
+	void readRequest();
 };
