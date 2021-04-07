@@ -81,7 +81,7 @@ int select_loop() {
     	// call select
     	to_select = select(nfds, &read_fd_sets, &write_fd_sets, 0, &timeout);
     	if (!to_select)
-    		exit_error_msg("Timeout of session");
+			error_message("Timeout of session");
 		// error occured -> errno is set to indicate an error
     	else if (to_select == -1)
 			exit_error(errno);

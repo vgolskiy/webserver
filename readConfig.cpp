@@ -138,6 +138,7 @@ void		Config::clear_location(t_location &location) {
 };
 
 //Lists for parsing
+// Необходимые методы: GET, HEAD, PUT, POST
 std::string const	Config::_methods[] = {
 	"GET",
 	"HEAD",
@@ -248,7 +249,7 @@ void	error_message(std::string message)
 */
 int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
 	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35) 
-		&& (to_parse[0] != NAME))) {
+		&& (to_parse[0] != NAME) && (to_parse[0] != ERR_PAGE))) {
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
 	}
@@ -271,7 +272,7 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 			return (EXIT_FAILURE);
 		}
 	}
-	else if ((to_parse[0] == ERR_PAGE) && (!server.error_page.size())) {
+	else if ((to_parse[0] == ERR_PAGE)) {
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			server.error_page.push_back(to_parse[i]);
 	}
@@ -459,7 +460,6 @@ bool		Config::verify_brackets(std::vector<std::string> &lines)
 /* TODO!!!
 ** Verifies:
 ** check all provided files accessibility
-** check number of listens port - not the same within one port ???
 ** - uri starts with '/' only
 ** - localhost is filled
 ** - ports are defined

@@ -4,6 +4,7 @@ server {
 
 	server_name	webserv;
 
+
     location /wordpress {
         index   	index.php;
 		methods		GET,PUT,POST;
@@ -13,4 +14,7 @@ server {
 		autoindex	off;
 		auth		test:test;
     }
+
+    error_page   500 502 503 504;
+	
 }

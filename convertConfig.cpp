@@ -183,6 +183,7 @@ void	Config::init_global_configuration(void)
 
 		server->name = _servers[i].name;
 		server->location = _servers[i].location;
+		server->port = _servers[i].port;
 		server->host = _servers[i].host;
 		server->error_page = _servers[i].error_page;
 		g_config.server.push_back(server);

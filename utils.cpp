@@ -27,6 +27,7 @@ void init_servers()
     for (size_t i = 0; i < g_config.server.size(); i++) // TODO: error checking!
     {
 		//primary port is the first port in list by default
+		std::cout << g_config.server[i]->port.front() << std::endl;
         unsigned short port = g_config.server[i]->port.front();
         std::string host = g_config.server[i]->host;
         g_config.server[i]->serv_socket = new Socket(port, host);
