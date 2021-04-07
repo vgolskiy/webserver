@@ -5,9 +5,12 @@ server {
 	server_name	webserv;
 
     location /wordpress {
-        index   index.php;
-		methods	GET,PUT,POST;
-		root	./content;
+        index   	index.php;
+		methods		GET,PUT,POST;
+		root		./content;
+		cgi_path	./content;
+		php_path	./content;
 		autoindex	off;
+		auth		test:test;
     }
 }
