@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 00:54:50 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/07 09:46:26 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -465,6 +465,7 @@ bool		Config::verify_brackets(std::vector<std::string> &lines)
 ** - ports are defined
 ** - ports are not the same within one server
 ** check error pages order ???
+** ascii 47 /
 */
 
 bool	Config::verify_config()
@@ -488,7 +489,7 @@ bool	Config::verify_config()
 		}
 		for (size_t i = 0; i != _servers.size(); ++i) {
 			for (size_t j = 0; j != _servers[i].location.size(); ++j) {
-				if (_servers[i].location[j].uri.front() != '/')
+				if (_servers[i].location[j].uri.front() != 47)
 					return (false);
 			}
 		}
