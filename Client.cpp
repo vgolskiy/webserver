@@ -13,7 +13,10 @@
 #include "Client.hpp"
 
 Client::Client(Socket *listen_sock) 
-: _fd(-1), _port(0), _listen_sock(listen_sock) {}
+: _fd(-1), _port(0), _listen_sock(listen_sock) 
+{
+    _request = nullptr; // doesn't work in linux (?)
+}
 
 Client::Client(const Client &copy) {*this = copy;};
 
@@ -34,6 +37,11 @@ Client	Client::operator=(const Client &other) {
 int Client::get_socket_fd()
 {
     return _fd;
+}
+
+Request * Client::get_request()
+{
+    return _request;
 }
 
 bool Client::accept_connection()

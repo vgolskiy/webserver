@@ -40,4 +40,6 @@ public:
 
 	bool accept_connection();
 	void readRequest();
+
+	Request *get_request();
 };

@@ -20,6 +20,15 @@
 // the file descriptor fd is present in set, and zero if it
 // is not.
 
+/*
+int nfds:
+Представляет собой целое число, на единицу большее максимального файлового дескриптора 
+в любом из наборов. Другими словами, при добавлении файловых дескрипторов в наборы вам 
+необходимо вычислять максимальное целое значение любого из них, а затем увеличивать
+это значение на единицу и передавать в nfds.
+*/
+
+
 # include "Socket.hpp"
 # include "Client.hpp"
 
@@ -44,13 +53,48 @@ void add_new_client(fd_set &read_fd_sets)
     }
 }
 
-//Set socket fds for every server
-void	set_fds(fd_set &read_fd_sets, fd_set &write_fd_sets) {
-	(void) write_fd_sets;
-	for (size_t i = 0; i < g_config.server.size(); i++) {
+// Set socket fds for every server: read_fd_set for servers and both write_and_read_fds for clients
+void	set_fds(fd_set &read_fd_sets, fd_set &write_fd_sets, int &nfds)
+{
+	(void)write_fd_sets;
+	for (size_t i = 0; i < g_config.server.size(); i++)
+	{
 		if (!(FD_ISSET(g_config.server[i]->serv_socket->get_fd(), &read_fd_sets)))
+		{
 			FD_SET(g_config.server[i]->serv_socket->get_fd(), &read_fd_sets);
+			if (g_config.server[i]->serv_socket->get_fd() > nfds)
+				nfds = g_config.server[i]->serv_socket->get_fd();
+		}
 	}
+	for (size_t j = 0; j < g_config.server.size(); j++)
+	{
+		std::list<Client*>::iterator it = g_config.server[j]->_num_clients.begin();
+		std::list<Client*>::iterator ite = g_config.server[j]->_num_clients.end();
+		for (; it != ite; it++)
+		{	
+			if (!(FD_ISSET((*it)->get_socket_fd(), &read_fd_sets)))
+			{
+				FD_SET((*it)->get_socket_fd(), &read_fd_sets);
+				if ((*it)->get_socket_fd() > nfds)
+					nfds = (*it)->get_socket_fd();
+			}
+			if ((*it)->get_request()) // TODO: add conditions
+			{
+				if (!(FD_ISSET((*it)->get_socket_fd(), &write_fd_sets)))
+				{
+					FD_SET((*it)->get_socket_fd(), &write_fd_sets);
+					if ((*it)->get_socket_fd() > nfds)
+						nfds = (*it)->get_socket_fd();
+				}
+			}
+		}
+	}
+}
+
+void deal_request(fd_set &read_fd_sets, fd_set &write_fd_sets)
+{
+	(void) write_fd_sets;
+	(void) read_fd_sets;
 }
 
 // struct timeval *restrict timeout - specifies the interval that select() should block
@@ -68,18 +112,19 @@ int select_loop() {
     int is_Running = 1;
 	//Ignored. The nfds parameter is included only for compatibility with Berkeley sockets.
 	//Setting it to max size of fds = 1024
-	int nfds = FD_SETSIZE;
+	int nfds;
 
 	while (is_Running)
 	{
+		nfds = 0;
 		FD_ZERO(&read_fd_sets);
 		FD_ZERO(&write_fd_sets);
 
     	// setting fds: adding readFD and writeFD for each server
-		set_fds(read_fd_sets, write_fd_sets);
+		set_fds(read_fd_sets, write_fd_sets, nfds);
 
     	// call select
-    	to_select = select(nfds, &read_fd_sets, &write_fd_sets, 0, &timeout);
+    	to_select = select(nfds + 1, &read_fd_sets, &write_fd_sets, 0, &timeout);
     	if (!to_select)
 			error_message("Timeout of session");
 		// error occured -> errno is set to indicate an error
@@ -89,6 +134,7 @@ int select_loop() {
             // delete timeout servers ?
             add_new_client(read_fd_sets);
             // interact with clients (read_fd_sets + write_fd_sets)
+			deal_request(read_fd_sets, write_fd_sets);
         }
 	}
 	return EXIT_SUCCESS;
