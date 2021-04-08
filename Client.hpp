@@ -32,14 +32,12 @@ private:
 
 public:
 	Client(Socket *listen_sock);
-	Client(const Client &copy);
 	~Client();
-	Client	operator=(const Client &other);
-
-	int get_socket_fd();
 
 	bool accept_connection();
 	void readRequest();
 
+	int get_socket_fd();
+	int get_s_addr();
 	Request *get_request();
 };

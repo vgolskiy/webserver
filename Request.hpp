@@ -86,6 +86,7 @@ POST:
 
 # define HTTP "HTTP/1.1"
 
+class Client;
 class Request
 {
 private:
@@ -95,9 +96,12 @@ private:
 	std::string							_version;
 	std::map<std::string, std::string>	_headers;
 	std::string 						_body;
+	std::vector<std::string>			_env;
 
 	static std::string const			methods[];
 	static std::string const			headers[];
+
+	Client*								_client;
 public:
 	Request();
 	~Request();
@@ -106,4 +110,8 @@ public:
 	void check_start_line(const std::vector<std::string> &lines);
 	void set_up_headers(const std::vector<std::string> &lines);
 
+	void set_cgi_meta_vars();
+
+	std::vector<std::string> get_env();
+	std::string find_header(std::string header);
 };

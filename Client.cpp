@@ -18,21 +18,7 @@ Client::Client(Socket *listen_sock)
     _request = nullptr; // doesn't work in linux (?)
 }
 
-Client::Client(const Client &copy) {*this = copy;};
-
 Client::~Client() {}
-
-Client	Client::operator=(const Client &other) {
-	if (this != &other) {
-		_fd = other._fd;
-		_port = other._port;
-		_host = other._host;
-		_address = other._address;
-        _inet = other._inet;
-        _listen_sock = other._listen_sock;
-	}
-	return (*this);
-};
 
 int Client::get_socket_fd()
 {
@@ -42,6 +28,11 @@ int Client::get_socket_fd()
 Request * Client::get_request()
 {
     return _request;
+}
+
+int Client::get_s_addr()
+{
+    return _address.sin_addr.s_addr;
 }
 
 bool Client::accept_connection()
