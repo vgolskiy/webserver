@@ -102,8 +102,10 @@ private:
 	static std::string const			headers[];
 
 	Client*								_client;
+	int									_status;
+	int									_remain_len; // bytes left to read
 public:
-	Request();
+	Request(Client *client);
 	~Request();
 
 	void parse_request(std::string &lines);
@@ -111,7 +113,21 @@ public:
 	void set_up_headers(const std::vector<std::string> &lines);
 
 	void set_cgi_meta_vars();
+	void cut_remain_len(int to_cut);
+
+	std::string find_header(std::string header);
 
 	std::vector<std::string> get_env();
-	std::string find_header(std::string header);
+	int	get_remain_len();
+	int get_status();
+
+	enum status
+	{
+		INIT,
+		BODY_PARSE,
+		HEADERS,
+		C_G_I,
+		MTH,
+		DONE
+	};
 };

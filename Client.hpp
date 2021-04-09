@@ -20,8 +20,26 @@ class Socket;
 class Request;
 class Client
 {
+
+/*
+Statuses:
+	INIT - in a constructor;
+	ALIVE - once connection accepted
+	DONE - once response sent and nothing left (send returns >= 0) + TODO: delete request+response
+	DEAD - if recv returns 0 or if send returns (<0)
+*/
+
+enum status
+{
+	INIT,
+	ALIVE,
+	DONE,
+	EMPTY
+};
+
 private:
 	int					_fd;
+	int					_status;
 	unsigned short		_port;
 	std::string			_host;
 	struct sockaddr_in	_address;
