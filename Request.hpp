@@ -121,6 +121,8 @@ public:
 	int	get_remain_len();
 	int get_status();
 
+	void createResponce();
+
 	enum status
 	{
 		INIT,
