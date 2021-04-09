@@ -114,4 +114,7 @@ public:
 
 	std::vector<std::string> get_env();
 	std::string find_header(std::string header);
+
+	void createResponce();
+
 };

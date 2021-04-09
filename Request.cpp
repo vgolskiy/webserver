@@ -158,3 +158,27 @@ void Request::set_cgi_meta_vars()
     //set by yourself?
     _env.push_back("SERVER_SOFTWARE=webserv");
 }
+
+void Request::createResponce() {
+	if (_method == "PUT")
+	{
+
+	}
+	else if (_method == "HEAD")
+	{
+
+	}
+	else if (_method == "GET")
+	{
+
+	}
+	else if (_method == "POST")
+	{
+		//CGI
+	}
+	//else if (/*без метода*/)
+	//{
+	//
+	//}
+
+}
