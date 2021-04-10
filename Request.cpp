@@ -1,24 +1,27 @@
 #include "Request.hpp"
 
-Request::Request() 
+Request::Request(Client *client) 
 {
     _method = "";
     _query_str = "";
     _version = "";
     _uri = "";
     _body = "";
+    _client = client;
+    _remain_len = 0;
+    _status = INIT;
 }
 
 Request::~Request() {}
 
-std::string const	Request::methods[] = {
+std::string const Request::methods[] = {
 	"GET",
 	"HEAD",
 	"POST",
 	"PUT",
 };
 
-std::string const	Request::headers[] = {
+std::string const Request::headers[] = {
 	"Accept-Charsets",
 	"Accept-Language",
 	"Authorization",
@@ -34,10 +37,13 @@ std::string const	Request::headers[] = {
 	"User-Agent",
 };
 
-std::vector<std::string> Request::get_env()
-{
-    return _env;
-}
+int Request::get_remain_len(){return _remain_len;}
+
+int Request::get_status(){return _status;}
+
+void Request::cut_remain_len(int to_cut){_remain_len -= to_cut;}
+
+std::vector<std::string> Request::get_env(){return _env;}
 
 void Request::set_up_headers(const std::vector<std::string> &lines)
 {
@@ -92,6 +98,8 @@ void Request::check_start_line(const std::vector<std::string> &start_line)
 
 void Request::parse_request(std::string &lines)
 {
+    if (_status == Request::DONE)
+        return ;
     // split initial message (by "\r\n"):
     std::vector<std::string>    split_lines;
     split_lines = split(lines, "\r\n"); // split - from readConfig.cpp
@@ -105,16 +113,16 @@ void Request::parse_request(std::string &lines)
     set_up_headers(split_lines);
 }
 
+// TODO: coding special signs from URL: !#%^&()=+ и пробел
+
 std::string Request::find_header(std::string header)
 {
     std::map<std::string, std::string>::iterator it = _headers.begin();
     std::map<std::string, std::string>::iterator ite = _headers.end();
 
     for (; it != ite; it++)
-    {
         if ((*it).first == header)
             return (*it).second;
-    }
     return NULL;
 }
 
