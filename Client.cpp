@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/12 21:37:55 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/12 21:46:37 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ bool Client::accept_connection()
 {
     int addrlen = sizeof(_address);
 
-    _fd = accept(_listen_sock->get_fd(), (struct sockaddr*)&_address, (socklen_t*)&addrlen);
-    if (_fd == false)
-        return (false); // is it better to throw exception?
+	if ((_fd = accept(_listen_sock->get_fd(), (struct sockaddr*)&_address, (socklen_t*)&addrlen)) == -1)
+		exit_error(errno); // is it better to throw exception?
+		//just doing the same behavior in all cases
     _host = _address.sin_family;
     _port = _address.sin_port;
     _inet = _address.sin_addr.s_addr;
