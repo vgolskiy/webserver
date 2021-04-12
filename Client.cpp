@@ -1,22 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.cpp                                         :+:      :+:    :+:   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/06 11:15:22 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/12 21:37:55 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
+void	Client::clear_request() {
+	delete _request;
+}
+
 Client::Client(Socket *listen_sock) 
 : _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock),
 _to_parse(""), _request(NULL) {}
 
-Client::~Client() {} // TODO: close _fd; delete _request+_response
+Client::~Client() {
+	clear_request();
+} // TODO: close _fd; delete _request+_response
+//response will be deleted on server side
+//fds will be deleted during global configuration clearance
 
 int         Client::get_socket_fd(){return _fd;}
 
