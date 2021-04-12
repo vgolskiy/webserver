@@ -48,6 +48,8 @@ private:
 	std::string			_to_parse;
 	Request				*_request;
 
+
+
 public:
 	Client(Socket *listen_sock);
 	~Client();

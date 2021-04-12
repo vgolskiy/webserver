@@ -104,6 +104,8 @@ private:
 	Client*								_client;
 	int									_status;
 	int									_remain_len; // bytes left to read
+
+	std::string _response;
 public:
 	Request(Client *client);
 	~Request();
@@ -119,12 +121,10 @@ public:
 
 	void createResponce();
 
-
 	std::vector<std::string> get_env();
 	int	get_remain_len();
 	int get_status();
 
-	void createResponce();
 
 	enum status
 	{

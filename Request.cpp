@@ -10,6 +10,7 @@ Request::Request(Client *client)
     _client = client;
     _remain_len = 0;
     _status = INIT;
+    _response = "";
 }
 
 Request::~Request() {}
@@ -168,11 +169,14 @@ void Request::set_cgi_meta_vars()
 }
 
 void Request::createResponce() {
-	if (_method == "PUT")
+	if (_method == "HEAD")
 	{
+		_response = "HTTP/1.1"; //+ статус
+		_response += "\r\n";
+		
 
 	}
-	else if (_method == "HEAD")
+	else if (_method == "PUT")
 	{
 
 	}
