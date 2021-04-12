@@ -63,7 +63,7 @@ void Request::set_up_headers(const std::vector<std::string> &lines)
             }
         }
         if (flag == false)
-            error_message("Invalid header!\n"); // Should we do it or just ignore invalid (extra) headers?
+            error_message("Invalid header"); // Should we do it or just ignore invalid (extra) headers?
         tmp.clear();
     }
 }
@@ -72,14 +72,14 @@ void Request::check_start_line(const std::vector<std::string> &start_line)
 {
     // check number of arguments
     if (start_line.size() != 3)
-        error_message("Invalid number of arguments!\n");
+        error_message("Invalid number of arguments");
     
     // check the validity of the method from the list
     for (size_t i = 0; i < methods->size(); i++)
         if (start_line[0] == methods[i])
             _method = methods[i];
     if (_method.empty())
-        error_message("Invalid method!\n");
+        error_message("Invalid method");
     
     // check _uri: if contains "?" -> fill_in query_string() ??
     _uri = start_line[1];
@@ -93,7 +93,7 @@ void Request::check_start_line(const std::vector<std::string> &start_line)
     // check version of protocol:
     _version = start_line[2];
     if (_version != HTTP)
-        error_message("Invalid version of protocol!\n"); // if error - then what?
+        error_message("Invalid version of protocol"); // if error - then what?
 }
 
 void Request::parse_request(std::string &lines)
