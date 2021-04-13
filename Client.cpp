@@ -17,8 +17,7 @@ void	Client::clear_request() {
 }
 
 Client::Client(Socket *listen_sock) 
-: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock),
-_to_parse(""), _request(NULL) {}
+: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _request(NULL) {}
 
 Client::~Client() {
 	if (_fd != -1)
@@ -43,14 +42,16 @@ bool Client::accept_connection()
     _host = _address.sin_family;
     _port = _address.sin_port;
     _inet = _address.sin_addr.s_addr;
-
+    
+    std::cout << "first mention of client_fd: " << _fd << "\n";
+    
     // TEST message:
-	char buffer[1024] = {0};
-	const char* hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 20\n\nServer-Test message!";
-    read(_fd, buffer, 1024);
-	std::cout << buffer << std::endl;
-    send(_fd, hello, strlen(hello), 0);
-	std::cout << "Hello message sent\n\n";
+	// char buffer[1024] = {0};
+	// const char* hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 20\n\nServer-Test message!";
+    // read(_fd, buffer, 1024);
+	// std::cout << buffer << std::endl;
+    // send(_fd, hello, strlen(hello), 0);
+	// std::cout << "Hello message sent\n\n";
     // END of Test;
 
     if (fcntl(_fd, F_SETFL, O_NONBLOCK) < 0)
@@ -70,9 +71,11 @@ void Client::readRequest()
         _request = new Request(this);
 
     // if remain len < buffer size -> change buffer size
-    if (_request->get_remain_len() < buf_size)
-        buf_size = _request->get_remain_len();
+    // if (_request->get_remain_len() < buf_size && _request->get_remain_len() > 0) // + condition of parsing
+    //     buf_size = _request->get_remain_len();
     char buffer[buf_size + 1];
+    // Requests may straddle multiple recv calls
+    //      – Need to maintain state information.
     to_recieve = recv(_fd, &buffer, buf_size, 0);
 
     // in nonblocking case -1 is returned if no messages are available
@@ -85,11 +88,12 @@ void Client::readRequest()
         default:
             buffer[to_recieve] = '\0';
             _to_parse += buffer;
+            std::cout << std::string(buffer) << "\n";
             _request->parse_request(_to_parse); // added conditions
             // cut what we've parsed in case if we parse body
-            if (_request->get_status() == Request::BODY_PARSE)
-                _request->cut_remain_len(to_recieve);
+            // if (_request->get_status() == Request::BODY_PARSE)
+            //     _request->cut_remain_len(to_recieve);
     }
-    _request->parse_request(_to_parse);
+    // _request->parse_request(_to_parse);
     // parse request;
 }

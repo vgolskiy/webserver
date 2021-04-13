@@ -80,7 +80,8 @@ POST:
 
 */
 
-#pragma once
+#ifndef REQUEST_HPP
+#define REQUEST_HPP
 
 #include "Config.hpp"
 
@@ -135,3 +136,5 @@ public:
 	};
 
 };
+
+#endif

@@ -28,9 +28,8 @@ int nfds:
 это значение на единицу и передавать в nfds.
 */
 
-
-# include "Socket.hpp"
 # include "Client.hpp"
+# include "Config.hpp"
 
 void add_client(t_server* server)
 {
@@ -91,10 +90,19 @@ void	set_fds(fd_set &read_fd_sets, fd_set &write_fd_sets, int &nfds)
 	}
 }
 
-void deal_request(fd_set &read_fd_sets, fd_set &write_fd_sets)
+void deal_request(fd_set &read_fd_sets, fd_set &write_fd_sets) // doesnt work appropriately
 {
 	(void) write_fd_sets;
 	(void) read_fd_sets;
+
+	for (size_t i = 0; i != g_config.server.size(); i++)
+	{
+		std::list<Client*>::iterator it = g_config.server[i]->_num_clients.begin();
+		std::list<Client*>::iterator ite = g_config.server[i]->_num_clients.end();
+
+		for (; it != ite; it++)
+			(*it)->readRequest();
+	}
 }
 
 // struct timeval *restrict timeout - specifies the interval that select() should block

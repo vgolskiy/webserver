@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SOCKET_HPP
+#define SOCKET_HPP
 
 # include "Config.hpp"
 # include "Server.hpp"
@@ -26,3 +27,5 @@ class Socket // add this class to struct service
 		void	to_listen(int num_ports);
 		int		get_fd(void) const;
 };
+
+#endif

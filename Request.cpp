@@ -52,13 +52,13 @@ void Request::set_up_headers(const std::vector<std::string> &lines)
 
     for (size_t i = 1; i < lines.size(); i++)
     {
-        flag = false;
         tmp = split(lines[i], ":");
         for (size_t j = 0; j != headers->size(); j++)
         {
             if (tmp[0] == headers[j])
             {
-                _headers[headers[i]] = tmp[1];
+                std::cout << "we're inside" << std::endl;
+                _headers[headers[j]] = tmp[1];
                 flag = true;
             }
         }
@@ -103,7 +103,9 @@ void Request::parse_request(std::string &lines)
     // split initial message (by "\r\n"):
     std::vector<std::string>    split_lines;
     split_lines = split(lines, "\r\n"); // split - from readConfig.cpp
-
+    
+    // for (size_t i = 0; i != split_lines.size(); i++)
+    //     std::cout << "line " << i << ": " << split_lines[i] << "\n";
     // split + check start_line
     std::vector<std::string>    start_line;
     start_line = split(split_lines[0], " "); // Split start line with method

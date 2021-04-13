@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
 # include "Config.hpp"
 # include "Request.hpp"
@@ -60,3 +61,5 @@ public:
 	Request	*get_request(void);
 	void	clear_request(void);
 };
+
+#endif
