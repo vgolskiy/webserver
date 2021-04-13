@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/13 11:27:52 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/13 18:39:04 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ bool Client::accept_connection()
     _port = _address.sin_port;
     _inet = _address.sin_addr.s_addr;
     
-    std::cout << "first mention of client_fd: " << _fd << "\n";
-    
     // TEST message:
 	// char buffer[1024] = {0};
 	// const char* hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 20\n\nServer-Test message!";
@@ -64,8 +62,8 @@ bool Client::accept_connection()
 void Client::readRequest()
 {
     int buf_size = BUFFER_SIZE;
-    int to_recieve;
-
+    int to_recieve = 0;
+	
     // if no request - create one for this client
     if (!_request)
         _request = new Request(this);
@@ -74,26 +72,25 @@ void Client::readRequest()
     // if (_request->get_remain_len() < buf_size && _request->get_remain_len() > 0) // + condition of parsing
     //     buf_size = _request->get_remain_len();
     char buffer[buf_size + 1];
+	//memset(buffer, 0, sizeof(buffer));
     // Requests may straddle multiple recv calls
     //      – Need to maintain state information.
     to_recieve = recv(_fd, &buffer, buf_size, 0);
 
     // in nonblocking case -1 is returned if no messages are available
-    switch(to_recieve)
-    {
-        case 0:
-            _status = Client::EMPTY;
-        case -1:
-            _request->parse_request(_to_parse); // parse what left
-        default:
-            buffer[to_recieve] = '\0';
-            _to_parse += buffer;
-            std::cout << std::string(buffer) << "\n";
-            _request->parse_request(_to_parse); // added conditions
+    if (!to_recieve)
+        _status = Client::EMPTY;
+    else if (to_recieve == -1)
+		_request->parse_request(_to_parse); // parse what left
+    else {
+        buffer[to_recieve] = '\0';
+        _to_parse += buffer;
+        _request->parse_request(_to_parse); // added conditions
             // cut what we've parsed in case if we parse body
             // if (_request->get_status() == Request::BODY_PARSE)
             //     _request->cut_remain_len(to_recieve);
     }
+	//memset(buffer, 0, sizeof(buffer));
     // _request->parse_request(_to_parse);
     // parse request;
 }

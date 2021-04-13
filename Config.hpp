@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 00:18:28 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/13 21:00:36 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,20 +129,11 @@ typedef struct						s_server
 	std::string						host;
 	std::list<unsigned short>		port;
 	Socket							*serv_socket;
-	std::list<Client*> 				_num_clients;
+	std::list<Client*> 				clients;
 }									t_server;
 
-//Server parameters structure for global configurations structure
-
 //Global server configuration parameters structure
-typedef struct						s_config
-{
-	std::vector<t_server*>			server;
-}									t_config;
-
-//Allowing configuration be accessible withing multiple files
-//https://stackoverflow.com/questions/3627941/global-variable-within-multiple-files
-extern t_config						g_config;
+extern std::vector<t_server*>		g_servers;
 
 class Config {
 private:
@@ -159,7 +150,7 @@ public:
 	Config	operator=(const Config &other);
 
 	int		parse_configuration_file(std::vector<std::string> &file_lines);
-	void	init_global_configuration(void);
+	void	init_servers_configuration(void);
 
 private:
 	std::vector<std::string>	parse_line(std::string &line);
@@ -190,7 +181,7 @@ int							ft_atoi(const char *str);
 std::string					read_file(const char *file_path);
 std::vector<std::string>	split(const std::string &s, const std::string &delimiter);
 void						error_message(std::string message);
-void						clear_global_configuration(void);
+void						clear_servers_configuration(void);
 bool						verify_directory(std::string &dir);
 bool						verify_file(std::string &file_path);
 

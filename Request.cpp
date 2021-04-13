@@ -105,15 +105,15 @@ void Request::parse_request(std::string &lines)
     std::vector<std::string>    split_lines;
     split_lines = split(lines, "\r\n"); // split - from readConfig.cpp
     
-    // for (size_t i = 0; i != split_lines.size(); i++)
-    //     std::cout << "line " << i << ": " << split_lines[i] << "\n";
+    for (size_t i = 0; i != split_lines.size(); i++)
+        std::cout << "line " << i << ": " << split_lines[i] << "\n";
     // split + check start_line
-    std::vector<std::string>    start_line;
-    start_line = split(split_lines[0], " "); // Split start line with method
-    check_start_line(start_line);
+    // std::vector<std::string>    start_line;
+    // start_line = split(split_lines[0], " "); // Split start line with method
+    // check_start_line(start_line);
     
-    // divide headers -> to map;
-    set_up_headers(split_lines);
+    // // divide headers -> to map;
+    // set_up_headers(split_lines);
 }
 
 // TODO: coding special signs from URL: !#%^&()=+ и пробел

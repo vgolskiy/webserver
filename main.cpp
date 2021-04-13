@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 00:36:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/13 20:15:52 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 #include "Socket.hpp"
 #include "Server.hpp"
 
-void	init_servers(void); // utils.cpp
+void	init_servers(std::vector<t_server*> &servers); // utils.cpp
 void	signals(void);
-int 	select_loop(void);
+int 	select_loop(std::vector<t_server*> &servers);
 
 int		main() {
 	const char* 				file = CONFIG;
@@ -43,10 +43,11 @@ int		main() {
 	if (config.parse_configuration_file(file_lines))
 		return (EXIT_FAILURE);
 	file_lines.clear();
-	config.init_global_configuration();
-	init_servers();
-	signals();	
-	select_loop();
+	config.init_servers_configuration();
+	std::vector<t_server*> &servers = g_servers;
+	init_servers(servers);
+	signals();
+	select_loop(servers);
 	
 	return (EXIT_SUCCESS);
 }

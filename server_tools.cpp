@@ -34,41 +34,42 @@ int nfds:
 void add_client(t_server* server)
 {
     Client *new_cl = new Client(server->serv_socket);
-    server->_num_clients.push_back(new_cl);
+    server->clients.push_back(new_cl);
 
-	if ((server->_num_clients.back()->accept_connection()) == false)
+	if ((server->clients.back()->accept_connection()) == false)
 	{
-		server->_num_clients.pop_back();
+		server->clients.pop_back();
 		std::cerr << "Failed to establish connection with a client!\n";
 	}
 }
 
-void add_new_client(fd_set &read_fd_sets)
+void add_new_client(std::vector<t_server*> &servers, fd_set &read_fd_sets)
 {
-    for (size_t i = 0; i < g_config.server.size(); i++)
+    for (size_t i = 0; i < servers.size(); i++)
     {
-        if (FD_ISSET(g_config.server[i]->serv_socket->get_fd(), &read_fd_sets))
-            add_client(g_config.server[i]);
+        if (FD_ISSET(servers[i]->serv_socket->get_fd(), &read_fd_sets)) // reduntant?
+            add_client(servers[i]);
     }
 }
 
 // Set socket fds for every server: read_fd_set for servers and both write_and_read_fds for clients
-void	set_fds(fd_set &read_fd_sets, fd_set &write_fd_sets, int &nfds)
+void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
+				fd_set &write_fd_sets, int &nfds)
 {
 	(void)write_fd_sets;
-	for (size_t i = 0; i < g_config.server.size(); i++)
+	for (size_t i = 0; i < servers.size(); i++)
 	{
-		if (!(FD_ISSET(g_config.server[i]->serv_socket->get_fd(), &read_fd_sets)))
+		if (!(FD_ISSET(servers[i]->serv_socket->get_fd(), &read_fd_sets)))
 		{
-			FD_SET(g_config.server[i]->serv_socket->get_fd(), &read_fd_sets);
-			if (g_config.server[i]->serv_socket->get_fd() > nfds)
-				nfds = g_config.server[i]->serv_socket->get_fd();
+			FD_SET(servers[i]->serv_socket->get_fd(), &read_fd_sets);
+			if (servers[i]->serv_socket->get_fd() > nfds)
+				nfds = servers[i]->serv_socket->get_fd();
 		}
 	}
-	for (size_t j = 0; j < g_config.server.size(); j++)
+	for (size_t j = 0; j < servers.size(); j++)
 	{
-		std::list<Client*>::iterator it = g_config.server[j]->_num_clients.begin();
-		std::list<Client*>::iterator ite = g_config.server[j]->_num_clients.end();
+		std::list<Client*>::iterator it = servers[j]->clients.begin();
+		std::list<Client*>::iterator ite = servers[j]->clients.end();
 		for (; it != ite; it++)
 		{	
 			if (!(FD_ISSET((*it)->get_socket_fd(), &read_fd_sets)))
@@ -90,40 +91,43 @@ void	set_fds(fd_set &read_fd_sets, fd_set &write_fd_sets, int &nfds)
 	}
 }
 
-void delete_clients()
+void delete_clients(std::vector<t_server*> &servers)
 {
-	for (size_t j = 0; j < g_config.server.size(); j++)
+	for (size_t j = 0; j < servers.size(); j++)
 	{
-		std::list<Client*>::iterator it = g_config.server[j]->_num_clients.begin();
-		std::list<Client*>::iterator ite = g_config.server[j]->_num_clients.end();
+		std::list<Client*>::iterator it = servers[j]->clients.begin();
+		std::list<Client*>::iterator ite = servers[j]->clients.end();
 		for (; it != ite; it++)
 		{
 			delete *it;
-			it =  g_config.server[j]->_num_clients.erase(it);
+			it =  servers[j]->clients.erase(it);
 			std::cout << "Client is disconnected!\n";
 		}
 	}
 }
 
-void deal_request(fd_set &read_fd_sets, fd_set &write_fd_sets) // doesnt work appropriately
+void deal_request(std::vector<t_server*> &servers,
+					fd_set &read_fd_sets, fd_set &write_fd_sets) // doesnt work appropriately
 {
 	(void) write_fd_sets;
 	(void) read_fd_sets;
 
-	for (size_t i = 0; i != g_config.server.size(); i++)
+	for (size_t i = 0; i != servers.size(); i++)
 	{
-		std::list<Client*>::iterator it = g_config.server[i]->_num_clients.begin();
-		std::list<Client*>::iterator ite = g_config.server[i]->_num_clients.end();
+		std::list<Client*>::iterator it = servers[i]->clients.begin();
+		std::list<Client*>::iterator ite = servers[i]->clients.end();
 
-		for (; it != ite; it++)
-			(*it)->readRequest();
+		for (; it != ite; it++) {
+			if (FD_ISSET((*it)->get_socket_fd(), &read_fd_sets))
+				(*it)->readRequest();
+		}
 	}
 }
 
 // struct timeval *restrict timeout - specifies the interval that select() should block
 // waiting for a file descriptor to become ready - SIGNAL HANDLER?????
 
-int select_loop() {
+int select_loop(std::vector<t_server*> &servers) {
 	fd_set	        read_fd_sets;
 	fd_set	        write_fd_sets;
 	struct timeval  timeout; // Subject: a request to your server should never hang forever -> set timeout
@@ -144,7 +148,7 @@ int select_loop() {
 		FD_ZERO(&write_fd_sets);
 
     	// setting fds: adding readFD and writeFD for each server
-		set_fds(read_fd_sets, write_fd_sets, nfds);
+		set_fds(servers, read_fd_sets, write_fd_sets, nfds);
 
     	// call select
     	to_select = select(nfds + 1, &read_fd_sets, &write_fd_sets, 0, &timeout);
@@ -154,9 +158,9 @@ int select_loop() {
     	else if (to_select == -1)
 			exit_error(errno);
         else {
-            add_new_client(read_fd_sets);
-			deal_request(read_fd_sets, write_fd_sets); // ad conditions;
-			delete_clients();
+            add_new_client(servers, read_fd_sets);
+			deal_request(servers, read_fd_sets, write_fd_sets); // ad conditions;
+			delete_clients(servers);
         }
 	}
 	return EXIT_SUCCESS;
