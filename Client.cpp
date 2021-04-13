@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/12 21:46:37 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/13 11:27:52 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,11 @@ Client::Client(Socket *listen_sock)
 _to_parse(""), _request(NULL) {}
 
 Client::~Client() {
+	if (_fd != -1)
+		close(_fd);
 	clear_request();
 } // TODO: close _fd; delete _request+_response
 //response will be deleted on server side
-//fds will be deleted during global configuration clearance
 
 int         Client::get_socket_fd(){return _fd;}
 
