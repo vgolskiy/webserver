@@ -117,10 +117,8 @@ void deal_request(std::vector<t_server*> &servers,
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
 		std::list<Client*>::iterator ite = servers[i]->clients.end();
 
-		for (; it != ite; it++) {
-			if (FD_ISSET((*it)->get_socket_fd(), &read_fd_sets))
-				(*it)->readRequest();
-		}
+		for (; it != ite; it++)
+			(*it)->readRequest();
 	}
 }
 
@@ -158,7 +156,7 @@ int select_loop(std::vector<t_server*> &servers) {
     	else if (to_select == -1)
 			exit_error(errno);
         else {
-            add_new_client(servers, read_fd_sets);
+			add_new_client(servers, read_fd_sets);
 			deal_request(servers, read_fd_sets, write_fd_sets); // ad conditions;
 			delete_clients(servers);
         }
