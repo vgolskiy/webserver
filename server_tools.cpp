@@ -90,6 +90,21 @@ void	set_fds(fd_set &read_fd_sets, fd_set &write_fd_sets, int &nfds)
 	}
 }
 
+void delete_clients()
+{
+	for (size_t j = 0; j < g_config.server.size(); j++)
+	{
+		std::list<Client*>::iterator it = g_config.server[j]->_num_clients.begin();
+		std::list<Client*>::iterator ite = g_config.server[j]->_num_clients.end();
+		for (; it != ite; it++)
+		{
+			delete *it;
+			it =  g_config.server[j]->_num_clients.erase(it);
+			std::cout << "Client is disconnected!\n";
+		}
+	}
+}
+
 void deal_request(fd_set &read_fd_sets, fd_set &write_fd_sets) // doesnt work appropriately
 {
 	(void) write_fd_sets;
@@ -139,10 +154,9 @@ int select_loop() {
     	else if (to_select == -1)
 			exit_error(errno);
         else {
-            // delete timeout servers ?
             add_new_client(read_fd_sets);
-            // interact with clients (read_fd_sets + write_fd_sets)
-			deal_request(read_fd_sets, write_fd_sets);
+			deal_request(read_fd_sets, write_fd_sets); // ad conditions;
+			delete_clients();
         }
 	}
 	return EXIT_SUCCESS;

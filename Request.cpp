@@ -52,6 +52,7 @@ void Request::set_up_headers(const std::vector<std::string> &lines)
 
     for (size_t i = 1; i < lines.size(); i++)
     {
+        flag = false;
         tmp = split(lines[i], ":");
         for (size_t j = 0; j != headers->size(); j++)
         {
