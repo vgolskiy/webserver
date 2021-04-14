@@ -130,17 +130,15 @@ int select_loop(std::vector<t_server*> &servers) {
 	fd_set	        write_fd_sets;
 	struct timeval  timeout; // Subject: a request to your server should never hang forever -> set timeout
     int             to_select;
+	//Variable is ignored. The nfds parameter is included only for compatibility with Berkeley sockets.
+	//We can set it to max size of fds = 1024 or calculate in progress
+	int				nfds = 0;
 
 	//1) Timeout implementation: https://stackoverflow.com/questions/9847441/setting-socket-timeout
 	timeout.tv_sec = 10;
 	timeout.tv_usec = 0;
-	//Ignored. The nfds parameter is included only for compatibility with Berkeley sockets.
-	//We can set it to max size of fds = 1024 or calculate in progress
-	int nfds;
-
 	while (true)
 	{
-		nfds = 0;
 		FD_ZERO(&read_fd_sets);
 		FD_ZERO(&write_fd_sets);
 
