@@ -167,14 +167,29 @@ void Request::set_cgi_meta_vars()
     //set by yourself?
     _env.push_back("SERVER_SOFTWARE=webserv");
 }
-
+#include <sstream>
 void Request::createResponce() {
+	std::ostringstream tmp;
+	tmp << _status;
+	std::string status = tmp.str();
+	_response = "";
 	if (_method == "HEAD")
 	{
-		_response = "HTTP/1.1"; //+ статус
+		_response += "HTTP/1.1";//+ статус
+		_response += status;
 		_response += "\r\n";
+		//поменять дату, имя сервера
+		std::map<std::string, std::string>::iterator beg = _headers.begin();
+		std::map<std::string, std::string>::iterator end = _headers.end();
+		while (beg != end)
+		{
+			_response += (*beg).first;
+			_response += ": ";
+			_response += (*beg).second;
+			_response += "\r\n";
+			++beg;
+		}
 		
-
 	}
 	else if (_method == "PUT")
 	{
