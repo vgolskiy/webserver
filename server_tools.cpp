@@ -48,7 +48,7 @@ void add_new_client(std::vector<t_server*> &servers, fd_set &read_fd_sets)
     for (size_t i = 0; i < servers.size(); i++)
     {
         if (FD_ISSET(servers[i]->serv_socket->get_fd(), &read_fd_sets)) // reduntant?
-            add_client(servers[i]);
+    	        add_client(servers[i]);
     }
 }
 

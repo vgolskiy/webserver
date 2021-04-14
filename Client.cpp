@@ -72,7 +72,7 @@ void Client::readRequest()
     // if (_request->get_remain_len() < buf_size && _request->get_remain_len() > 0) // + condition of parsing
     //     buf_size = _request->get_remain_len();
     char buffer[buf_size + 1];
-	//memset(buffer, 0, sizeof(buffer));
+    memset(buffer, 0, buf_size);
     // Requests may straddle multiple recv calls
     //      – Need to maintain state information.
     to_recieve = recv(_fd, &buffer, buf_size, 0);
