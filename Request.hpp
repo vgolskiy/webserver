@@ -105,12 +105,16 @@ private:
 	Client*								_client;
 	int									_status;
 	int									_remain_len; // bytes left to read
+	int									_content_len;
+	bool								_chunk;
 public:
 	Request(Client *client);
 	~Request();
 
+	void parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
 	void parse_request(std::string &lines);
-	void check_start_line(const std::vector<std::string> &lines);
+	bool parse_chunk(std::string &lines);
+	bool check_start_line(const std::vector<std::string> &lines);
 	void set_up_headers(const std::vector<std::string> &lines);
 
 	void set_cgi_meta_vars();
@@ -120,10 +124,11 @@ public:
 
 	void createResponce();
 
-
 	std::vector<std::string> get_env();
 	int	get_remain_len();
 	int get_status();
+
+	void print_parsed_request();
 
 	enum status
 	{
@@ -132,6 +137,7 @@ public:
 		HEADERS,
 		C_G_I,
 		MTH,
+		CHUNK,
 		DONE
 	};
 

@@ -10,6 +10,8 @@ Request::Request(Client *client)
     _client = client;
     _remain_len = 0;
     _status = INIT;
+    _content_len = -1;
+    _chunk = false;
 }
 
 Request::~Request() {}
@@ -48,8 +50,8 @@ std::vector<std::string> Request::get_env(){return _env;}
 void remove_spaces(std::string &str) 
 {
     char* chr = const_cast<char*>(str.c_str());
-
     int i = 0;
+
     while (chr[i] == ' ')
         i++;
     str = std::string(&chr[i]);
@@ -64,10 +66,8 @@ void Request::set_up_headers(const std::vector<std::string> &lines)
     {
         flag = false;
         tmp = split(lines[i], ":"); // Special case for localhost:XXXX
-
         for (size_t i = 0; i < tmp.size(); i++)
             remove_spaces(tmp[i]);
-
         for (size_t j = 0; j != headers->size(); j++)
         {
             if (tmp[0] == headers[j])
@@ -76,66 +76,145 @@ void Request::set_up_headers(const std::vector<std::string> &lines)
                 flag = true;
             }
         }
-        // if (flag == false)
-        //     error_message("Invalid header"); // Should we do it or just ignore invalid (extra) headers?
+        if (tmp[0] == "Content-Length")
+        {   
+            try
+            {
+                _content_len = std::stoi(tmp[0]);
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+        }
+        if (tmp[0] == "Transfer-Encoding" && tmp[1] == "chunked")
+        {
+            _chunk = true;
+            _content_len = -1;
+        }
         tmp.clear();
     }
 }
 
-void Request::check_start_line(const std::vector<std::string> &start_line)
+bool Request::check_start_line(const std::vector<std::string> &start_line)
 {
     /* check number of arguments */
     if (start_line.size() != 3)
-        error_message("Invalid number of arguments");
-    else 
-    {
-        /* check the validity of the method from the list */
-        for (size_t i = 0; i < methods->size(); i++)
-            if (start_line[0] == methods[i])
-                _method = methods[i];
-        std::cout << "METHOD: " << _method << "\n";
+        return false; // Invalid number of arguments
+  
+    /* check the validity of the method from the list */
+    for (size_t i = 0; i < methods->size(); i++)
+        if (start_line[0] == methods[i])
+            _method = methods[i];
 
-        /* In case of no method added */
-        if (_method.empty())
-            error_message("Invalid method");
-        
-        /* check _uri: if contains "?" -> fill_in query_string() */
-        _uri = start_line[1];
-        std::cout << "URI: " << _uri << "\n";
-        if (_uri.find("?") != std::string::npos)
-        {
-            _query_str = _uri.substr(_uri.find("?") + 1, std::string::npos);
-            _uri.erase(_uri.find("?"), std::string::npos); // cut unnessesary part
-        }
-        
-        /* check version of protocol: */
-        _version = start_line[2];
-        std::cout << "VERSION: "<< _version << "\n";
-        if (_version != HTTP)
-            error_message("Invalid version of protocol"); // if error - then what?
+    /* In case of no method added */
+    if (_method.empty())
+        return false; // Invalid method
+    
+    /* check _uri: if contains "?" -> fill_in query_string() */
+    _uri = start_line[1];
+    if (_uri.find("?") != std::string::npos)
+    {
+        _query_str = _uri.substr(_uri.find("?") + 1, std::string::npos);
+        _uri.erase(_uri.find("?"), std::string::npos); // cut unnessesary part
     }
+    
+    /* check version of protocol: */
+    _version = start_line[2];
+    if (_version != HTTP)
+        return false; // Invalid version
+    _status = Request::HEADERS;
+    return true;
+}
+
+void Request::parse_init(std::vector<std::string> &split_lines, std::string &orig_lines)
+{
+    for (size_t i = 0; i < split_lines.size(); i++)
+    {
+        if (split_lines[i].empty())
+        {
+            // if orig_lines are all empty -> just delete everything and stopped on the INIT
+            split_lines.erase(split_lines.begin()); // delete empty lines
+            orig_lines.erase(0, orig_lines.find("\r\n") + 2);
+        }
+        else
+        {
+            _status = Request::MTH;
+            break ;
+        }
+    }
+}
+
+// <длина блока в HEX><CRLF><содержание блока><CRLF>
+bool Request::parse_chunk(std::string &lines)
+{
+    if (lines.find("\r\n") == std::string::npos)
+        return false;
+    // TODO: check length in hex
+
+
+
+    return true;
+}
+
+void Request::print_parsed_request()
+{
+    std::cout << GREEN"-------PRINT PARSED REQUEST-------"RESET << std::endl;
+
+    std::cout << BLUE"METHOD: " << _method << "\n"RESET;
+    std::cout << BROWN"URI: " << _uri << "\n"RESET;
+    std::cout << RED"VERSION: "<< _version << "\n"RESET;
+
+    std::map<std::string, std::string>::iterator  it = _headers.begin();
+    std::map<std::string, std::string>::iterator  ite = _headers.end();
+    std::cout << BLACK"\nHEADERS:\n"RESET;
+    for (; it != ite; it++)
+        std::cout << ""MAGENTA << (*it).first << RESET": "CYAN << (*it).second << "\n"RESET;
+    std::cout << std::endl;
 }
 
 void Request::parse_request(std::string &lines)
 {
+    std::vector<std::string>    split_lines;
+    
     if (_status == Request::DONE)
         return ;
-    
-    std::vector<std::string>    split_lines;
-    split_lines = split(lines, "\r\n\r\n"); // remove last two empty lines
-    split_lines = split(split_lines[0], "\r\n"); // split the rest by delimeter
+    if (_status == Request::INIT)
+    {
+        split_lines = split(lines, "\r\n"); // split initial message
+        parse_init(split_lines, lines);
+        _status = Request::MTH;
+    }
+    if (_status == Request::MTH)
+    {
+        std::vector<std::string>    start_line;
+        start_line = split(split_lines[0], " ");
+        if ((check_start_line(start_line)) == false)
+            error_message("Bad request sent by client!"); // TODO: return (?)
+    }
+    if (_status == Request::HEADERS)
+    {
+        split_lines = split(lines, "\r\n\r\n"); // remove last lines
+        split_lines = split(split_lines[0], "\r\n"); // main split
+        set_up_headers(split_lines);
+        lines.erase(0, lines.find("\r\n\r\n") + 4); // erase headers
+        if (_content_len > 0)
+            _status = Request::BODY_PARSE;
+        else if (_chunk == true)
+            _status = Request::CHUNK;
+    }
+    if (_status == Request::BODY_PARSE)
+    {
+        // Lines of characters in the body MUST be limited to 998 characters - https://tools.ietf.org/html/rfc2822.html#section-2.2
+        _body = lines;
+        _status = Request::DONE;
+    }
+    if (_status == Request::CHUNK) // https://docs.python.org/3/library/http.client.html
+        if ((parse_chunk(lines)) == false)
+            error_message("Bad request of chunk request!");
 
-    std::vector<std::string>    start_line;
-    start_line = split(split_lines[0], " ");
-    check_start_line(start_line);
-    
-    set_up_headers(split_lines);
-
-    /* check-print headers - delete later */
-    std::map<std::string, std::string>::iterator  it = _headers.begin();
-    std::map<std::string, std::string>::iterator  ite = _headers.end();
-    for (; it != ite; it++)
-        std::cout << "header: " << (*it).first << ", value: " << (*it).second << "\n";
+    /* check-print request - delete later */
+    print_parsed_request();
 }
 
 // TODO: coding special signs from URL: !#%^&()=+ и пробел

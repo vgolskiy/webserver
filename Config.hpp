@@ -44,6 +44,17 @@
 # define	CONFIG		"content/default"
 # define	SERVER_NAME	""
 
+// COLORS
+# define BLACK "\e[1;30m" 
+# define RED "\e[0;31m"
+# define GREEN "\e[1;32m"
+# define BROWN "\e[0;33m" 
+# define BLUE "\e[0;34m"
+# define MAGENTA "\e[0;35m"
+# define CYAN "\e[0;36m"
+# define GRAY "\e[0;37m"
+# define RESET "\e[m"
+
 //SERVER KEYS
 # define	SERVER		"server"
 // The parameter to server_name can be a full (exact) name, a wildcard, or a regular expression.

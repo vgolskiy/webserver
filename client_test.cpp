@@ -28,7 +28,7 @@ int main() {
 	int sock = 0;
 	size_t	sent = 0;
 	struct sockaddr_in serv_addr;
-	const char* hello = "Hello from client";
+	const char* hello = "POST /cgi-bin/process.cgi HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\r\nHost: www.example.com\r\nContent-Type: application/x-www-form-urlencoded\r\nTransfer-Encoding: chunked\r\nAccept-Language: ru-ru\r\nAccept-Encoding: gzip, deflate\r\nConnection: Keep-Alive\r\n\r\n\r\n";
 	char buffer[1024] = {0};
 
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
