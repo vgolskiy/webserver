@@ -134,12 +134,11 @@ int select_loop(std::vector<t_server*> &servers) {
 	//1) Timeout implementation: https://stackoverflow.com/questions/9847441/setting-socket-timeout
 	timeout.tv_sec = 10;
 	timeout.tv_usec = 0;
-    int is_Running = 1;
 	//Ignored. The nfds parameter is included only for compatibility with Berkeley sockets.
 	//We can set it to max size of fds = 1024 or calculate in progress
 	int nfds;
 
-	while (is_Running)
+	while (true)
 	{
 		nfds = 0;
 		FD_ZERO(&read_fd_sets);

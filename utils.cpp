@@ -21,9 +21,14 @@ void	signal_handler(int signal)
 	}
 }
 
-// Shall we check if any of servers have been initiated?
-void init_servers(std::vector<t_server*> &servers)
+/*
+** Starting servers services
+** Servers not empty verification
+*/
+int		start_servers(std::vector<t_server*> &servers)
 {
+	if (servers.empty())
+		return (EXIT_FAILURE);
     for (size_t i = 0; i < servers.size(); i++) // TODO: error checking!
     {
 		//primary port is the first port in list by default
@@ -33,6 +38,7 @@ void init_servers(std::vector<t_server*> &servers)
 		servers[i]->serv_socket->to_bind();
 		servers[i]->serv_socket->to_listen(SOMAXCONN); // Max length for listen (?)
     }
+	return (EXIT_SUCCESS);
 }
 
 void	exit_error(int err) {
