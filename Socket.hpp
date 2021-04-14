@@ -2,7 +2,6 @@
 #define SOCKET_HPP
 
 # include "Config.hpp"
-# include "Server.hpp"
 
 class Config;
 

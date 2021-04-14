@@ -6,17 +6,13 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/14 21:38:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 00:14:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 #include "Socket.hpp"
 #include "Server.hpp"
-
-int		start_servers(std::vector<t_server*> &servers); // utils.cpp
-void	signals(void);
-int 	select_loop(std::vector<t_server*> &servers);
 
 int		main() {
 	const char* 				file = CONFIG;

@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "Config.hpp"
 
 // Если процесс пытается записать данные в оборванный сокет при помощи вы­зова write или send,
 // то он получит сигнал SIGPIPE, который может быть пере­хвачен соответствующим обработчиком сигнала
@@ -19,26 +19,6 @@ void	signal_handler(int signal)
 		clear_servers_configuration();
 		exit(EXIT_SUCCESS);
 	}
-}
-
-/*
-** Starting servers services
-** Servers not empty verification
-*/
-int		start_servers(std::vector<t_server*> &servers)
-{
-	if (servers.empty())
-		return (EXIT_FAILURE);
-    for (size_t i = 0; i < servers.size(); i++) // TODO: error checking!
-    {
-		//primary port is the first port in list by default
-		unsigned short port = servers[i]->port.front();
-		std::string host = servers[i]->host;
-		servers[i]->serv_socket = new Socket(port, host);
-		servers[i]->serv_socket->to_bind();
-		servers[i]->serv_socket->to_listen(SOMAXCONN); // Max length for listen (?)
-    }
-	return (EXIT_SUCCESS);
 }
 
 void	exit_error(int err) {

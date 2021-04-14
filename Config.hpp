@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/13 21:00:36 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 00:08:37 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <netinet/in.h>
+# include "Client.hpp"
 # include "Socket.hpp"
 
 //GET NEXT LINE
@@ -195,5 +196,9 @@ void						error_message(std::string message);
 void						clear_servers_configuration(void);
 bool						verify_directory(std::string &dir);
 bool						verify_file(std::string &file_path);
+void						exit_error(int err);
+void						exit_error_msg(std::string msg);
+void						signal_handler(int signal);
+void						signals(void);
 
 #endif
