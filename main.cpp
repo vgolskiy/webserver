@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/13 20:15:52 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/14 21:38:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "Socket.hpp"
 #include "Server.hpp"
 
-void	init_servers(std::vector<t_server*> &servers); // utils.cpp
+int		start_servers(std::vector<t_server*> &servers); // utils.cpp
 void	signals(void);
 int 	select_loop(std::vector<t_server*> &servers);
 
@@ -45,7 +45,8 @@ int		main() {
 	file_lines.clear();
 	config.init_servers_configuration();
 	std::vector<t_server*> &servers = g_servers;
-	init_servers(servers);
+	if (start_servers(servers))
+		return (EXIT_FAILURE);
 	signals();
 	select_loop(servers);
 	

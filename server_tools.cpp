@@ -136,7 +136,7 @@ int select_loop(std::vector<t_server*> &servers) {
 	timeout.tv_usec = 0;
     int is_Running = 1;
 	//Ignored. The nfds parameter is included only for compatibility with Berkeley sockets.
-	//Setting it to max size of fds = 1024
+	//We can set it to max size of fds = 1024 or calculate in progress
 	int nfds;
 
 	while (is_Running)
