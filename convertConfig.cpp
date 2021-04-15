@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   convertConfig.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/13 21:01:43 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 17:02:58 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ void	Config::init_servers_configuration(void)
 		server->port = _servers[i].port;
 		server->host = _servers[i].host;
 		server->error_page = _servers[i].error_page;
+		server->time_start = current_time();
 		g_servers.push_back(server);
 	}
 }

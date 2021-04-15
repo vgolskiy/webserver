@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 13:39:42 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 16:51:44 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	Client::clear_request() {
 }
 
 Client::Client(Socket *listen_sock) 
-: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _request(NULL) {}
+: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _request(NULL), _time_start(current_time()) {}
 
 Client::~Client() {
 	if (_fd != -1)
@@ -31,6 +31,10 @@ int         Client::get_socket_fd(){return _fd;}
 int         Client::get_s_addr(){return _address.sin_addr.s_addr;}
 
 Request*    Client::get_request(){return _request;}
+
+int			Client::get_status() const {return _status;}
+
+long		Client::get_start_time() const {return _time_start;}
 
 bool Client::accept_connection()
 {

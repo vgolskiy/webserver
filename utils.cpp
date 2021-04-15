@@ -32,3 +32,10 @@ void	exit_error_msg(std::string msg) {
 	clear_servers_configuration();
 	exit(EXIT_FAILURE);
 }
+
+long	current_time() {
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
