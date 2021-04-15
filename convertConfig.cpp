@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   convertConfig.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/13 21:01:43 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 18:31:30 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ void	Config::init_servers_configuration(void)
 		server->port = _servers[i].port;
 		server->host = _servers[i].host;
 		server->error_page = _servers[i].error_page;
+		server->time_start = current_time();
 		g_servers.push_back(server);
 	}
 }
@@ -195,11 +196,11 @@ void	clear_servers_configuration() {
 	int	fd;
 
 	for (size_t i = 0; i < g_servers.size(); ++i) {
-		if ((fd = g_servers[i]->serv_socket->get_fd()) >= 0)
+		if ((fd = g_servers[i]->socket->get_fd()) >= 0)
 			close (fd);
 		while (!g_servers[i]->clients.empty())
 			delete g_servers[i]->clients.front();
-		delete g_servers[i]->serv_socket;
+		delete g_servers[i]->socket;
 		delete g_servers[i];
 	}
 }

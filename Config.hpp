@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 00:08:37 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 18:30:28 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <map>
 # include <sys/types.h>
 # include <sys/stat.h>
+# include <sys/time.h>
 
 //Server
 # include <sys/socket.h>
@@ -140,7 +141,8 @@ typedef struct						s_server
 	std::vector<t_location> 		location;
 	std::string						host;
 	std::list<unsigned short>		port;
-	Socket							*serv_socket;
+	long							time_start;
+	Socket							*socket;
 	std::list<Client*> 				clients;
 }									t_server;
 
@@ -196,9 +198,12 @@ void						error_message(std::string message);
 void						clear_servers_configuration(void);
 bool						verify_directory(std::string &dir);
 bool						verify_file(std::string &file_path);
+
+//UTILS.CPP
 void						exit_error(int err);
 void						exit_error_msg(std::string msg);
 void						signal_handler(int signal);
 void						signals(void);
+long						current_time(void);
 
 #endif

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/04/15 19:28:29 by mskinner          #+#    #+#             */
+/*   Updated: 2021/04/15 19:28:32 by mskinner         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Config.hpp"
 
 // Если процесс пытается записать данные в оборванный сокет при помощи вы­зова write или send,
@@ -31,4 +43,11 @@ void	exit_error_msg(std::string msg) {
 	error_message(msg);
 	clear_servers_configuration();
 	exit(EXIT_FAILURE);
+}
+
+long	current_time() {
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 13:39:42 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 18:36:25 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	Client::clear_request() {
 }
 
 Client::Client(Socket *listen_sock) 
-: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _request(NULL) {}
+: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _request(NULL), _time_start(current_time()) {}
 
 Client::~Client() {
 	if (_fd != -1)
@@ -26,19 +26,22 @@ Client::~Client() {
 } // TODO: close _fd; delete _request+_response
 //response will be deleted on server side
 
-int         Client::get_socket_fd(){return _fd;}
+int         Client::get_fd(){return _fd;}
 
 int         Client::get_s_addr(){return _address.sin_addr.s_addr;}
 
 Request*    Client::get_request(){return _request;}
 
-bool Client::accept_connection()
+int			Client::get_status() const {return _status;}
+
+long		Client::get_start_time() const {return _time_start;}
+
+void	Client::accept_connection()
 {
     int addrlen = sizeof(_address);
 
 	if ((_fd = accept(_listen_sock->get_fd(), (struct sockaddr*)&_address, (socklen_t*)&addrlen)) == -1)
-		exit_error(errno); // is it better to throw exception?
-		//just doing the same behavior in all cases
+		throw (errno);
     _host = _address.sin_family;
     _port = _address.sin_port;
     _inet = _address.sin_addr.s_addr;
@@ -53,10 +56,8 @@ bool Client::accept_connection()
     // END of Test;
 
     if (fcntl(_fd, F_SETFL, O_NONBLOCK) < 0)
-		exit_error(errno);
+		throw (errno);
     _status = Client::ALIVE;
-
-    return true;
 }
 
 void Client::readRequest()

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Socket.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/04/15 19:28:49 by mskinner          #+#    #+#             */
+/*   Updated: 2021/04/15 20:22:18 by mskinner         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Socket.hpp"
 
 Socket::Socket(void) : _fd(-1), _port(0), _opt(1), _host(""), _address() {};
@@ -40,7 +52,7 @@ int		Socket::get_fd(void) const {
 Socket::Socket(int port, std::string host) : _port(port), _opt(1), _host(host) {
     init_socket();
 
-    if((_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) //After that moment we are closing fds' during global structure cleaning
+    if((_fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) //After that moment we are closing fds' during global structure cleaning
 		exit_error(errno);
     if (fcntl(_fd, F_SETFL, O_NONBLOCK) < 0)
 		exit_error(errno);
