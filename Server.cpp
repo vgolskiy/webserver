@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 01:05:40 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 13:42:21 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	add_client(t_server* server)
 	if ((server->clients.back()->accept_connection()) == false)
 	{
 		server->clients.pop_back();
-		std::cerr << "Failed to establish connection with a client!\n";
+		error_message("Failed to establish connection with a client");
 	}
 }
 
@@ -140,7 +140,8 @@ void	deal_request(std::vector<t_server*> &servers,
 int		select_loop(std::vector<t_server*> &servers) {
 	fd_set	        read_fd_sets;
 	fd_set	        write_fd_sets;
-	struct timeval  timeout; // Subject: a request to your server should never hang forever -> set timeout
+	// Subject: a request to your server should never hang forever -> set timeout
+	struct timeval  timeout;
     int             to_select;
 	//Variable is ignored. The nfds parameter is included only for compatibility with Berkeley sockets.
 	//We can set it to max size of fds = 1024 or calculate in progress
@@ -193,6 +194,7 @@ int		start_servers(std::vector<t_server*> &servers)
 		servers[i]->serv_socket = new Socket(port, host);
 		servers[i]->serv_socket->to_bind();
 		servers[i]->serv_socket->to_listen(SOMAXCONN); // Max length for listen (?)
+		std::cout << "Server " << servers[i]->name.front() << " is litening to port " << ntohs(servers[i]->port.front()) << std::endl;
     }
 	return (EXIT_SUCCESS);
 }

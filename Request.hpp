@@ -111,24 +111,20 @@ public:
 	Request(Client *client);
 	~Request();
 
-	void parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
-	void parse_request(std::string &lines);
-	bool parse_chunk(std::string &lines);
-	bool check_start_line(const std::vector<std::string> &lines);
-	void set_up_headers(const std::vector<std::string> &lines);
-
-	void set_cgi_meta_vars();
-	void cut_remain_len(int to_cut);
-
-	std::string find_header(std::string header);
-
-	void createResponce();
-
+	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
+	void		parse_request(std::string &lines);
+	bool		parse_chunk(std::string &lines);
+	bool		check_start_line(const std::vector<std::string> &lines);
+	void		set_up_headers(const std::vector<std::string> &lines);	
+	void		set_cgi_meta_vars();
+	void		cut_remain_len(int to_cut);
+	std::string	find_header(std::string header);
+	void		createResponce();
+	int			get_remain_len();
+	int 		get_status();
+	int			get_content_length();
+	void		print_parsed_request();
 	std::vector<std::string> get_env();
-	int	get_remain_len();
-	int get_status();
-
-	void print_parsed_request();
 
 	enum status
 	{
@@ -140,7 +136,6 @@ public:
 		CHUNK,
 		DONE
 	};
-
 };
 
 #endif

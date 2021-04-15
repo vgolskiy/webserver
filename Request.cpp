@@ -41,6 +41,8 @@ std::string const Request::headers[] = {
 
 int Request::get_remain_len(){return _remain_len;}
 
+int	Request::get_content_length() {return _content_len;}
+
 int Request::get_status(){return _status;}
 
 void Request::cut_remain_len(int to_cut){_remain_len -= to_cut;}
@@ -211,7 +213,7 @@ void Request::parse_request(std::string &lines)
     }
     if (_status == Request::CHUNK) // https://docs.python.org/3/library/http.client.html
         if ((parse_chunk(lines)) == false)
-            error_message("Bad request of chunk request!");
+            error_message("Bad chunk request");
 
     /* check-print request - delete later */
     print_parsed_request();

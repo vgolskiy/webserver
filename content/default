@@ -18,3 +18,24 @@ server {
     error_page   500 502 503 504;
 	
 }
+
+server {
+    listen 8080;
+	listen localhost:8080;
+
+	server_name	webserv;
+
+
+    location /wordpress {
+        index   	index.php;
+		methods		GET,PUT,POST;
+		root		./content;
+		cgi_path	./content;
+		php_path	./content;
+		autoindex	off;
+		auth		test:test;
+    }
+
+    error_page   500 502 503 504;
+	
+}
