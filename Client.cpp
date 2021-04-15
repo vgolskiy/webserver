@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/13 18:39:04 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 13:39:42 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,21 +60,21 @@ bool Client::accept_connection()
 }
 
 void Client::readRequest()
-{
-    int buf_size = BUFFER_SIZE;
-    int to_recieve = 0;
-	
+{	
     // if no request - create one for this client
     if (!_request)
         _request = new Request(this);
 
-    // if remain len < buffer size -> change buffer size
-    // if (_request->get_remain_len() < buf_size && _request->get_remain_len() > 0) // + condition of parsing
-    //     buf_size = _request->get_remain_len();
-    char buffer[buf_size + 1];
+    /*
+	** In case of chunk request we changing BUFFER_SIZE to chunk_size
+	** if remain len < buffer size -> change buffer size
+    */
+    int		buf_size = _request->get_content_length() > 0 ? _request->get_content_length() : BUFFER_SIZE;
+    char	buffer[buf_size + 1];
     memset(buffer, 0, buf_size);
     // Requests may straddle multiple recv calls
     //      – Need to maintain state information.
+    int		to_recieve = 0;
     to_recieve = recv(_fd, &buffer, buf_size, 0);
 
     // in nonblocking case -1 is returned if no messages are available

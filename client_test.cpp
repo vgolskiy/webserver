@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client_test.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 23:17:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/13 18:26:32 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 12:54:52 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string>
-#define PORT 8000 
+#define PORT 8080 
    
 int main() { 
 	int sock = 0;
