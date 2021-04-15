@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 18:25:47 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 18:50:46 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,9 @@ int		start_servers(std::vector<t_server*> &servers)
 		//primary port is the first port in list by default
 		unsigned short port = servers[i]->port.front();
 		std::string host = servers[i]->host;
-		servers[i]->serv_socket = new Socket(port, host);
-		servers[i]->serv_socket->to_bind();
-		servers[i]->serv_socket->to_listen(SOMAXCONN); // Max length for listen (?)
+		servers[i]->socket = new Socket(port, host);
+		servers[i]->socket->to_bind();
+		servers[i]->socket->to_listen(SOMAXCONN); // Max length for listen (?)
 		std::cout << "Server " << servers[i]->name.front() << " is litening to port " << ntohs(servers[i]->port.front()) << std::endl;
     }
 	return (EXIT_SUCCESS);
@@ -92,8 +92,8 @@ void	delete_upon_timeout(std::vector<t_server*> &servers, long timeout_server, l
 
 void	add_new_client(std::vector<t_server*> &servers, fd_set &read_fd_sets) {
     for (size_t i = 0; i < servers.size(); i++) {
-        if (FD_ISSET(servers[i]->serv_socket->get_fd(), &read_fd_sets)) {
-			Client *new_cl = new Client(servers[i]->serv_socket);
+        if (FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets)) {
+			Client *new_cl = new Client(servers[i]->socket);
 			try {
 				new_cl->accept_connection();
 				servers[i]->clients.push_back(new_cl);
@@ -113,32 +113,29 @@ void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
 	(void)write_fd_sets;
 	for (size_t i = 0; i < servers.size(); i++)
 	{
-		if (!(FD_ISSET(servers[i]->serv_socket->get_fd(), &read_fd_sets)))
+		if (!(FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets)))
 		{
-			FD_SET(servers[i]->serv_socket->get_fd(), &read_fd_sets);
-			if (servers[i]->serv_socket->get_fd() > nfds)
-				nfds = servers[i]->serv_socket->get_fd();
+			FD_SET(servers[i]->socket->get_fd(), &read_fd_sets);
+			if (servers[i]->socket->get_fd() > nfds)
+				nfds = servers[i]->socket->get_fd();
 		}
-	}
-	for (size_t j = 0; j < servers.size(); j++)
-	{
-		std::list<Client*>::iterator it = servers[j]->clients.begin();
-		std::list<Client*>::iterator ite = servers[j]->clients.end();
-		for (; it != ite; it++)
+
+		std::list<Client*>::iterator it = servers[i]->clients.begin();
+		for (; it != servers[i]->clients.end(); ++it)
 		{	
-			if (!(FD_ISSET((*it)->get_socket_fd(), &read_fd_sets)))
+			if (!(FD_ISSET((*it)->get_fd(), &read_fd_sets)))
 			{
-				FD_SET((*it)->get_socket_fd(), &read_fd_sets);
-				if ((*it)->get_socket_fd() > nfds)
-					nfds = (*it)->get_socket_fd();
+				FD_SET((*it)->get_fd(), &read_fd_sets);
+				if ((*it)->get_fd() > nfds)
+					nfds = (*it)->get_fd();
 			}
 			if ((*it)->get_request()) // TODO: add conditions
 			{
-				if (!(FD_ISSET((*it)->get_socket_fd(), &write_fd_sets)))
+				if (!(FD_ISSET((*it)->get_fd(), &write_fd_sets)))
 				{
-					FD_SET((*it)->get_socket_fd(), &write_fd_sets);
-					if ((*it)->get_socket_fd() > nfds)
-						nfds = (*it)->get_socket_fd();
+					FD_SET((*it)->get_fd(), &write_fd_sets);
+					if ((*it)->get_fd() > nfds)
+						nfds = (*it)->get_fd();
 				}
 			}
 		}
@@ -168,12 +165,9 @@ void	deal_request(std::vector<t_server*> &servers,
 
 	for (size_t i = 0; i != servers.size(); i++) {
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
-
 		for (; it != servers[i]->clients.end(); ++it) {
-			//if (FD_ISSET((*it)->get_socket_fd(), &read_fd_sets)) {
-				servers[i]->time_start = current_time();
-				(*it)->readRequest();
-			//}
+			servers[i]->time_start = current_time();
+			(*it)->readRequest();
 		}
 	}
 }

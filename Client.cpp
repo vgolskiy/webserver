@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 17:27:11 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 18:36:25 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Client::~Client() {
 } // TODO: close _fd; delete _request+_response
 //response will be deleted on server side
 
-int         Client::get_socket_fd(){return _fd;}
+int         Client::get_fd(){return _fd;}
 
 int         Client::get_s_addr(){return _address.sin_addr.s_addr;}
 

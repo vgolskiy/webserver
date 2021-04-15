@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 17:02:58 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 18:30:28 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ typedef struct						s_server
 	std::string						host;
 	std::list<unsigned short>		port;
 	long							time_start;
-	Socket							*serv_socket;
+	Socket							*socket;
 	std::list<Client*> 				clients;
 }									t_server;
 
