@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 16:51:44 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 17:27:11 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ public:
 	Client(Socket *listen_sock);
 	~Client();
 
-	bool	accept_connection(void);
+	void	accept_connection(void);
 	void	readRequest(void);
 
 	int		get_socket_fd(void);

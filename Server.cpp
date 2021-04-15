@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 17:15:15 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 17:43:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,22 +90,20 @@ void	delete_upon_timeout(std::vector<t_server*> &servers, long timeout_server, l
 	}
 }
 
-void	add_client(t_server* server)
-{
+void	add_client(t_server* server) {
     Client *new_cl = new Client(server->serv_socket);
-    server->clients.push_back(new_cl);
-
-	if ((server->clients.back()->accept_connection()) == false)
-	{
-		server->clients.pop_back();
-		error_message("Failed to establish connection with a client");
+	try {
+		new_cl->accept_connection();
+		server->clients.push_back(new_cl);
+		std::cout << "Client connected with a " << server->name.front() << std::endl;
+	}
+	catch (int e) {
+		error_message("Failed to connect with a client: " + std::string(strerror(e)));
 	}
 }
 
-void	add_new_client(std::vector<t_server*> &servers, fd_set &read_fd_sets)
-{
-    for (size_t i = 0; i < servers.size(); i++)
-    {
+void	add_new_client(std::vector<t_server*> &servers, fd_set &read_fd_sets) {
+    for (size_t i = 0; i < servers.size(); i++) {
         if (FD_ISSET(servers[i]->serv_socket->get_fd(), &read_fd_sets)) // reduntant?
     	        add_client(servers[i]);
     }

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 16:51:44 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 17:27:11 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,12 @@ int			Client::get_status() const {return _status;}
 
 long		Client::get_start_time() const {return _time_start;}
 
-bool Client::accept_connection()
+void	Client::accept_connection()
 {
     int addrlen = sizeof(_address);
 
 	if ((_fd = accept(_listen_sock->get_fd(), (struct sockaddr*)&_address, (socklen_t*)&addrlen)) == -1)
-		exit_error(errno); // is it better to throw exception?
-		//just doing the same behavior in all cases
+		throw (errno);
     _host = _address.sin_family;
     _port = _address.sin_port;
     _inet = _address.sin_addr.s_addr;
@@ -57,10 +56,8 @@ bool Client::accept_connection()
     // END of Test;
 
     if (fcntl(_fd, F_SETFL, O_NONBLOCK) < 0)
-		exit_error(errno);
+		throw (errno);
     _status = Client::ALIVE;
-
-    return true;
 }
 
 void Client::readRequest()
