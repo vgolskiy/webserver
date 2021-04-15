@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 18:50:46 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 20:41:59 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	delete_upon_timeout(std::vector<t_server*> &servers, long timeout_server, l
 	}
 }
 
-void	add_new_client(std::vector<t_server*> &servers, fd_set &read_fd_sets) {
+void	add_new_client(std::vector<t_server*> &servers, const fd_set &read_fd_sets) {
     for (size_t i = 0; i < servers.size(); i++) {
         if (FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets)) {
 			Client *new_cl = new Client(servers[i]->socket);
@@ -157,17 +157,23 @@ void	delete_clients(std::vector<t_server*> &servers)
 	}
 }
 
+/*
+** After select() has returned, readfds will be cleared of
+** all file descriptors except for those that are ready for reading
+*/
 void	deal_request(std::vector<t_server*> &servers,
-					fd_set &read_fd_sets, fd_set &write_fd_sets) // doesnt work appropriately
+					const fd_set &read_fd_sets, const fd_set &write_fd_sets) // doesnt work appropriately
 {
-	(void) write_fd_sets;
-	(void) read_fd_sets;
-
+	(void)read_fd_sets;
+	(void)write_fd_sets;
 	for (size_t i = 0; i != servers.size(); i++) {
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
 		for (; it != servers[i]->clients.end(); ++it) {
-			servers[i]->time_start = current_time();
-			(*it)->readRequest();
+		//	if (FD_ISSET((*it)->get_fd(), &read_fd_sets)
+		//		|| (FD_ISSET((*it)->get_fd(), &write_fd_sets))) {
+				servers[i]->time_start = current_time();
+				(*it)->readRequest();
+		//	}
 		}
 	}
 }
