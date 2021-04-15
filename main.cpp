@@ -6,17 +6,13 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:24:50 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 00:36:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 00:14:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 #include "Socket.hpp"
 #include "Server.hpp"
-
-void	init_servers(void); // utils.cpp
-void	signals(void);
-int 	select_loop(void);
 
 int		main() {
 	const char* 				file = CONFIG;
@@ -43,10 +39,12 @@ int		main() {
 	if (config.parse_configuration_file(file_lines))
 		return (EXIT_FAILURE);
 	file_lines.clear();
-	config.init_global_configuration();
-	init_servers();
-	signals();	
-	select_loop();
+	config.init_servers_configuration();
+	std::vector<t_server*> &servers = g_servers;
+	if (start_servers(servers))
+		return (EXIT_FAILURE);
+	signals();
+	select_loop(servers);
 	
 	return (EXIT_SUCCESS);
 }

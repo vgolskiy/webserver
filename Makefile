@@ -2,8 +2,8 @@ NAME = webserv
 
 INCLUDE = ./includes/
 HEADERS = 	Client.hpp \
-			Server.hpp \
 			Config.hpp \
+			Server.hpp \
 			Socket.hpp \
 			Request.hpp \
 #HEADERS = $(addprefix $(INCLUDE), $(HEADERS))
@@ -12,10 +12,9 @@ SRC_DIR = ./srcs/
 SRCS = 	main.cpp \
 		utils.cpp \
 		Socket.cpp \
-		Server.cpp \
 		Client.cpp \
 		readConfig.cpp \
-		server_tools.cpp \
+		Server.cpp \
 		convertConfig.cpp \
 		Request.cpp \
 		

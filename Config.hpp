@@ -6,11 +6,9 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 00:18:28 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 00:08:37 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#pragma once
 
 #ifndef _CONFIG_HPP_
 # define _CONFIG_HPP_
@@ -34,6 +32,7 @@
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <netinet/in.h>
+# include "Client.hpp"
 # include "Socket.hpp"
 
 //GET NEXT LINE
@@ -45,6 +44,17 @@
 //DEFAULT VALUES
 # define	CONFIG		"content/default"
 # define	SERVER_NAME	""
+
+// COLORS
+# define BLACK "\e[1;30m" 
+# define RED "\e[0;31m"
+# define GREEN "\e[1;32m"
+# define BROWN "\e[0;33m" 
+# define BLUE "\e[0;34m"
+# define MAGENTA "\e[0;35m"
+# define CYAN "\e[0;36m"
+# define GRAY "\e[0;37m"
+# define RESET "\e[m"
 
 //SERVER KEYS
 # define	SERVER		"server"
@@ -131,20 +141,11 @@ typedef struct						s_server
 	std::string						host;
 	std::list<unsigned short>		port;
 	Socket							*serv_socket;
-	std::list<Client*> 				_num_clients;
+	std::list<Client*> 				clients;
 }									t_server;
 
-//Server parameters structure for global configurations structure
-
 //Global server configuration parameters structure
-typedef struct						s_config
-{
-	std::vector<t_server*>			server;
-}									t_config;
-
-//Allowing configuration be accessible withing multiple files
-//https://stackoverflow.com/questions/3627941/global-variable-within-multiple-files
-extern t_config						g_config;
+extern std::vector<t_server*>		g_servers;
 
 class Config {
 private:
@@ -161,7 +162,7 @@ public:
 	Config	operator=(const Config &other);
 
 	int		parse_configuration_file(std::vector<std::string> &file_lines);
-	void	init_global_configuration(void);
+	void	init_servers_configuration(void);
 
 private:
 	std::vector<std::string>	parse_line(std::string &line);
@@ -192,8 +193,12 @@ int							ft_atoi(const char *str);
 std::string					read_file(const char *file_path);
 std::vector<std::string>	split(const std::string &s, const std::string &delimiter);
 void						error_message(std::string message);
-void						clear_global_configuration(void);
+void						clear_servers_configuration(void);
 bool						verify_directory(std::string &dir);
 bool						verify_file(std::string &file_path);
+void						exit_error(int err);
+void						exit_error_msg(std::string msg);
+void						signal_handler(int signal);
+void						signals(void);
 
 #endif

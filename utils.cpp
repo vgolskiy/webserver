@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "Config.hpp"
 
 // Если процесс пытается записать данные в оборванный сокет при помощи вы­зова write или send,
 // то он получит сигнал SIGPIPE, который может быть пере­хвачен соответствующим обработчиком сигнала
@@ -16,33 +16,19 @@ void	signals(void) {
 void	signal_handler(int signal)
 {
 	if (signal == SIGINT) {
-		clear_global_configuration();
+		clear_servers_configuration();
 		exit(EXIT_SUCCESS);
 	}
 }
 
-// Shall we check if any of servers have been initiated?
-void init_servers()
-{
-    for (size_t i = 0; i < g_config.server.size(); i++) // TODO: error checking!
-    {
-		//primary port is the first port in list by default
-	        unsigned short port = g_config.server[i]->port.front();
-        std::string host = g_config.server[i]->host;
-        g_config.server[i]->serv_socket = new Socket(port, host);
-        g_config.server[i]->serv_socket->to_bind();
-        g_config.server[i]->serv_socket->to_listen(SOMAXCONN); // Max length for listen (?)
-    }
-}
-
 void	exit_error(int err) {
 	error_message(strerror(err));
-	clear_global_configuration();
+	clear_servers_configuration();
 	exit(EXIT_FAILURE);
 }
 
 void	exit_error_msg(std::string msg) {
 	error_message(msg);
-	clear_global_configuration();
+	clear_servers_configuration();
 	exit(EXIT_FAILURE);
 }

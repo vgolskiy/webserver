@@ -6,11 +6,12 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/03/31 18:01:43 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/13 17:12:47 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
 # include "Config.hpp"
 # include "Request.hpp"
@@ -54,10 +55,13 @@ public:
 	Client(Socket *listen_sock);
 	~Client();
 
-	bool accept_connection();
-	void readRequest();
+	bool	accept_connection(void);
+	void	readRequest(void);
 
-	int get_socket_fd();
-	int get_s_addr();
-	Request *get_request();
+	int		get_socket_fd(void);
+	int		get_s_addr(void);
+	Request	*get_request(void);
+	void	clear_request(void);
 };
+
+#endif

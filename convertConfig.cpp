@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   convertConfig.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/03 20:42:19 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/13 21:01:43 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-t_config						g_config;
+std::vector<t_server*>	g_servers;
 
 bool	ft_isalpha(int c) {
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
@@ -176,7 +176,7 @@ int	Config::convert_localhost(std::string &s, t_server &server) {
 ** Adding new port to the top of the list (priority listening)
 ** ascii 58 :
 */
-void	Config::init_global_configuration(void)
+void	Config::init_servers_configuration(void)
 {
 	for (size_t i = 0; i < _servers.size(); ++i) {
 		t_server *server = new t_server;
@@ -186,19 +186,20 @@ void	Config::init_global_configuration(void)
 		server->port = _servers[i].port;
 		server->host = _servers[i].host;
 		server->error_page = _servers[i].error_page;
-		g_config.server.push_back(server);
+		g_servers.push_back(server);
 	}
 }
 
 // Out of Config class so we are able to free it in any moment
-void	clear_global_configuration(void) {
+void	clear_servers_configuration() {
 	int	fd;
 
-	for (size_t i = 0; i < g_config.server.size(); ++i) {
-		if ((fd = g_config.server[i]->serv_socket->get_fd()) >= 0)
+	for (size_t i = 0; i < g_servers.size(); ++i) {
+		if ((fd = g_servers[i]->serv_socket->get_fd()) >= 0)
 			close (fd);
-		delete g_config.server[i]->serv_socket;
-		delete g_config.server[i];
-		// TODO: delete client
+		while (!g_servers[i]->clients.empty())
+			delete g_servers[i]->clients.front();
+		delete g_servers[i]->serv_socket;
+		delete g_servers[i];
 	}
 }
