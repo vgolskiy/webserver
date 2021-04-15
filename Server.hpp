@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:11:13 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 01:04:25 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/15 17:46:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 int		start_servers(std::vector<t_server*> &servers);
 int 	select_loop(std::vector<t_server*> &servers);
-void	add_client(t_server* server);
 void	add_new_client(std::vector<t_server*> &servers, fd_set &read_fd_sets);
 void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
 				fd_set &write_fd_sets, int &nfds);
