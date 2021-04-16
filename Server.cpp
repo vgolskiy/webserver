@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 20:41:59 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/16 11:53:07 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,11 +169,14 @@ void	deal_request(std::vector<t_server*> &servers,
 	for (size_t i = 0; i != servers.size(); i++) {
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
 		for (; it != servers[i]->clients.end(); ++it) {
-		//	if (FD_ISSET((*it)->get_fd(), &read_fd_sets)
-		//		|| (FD_ISSET((*it)->get_fd(), &write_fd_sets))) {
+		//	if (FD_ISSET((*it)->get_fd(), &read_fd_sets) {
 				servers[i]->time_start = current_time();
 				(*it)->readRequest();
 		//	}
+		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
+		//	servers[i]->time_start = current_time();
+		// (*it)->writeRequest();
+		//}
 		}
 	}
 }
