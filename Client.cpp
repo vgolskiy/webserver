@@ -70,22 +70,29 @@ void Client::readRequest()
 	** In case of chunk request we changing BUFFER_SIZE to chunk_size
 	** if remain len < buffer size -> change buffer size
     */
-    if (_request->get_status() == Request::BODY_PARSE && _request->get_remain_len() > 0)
-        buf_size = _request->get_remain_len() < BUFFER_SIZE ? _request->get_remain_len() : BUFFER_SIZE;
-    char	buffer[buf_size + 1];
-    memset(buffer, 0, buf_size);
-    int		to_recieve = 0;
-    to_recieve = recv(_fd, &buffer, buf_size, 0);
-    if (!to_recieve)
-        _status = Client::EMPTY;
-    else if (to_recieve == -1)
-		_request->parse_request(_to_parse);
-    else {
-        buffer[to_recieve] = '\0';
-        _to_parse += buffer;
-        if (_request->get_status() == Request::BODY_PARSE)
-            _request->cut_remain_len(to_recieve);
-        _request->parse_request(_to_parse);
+    while (1)
+    {
+        if (_request->get_status() == Request::BODY_PARSE && _request->get_remain_len() > 0)
+            buf_size = _request->get_remain_len() < BUFFER_SIZE ? _request->get_remain_len() : BUFFER_SIZE;
+        char	buffer[buf_size + 1];
+        memset(buffer, 0, buf_size);
+        int		to_recieve = 0;
+        to_recieve = recv(_fd, &buffer, buf_size, 0);
+        if (!to_recieve)
+            _status = Client::EMPTY;
+        else if (to_recieve == -1)
+            _request->parse_request(_to_parse);
+        else {
+            buffer[to_recieve] = '\0';
+            _to_parse += buffer;
+            if (_request->get_status() == Request::BODY_PARSE)
+                _request->cut_remain_len(to_recieve);
+            _request->parse_request(_to_parse);
+        }
+        if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
+        {
+            std::cout << "Status: " << _request->get_status() << std::endl;
+            break ;
+        }
     }
-    std::cout << _request->get_status() << std::endl;
 }

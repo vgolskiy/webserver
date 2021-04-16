@@ -99,7 +99,7 @@ bool Request::set_up_headers(const std::vector<std::string> &lines)
         {   
             try
             {
-                _content_len = std::stoi(tmp[0]);
+                _content_len = std::stoi(tmp[1]);
                 _remain_len = _content_len;
             }
             catch(const std::exception& e)
@@ -178,7 +178,7 @@ bool Request::parse_chunk_size(std::string &lines)
         _status = Request::BAD_REQ;
         return false;
     }
-    _content_len = std::strtol(lines.c_str(), 0, 16);
+    _content_len = std::strtol(lines.c_str(), 0, 10); // TODO: change base
     _remain_len = _content_len;
     lines.erase(0, lines.find("\r\n") + 2);
     _status = Request::CHUNK_DATA;
@@ -286,10 +286,17 @@ void Request::parse_request(std::string &lines)
     if (_status == Request::CHUNK_DATA)
         if (parse_chunk_data(lines))
             return(parse_request(lines));
-    std::cout << "exit request with status: " << _status << std::endl;
     /* check-print request - delete later */
-    if (_status == Request::DONE)
+    if (_status == Request::BAD_REQ)
+    {
+        std::cout << "BAD REQUEST CLIENT: " << std::endl;
         print_parsed_request();
+    }
+    if (_status == Request::DONE)
+    {
+        print_parsed_request();
+        std::cout << "Body: " << _body << std::endl;
+    }
 }
 
 // TODO: coding special signs from URL: !#%^&()=+ и пробел
@@ -306,14 +313,14 @@ std::string Request::find_header(std::string header)
     return empty_head;
 }
 
-void Request::set_cgi_meta_vars(t_server server)
+void Request::set_cgi_meta_vars()
 {
     std::string header_found;
 
-    if ((header_found = find_header("Authorization")).c_str() != NULL) // check php (script?)
+    if ((header_found = find_header("Authorization")) != "NULL") // check php (script?)
         _env.push_back("AUTH_TYPE=" + header_found);
     _env.push_back("CONTENT_LENGTH=" + std::to_string(_body.size()));
-    if ((header_found = find_header("Content-Type")).c_str() != NULL)
+    if ((header_found = find_header("Content-Type")) != "NULL")
         _env.push_back("CONTENT_TYPE=" + header_found);
     _env.push_back("GATEWAY_INTERFACE=CGI/1.1"); // check php (script?)
     
@@ -339,9 +346,9 @@ void Request::set_cgi_meta_vars(t_server server)
     // The leading "/" is not part of the path.  It is optional if the path is NULL 
     
     // SERVER_NAME - get name from server[i]->get_name
-	_env.push_back("SERVER_NAME=" + server.name.front());
+	// _env.push_back("SERVER_NAME=" + _server.name.front());
     // SERVER_PORT - get port from server[i]->get_port
-    _env.push_back("SERVER_PORT=" + ntohs(server.port.front()));
+    // _env.push_back("SERVER_PORT=" + ntohs(_server.port.front()));
     _env.push_back("SERVER_PROTOCOL=" + _version);
 
     //set by yourself?
