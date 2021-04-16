@@ -62,36 +62,30 @@ void	Client::accept_connection()
 
 void Client::readRequest()
 {	
-    // if no request - create one for this client
+    int		buf_size = BUFFER_SIZE;
+    
     if (!_request)
         _request = new Request(this);
-
     /*
 	** In case of chunk request we changing BUFFER_SIZE to chunk_size
 	** if remain len < buffer size -> change buffer size
     */
-    int		buf_size = _request->get_content_length() > 0 ? _request->get_content_length() : BUFFER_SIZE;
+    if (_request->get_status() == Request::BODY_PARSE && _request->get_remain_len() > 0)
+        buf_size = _request->get_remain_len() < BUFFER_SIZE ? _request->get_remain_len() : BUFFER_SIZE;
     char	buffer[buf_size + 1];
     memset(buffer, 0, buf_size);
-    // Requests may straddle multiple recv calls
-    //      – Need to maintain state information.
     int		to_recieve = 0;
     to_recieve = recv(_fd, &buffer, buf_size, 0);
-
-    // in nonblocking case -1 is returned if no messages are available
     if (!to_recieve)
         _status = Client::EMPTY;
     else if (to_recieve == -1)
-		_request->parse_request(_to_parse); // parse what left
+		_request->parse_request(_to_parse);
     else {
         buffer[to_recieve] = '\0';
         _to_parse += buffer;
-        _request->parse_request(_to_parse); // added conditions
-            // cut what we've parsed in case if we parse body
-            // if (_request->get_status() == Request::BODY_PARSE)
-            //     _request->cut_remain_len(to_recieve);
+        if (_request->get_status() == Request::BODY_PARSE)
+            _request->cut_remain_len(to_recieve);
+        _request->parse_request(_to_parse);
     }
-	//memset(buffer, 0, sizeof(buffer));
-    // _request->parse_request(_to_parse);
-    // parse request;
+    std::cout << _request->get_status() << std::endl;
 }

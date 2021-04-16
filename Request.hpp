@@ -125,9 +125,11 @@ public:
 
 	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
 	void		parse_request(std::string &lines);
-	bool		parse_chunk(std::string &lines);
+	bool		parse_chunk_size(std::string &lines);
+	bool		parse_chunk_data(std::string &lines);
 	bool		check_start_line(const std::vector<std::string> &lines);
-	void		set_up_headers(const std::vector<std::string> &lines);	
+	bool		set_up_headers(const std::vector<std::string> &lines);	
+	bool		check_hex_chunk(std::string &to_check);
 	void		set_cgi_meta_vars();
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
@@ -146,6 +148,8 @@ public:
 		C_G_I,
 		MTH,
 		CHUNK,
+		CHUNK_DATA,
+		BAD_REQ,
 		DONE
 	};
 };
