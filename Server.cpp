@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/16 11:53:07 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/16 11:54:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ void	deal_request(std::vector<t_server*> &servers,
 		//	}
 		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
 		//	servers[i]->time_start = current_time();
-		// (*it)->writeRequest();
+		// (*it)->writeResponse();
 		//}
 		}
 	}
