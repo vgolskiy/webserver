@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 19:30:01 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/16 19:23:18 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,7 +306,7 @@ std::string Request::find_header(std::string header)
     return empty_head;
 }
 
-void Request::set_cgi_meta_vars()
+void Request::set_cgi_meta_vars(t_server server)
 {
     std::string header_found;
 
@@ -339,8 +339,9 @@ void Request::set_cgi_meta_vars()
     // The leading "/" is not part of the path.  It is optional if the path is NULL 
     
     // SERVER_NAME - get name from server[i]->get_name
+	_env.push_back("SERVER_NAME=" + server.name.front());
     // SERVER_PORT - get port from server[i]->get_port
-    
+    _env.push_back("SERVER_PORT=" + ntohs(server.port.front()));
     _env.push_back("SERVER_PROTOCOL=" + _version);
 
     //set by yourself?

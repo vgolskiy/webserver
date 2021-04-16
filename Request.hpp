@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 19:30:01 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/16 19:20:19 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ public:
 	bool		check_start_line(const std::vector<std::string> &lines);
 	bool		set_up_headers(const std::vector<std::string> &lines);	
 	bool		check_hex_chunk(std::string &to_check);
-	void		set_cgi_meta_vars();
+	void		set_cgi_meta_vars(t_server server);
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
 	void		createResponce();
