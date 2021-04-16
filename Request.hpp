@@ -96,6 +96,7 @@ POST:
 #define REQUEST_HPP
 
 #include "Config.hpp"
+#include <sstream>
 
 # define HTTP "HTTP/1.1"
 
@@ -119,6 +120,8 @@ private:
 	int									_remain_len; // bytes left to read
 	int									_content_len;
 	bool								_chunk;
+
+	std::string							_response;
 public:
 	Request(Client *client);
 	~Request();
@@ -131,7 +134,10 @@ public:
 	void		set_cgi_meta_vars();
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
+
 	void		createResponce();
+	std::string get_responce();
+
 	int			get_remain_len();
 	int 		get_status();
 	int			get_content_length();

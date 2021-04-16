@@ -173,17 +173,17 @@ bool Request::parse_chunk(std::string &lines)
 
 void Request::print_parsed_request()
 {
-    std::cout << GREEN"-------PRINT PARSED REQUEST-------"RESET << std::endl;
+    std::cout << GREEN"-------PRINT PARSED REQUEST-------" RESET << std::endl;
 
-    std::cout << BLUE"METHOD: " << _method << "\n"RESET;
-    std::cout << BROWN"URI: " << _uri << "\n"RESET;
-    std::cout << RED"VERSION: "<< _version << "\n"RESET;
+    std::cout << BLUE"METHOD: " << _method << "\n" RESET;
+    std::cout << BROWN"URI: " << _uri << "\n" RESET;
+    std::cout << RED"VERSION: "<< _version << "\n" RESET;
 
     std::map<std::string, std::string>::iterator  it = _headers.begin();
     std::map<std::string, std::string>::iterator  ite = _headers.end();
-    std::cout << BLACK"\nHEADERS:\n"RESET;
+    std::cout << BLACK"\nHEADERS:\n" RESET;
     for (; it != ite; it++)
-        std::cout << ""MAGENTA << (*it).first << RESET": "CYAN << (*it).second << "\n"RESET;
+        std::cout << "" MAGENTA << (*it).first << RESET": " CYAN << (*it).second << "\n" RESET;
     std::cout << std::endl;
 }
 
@@ -286,11 +286,29 @@ void Request::set_cgi_meta_vars()
 }
 
 void Request::createResponce() {
-	if (_method == "PUT")
+	std::ostringstream tmp;
+	tmp << _status;
+	std::string status = tmp.str();
+	_response = "";
+	if (_method == "HEAD")
 	{
+		_response += "HTTP/1.1";//+ статус
+		_response += status;
+		_response += "\r\n";
+		//поменять дату, имя сервера
+		std::map<std::string, std::string>::iterator beg = _headers.begin();
+		std::map<std::string, std::string>::iterator end = _headers.end();
+		while (beg != end)
+		{
+			_response += (*beg).first;
+			_response += ": ";
+			_response += (*beg).second;
+			_response += "\r\n";
+			++beg;
+		}
 
 	}
-	else if (_method == "HEAD")
+	else if (_method == "PUT")
 	{
 
 	}
@@ -300,11 +318,14 @@ void Request::createResponce() {
 	}
 	else if (_method == "POST")
 	{
-		//CGI
+
 	}
 	//else if (/*без метода*/)
 	//{
 	//
 	//}
+}
 
+std::string Request::get_responce() {
+	return _response;
 }
