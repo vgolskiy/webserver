@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/16 19:20:19 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 01:12:45 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ POST:
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
 
-#include "Config.hpp"
+# include "Config.hpp"
 
 # define HTTP "HTTP/1.1"
 
@@ -121,7 +121,7 @@ private:
 	bool								_chunk;
 public:
 	Request(Client *client);
-	~Request();
+	~Request(void);
 
 	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
 	void		parse_request(std::string &lines);
@@ -130,15 +130,15 @@ public:
 	bool		check_start_line(const std::vector<std::string> &lines);
 	bool		set_up_headers(const std::vector<std::string> &lines);	
 	bool		check_hex_chunk(std::string &to_check);
-	void		set_cgi_meta_vars();
+	void		set_cgi_meta_vars(int i);
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
-	void		createResponce();
-	int			get_remain_len();
-	int 		get_status();
-	int			get_content_length();
-	void		print_parsed_request();
-	std::vector<std::string> get_env();
+	void		createResponce(void);
+	int			get_remain_len(void);
+	int 		get_status(void);
+	int			get_content_length(void);
+	void		print_parsed_request(void);
+	std::vector<std::string> get_env(void);
 
 	enum status
 	{

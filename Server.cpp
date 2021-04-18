@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/16 11:54:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 01:15:03 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ void	deal_request(std::vector<t_server*> &servers,
 		for (; it != servers[i]->clients.end(); ++it) {
 		//	if (FD_ISSET((*it)->get_fd(), &read_fd_sets) {
 				servers[i]->time_start = current_time();
-				(*it)->readRequest();
+				(*it)->readRequest(i);
 		//	}
 		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
 		//	servers[i]->time_start = current_time();
@@ -224,4 +224,14 @@ int		select_loop(std::vector<t_server*> &servers) {
         }
 	}
 	return (EXIT_SUCCESS);
+}
+
+t_location	*get_location(t_server *server, std::string uri) {
+	std::vector<t_location>::iterator	it;
+
+	for (it = server->location.begin(); it != server->location.end(); ++it) {
+		if ((*it).uri == uri)
+			return &(*it);
+	}
+	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/16 19:23:18 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 01:20:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,9 +313,13 @@ std::string Request::find_header(std::string header)
     return empty_head;
 }
 
-void Request::set_cgi_meta_vars()
+void Request::set_cgi_meta_vars(int i)
 {
     std::string header_found;
+	t_location	*loc = get_location(g_servers[i], _uri);
+	//testing
+	if (!loc)
+		exit_error_msg("BADREQ: there is no such location");
 
     if ((header_found = find_header("Authorization")) != "NULL") // check php (script?)
         _env.push_back("AUTH_TYPE=" + header_found);
@@ -334,24 +338,32 @@ void Request::set_cgi_meta_vars()
     
     _env.push_back("REMOTE_ADDR=" + std::to_string(_client->get_s_addr())); // is it right convertion?
     
-    // REMOTE_IDENT - check location
+    // REMOTE_IDENT - location authentification
     // REMOTE_USER
+	if (!loc->auth.begin()->first.empty()) {
+		_env.push_back("REMOTE_IDENT=" + loc->auth.begin()->first);
+		_env.push_back("REMOTE_USER=" + loc->auth.begin()->first);
+	}
 
+	//TODO: should be verified against possible methods upon location
     if (!_method.empty())
-        _env.push_back("REQUEST_METHOD=" + _method); // always?
+        _env.push_back("REQUEST_METHOD=" + _method);
 
-    // REQUEST_URI - location path?
+    // REQUEST_URI - location path (uri in Request) 
+	// TODO: should be verified that we have such location while request parsing
+	_env.push_back("REQUEST_URI=" + _uri);
 
-    _env.push_back("SCRIPT_NAME="); // add script name
-    // The leading "/" is not part of the path.  It is optional if the path is NULL 
+	//Full path name of the file to execute
+	// The leading "/" is not part of the path.  It is optional if the path is NULL
+    _env.push_back("SCRIPT_NAME=" + _uri + loc->cgi); 
     
     // SERVER_NAME - get name from server[i]->get_name
-	// _env.push_back("SERVER_NAME=" + _server.name.front());
+	_env.push_back("SERVER_NAME=" + g_servers[i]->name.front());
     // SERVER_PORT - get port from server[i]->get_port
-    // _env.push_back("SERVER_PORT=" + ntohs(_server.port.front()));
+    _env.push_back("SERVER_PORT=" + std::to_string(ntohs(g_servers[i]->port.front())));
     _env.push_back("SERVER_PROTOCOL=" + _version);
 
-    //set by yourself?
+    //Just name of our program
     _env.push_back("SERVER_SOFTWARE=webserv");
 }
 

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 18:36:25 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/18 20:56:31 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	Client::accept_connection()
     _status = Client::ALIVE;
 }
 
-void Client::readRequest()
+void Client::readRequest(int i)
 {	
     int		buf_size = BUFFER_SIZE;
     
@@ -95,4 +95,5 @@ void Client::readRequest()
             break ;
         }
     }
+	_request->set_cgi_meta_vars(i);
 }
