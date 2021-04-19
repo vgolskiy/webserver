@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 15:04:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 18:09:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ Client::~Client() {
 	if (_fd != -1)
 		close(_fd);
 	clear_request();
-} // TODO: close _fd; delete _request+_response
-//response will be deleted on server side
+}
 
 int         Client::get_fd(){return _fd;}
 
