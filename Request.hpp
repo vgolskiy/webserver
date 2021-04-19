@@ -135,8 +135,11 @@ public:
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
 
-	void		createResponce();
-	std::string get_responce();
+	std::string server_date();
+
+	void		createResponse();
+	std::string get_response();
+	std::string	createHeader();
 
 	int			get_remain_len();
 	int 		get_status();

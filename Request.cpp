@@ -285,28 +285,46 @@ void Request::set_cgi_meta_vars()
     _env.push_back("SERVER_SOFTWARE=webserv");
 }
 
-void Request::createResponce() {
-	std::ostringstream tmp;
-	tmp << _status;
-	std::string status = tmp.str();
+//дата для даты и для последнего редактирования
+
+
+std::string Request::server_date() {
+	struct tm info;
+	struct timeval time;
+	char buf[29];
+	gettimeofday(&time, NULL);
+	std::string s = std::to_string(time.tv_sec);
+	strptime(s.c_str(), " %s ", &info);
+	strftime (buf, sizeof(buf), "%a, %d %b %Y %X %Z", &info);
+	std::string str = buf;
+	return str;
+	return "Date: " + str + "\r\n";
+}
+
+void Request::createResponse() {
+	std::string date = server_date();
 	_response = "";
 	if (_method == "HEAD")
 	{
-		_response += "HTTP/1.1";//+ статус
-		_response += status;
+		_response += "HTTP/1.1 200 OK"; //OK - status
 		_response += "\r\n";
-		//поменять дату, имя сервера
+		_headers["Date"] = server_date();
 		std::map<std::string, std::string>::iterator beg = _headers.begin();
 		std::map<std::string, std::string>::iterator end = _headers.end();
 		while (beg != end)
 		{
-			_response += (*beg).first;
-			_response += ": ";
-			_response += (*beg).second;
-			_response += "\r\n";
+			if ((*beg).second != "")
+			{
+				_response += (*beg).first;
+				_response += ": ";
+				_response += (*beg).second;
+				_response += "\r\n";
+			}
 			++beg;
 		}
-
+		_response += "Content-Length: ";
+		_response += _body.length();
+		_response += "\r\n";
 	}
 	else if (_method == "PUT")
 	{
@@ -326,6 +344,25 @@ void Request::createResponce() {
 	//}
 }
 
-std::string Request::get_responce() {
+std::string Request::get_response() {
 	return _response;
 }
+
+std::string Request::createHeader() {
+//	_response = "";
+//	_response += "Allow: " + "\r\n";
+//	_response += "Content-Language: " + "\r\n";
+//	_response += "Content-Length: " + "\r\n";
+//	_response += "Content-Location: " + "\r\n";
+//	_response += "Content-Type: " + "\r\n";
+//	_response += "Date: " + "\r\n";
+//	_response += "Last-Modified: " + "\r\n";
+//	_response += "Location: " + "\r\n";
+//	_response += "Retry-After: " + "\r\n";
+//	_response += "Server: " + "\r\n";
+//	_response += "Transfer-Encoding: " + "\r\n";
+//	_response += "WWW-Authenticate: " + "\r\n";
+//	return _response;
+}
+
+
