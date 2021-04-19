@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 13:42:28 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:14:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,17 +117,15 @@ bool Request::set_up_headers(const std::vector<std::string> &lines)
     return true;
 }
 
-bool Request::check_start_line(const std::vector<std::string> &start_line)
-{
+bool Request::check_start_line(const std::vector<std::string> &start_line, const int i) {
+	t_location	*loc;
+
     /* check number of arguments */
     if (start_line.size() != 3)
         return false;
-    /* check the validity of the method from the list */
-    for (size_t i = 0; i < methods->size(); i++)
-        if (start_line[0] == methods[i])
-            _method = methods[i];
-    /* In case of no method added */
-    if (_method.empty())
+    /* check version of protocol: */
+    _version = start_line[2];
+    if (_version != HTTP)
         return false;
     /* check _uri: if contains "?" -> fill_in query_string() */
     _uri = start_line[1];
@@ -136,10 +134,20 @@ bool Request::check_start_line(const std::vector<std::string> &start_line)
         _query_str = _uri.substr(_uri.find("?") + 1, std::string::npos);
         _uri.erase(_uri.find("?"), std::string::npos);
     }
-    /* check version of protocol: */
-    _version = start_line[2];
-    if (_version != HTTP)
-        return false;
+	/*
+	** Verification that location is among available in server config
+	** Method is available in found location
+	*/
+	_location = _uri.substr(0, _uri.rfind("/"));
+	if ((loc = get_location(g_servers[i], _location))) {
+    	/* check the validity of the method from the location methods list */
+    	for (size_t i = 0; i < loc->methods.size(); i++) {
+        	if (start_line[0] == loc->methods[i])
+            	_method = loc->methods[i];
+		}
+	}
+	if (!loc || (!_method.length()))
+		return false;
     _status = Request::HEADERS;
     return true;
 }
@@ -227,7 +235,7 @@ void Request::print_parsed_request()
     std::cout << std::endl;
 }
 
-void Request::parse_request(std::string &lines)
+void Request::parse_request(std::string &lines, const int i)
 {
     std::vector<std::string>    split_lines;
     
@@ -242,7 +250,7 @@ void Request::parse_request(std::string &lines)
         {
             std::vector<std::string>    start_line;
             start_line = split(split_lines[0], " ");
-            if (!check_start_line(start_line))
+            if (!check_start_line(start_line, i))
             {
                 error_message("Bad request sent by client!");
                 _status = Request::BAD_REQ;
@@ -285,7 +293,7 @@ void Request::parse_request(std::string &lines)
             return ;
     if (_status == Request::CHUNK_DATA)
         if (parse_chunk_data(lines))
-            return(parse_request(lines));
+            return(parse_request(lines, i));
     /* check-print request - delete later */
     if (_status == Request::BAD_REQ)
     {
@@ -313,7 +321,7 @@ std::string Request::find_header(std::string header)
     return empty_head;
 }
 
-void Request::set_cgi_meta_vars(int i)
+void Request::set_cgi_meta_vars(const int i)
 {
     std::string header_found;
 	t_location	*loc = get_location(g_servers[i], _uri);

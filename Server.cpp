@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 13:35:30 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:08:38 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,11 +226,11 @@ int		select_loop(std::vector<t_server*> &servers) {
 	return (EXIT_SUCCESS);
 }
 
-t_location	*get_location(t_server *server, std::string uri) {
+t_location	*get_location(t_server *server, std::string loc) {
 	std::vector<t_location>::iterator	it;
 
 	for (it = server->location.begin(); it != server->location.end(); ++it) {
-		if ((*it).uri == uri)
+		if (((*it).uri == loc) || ((*it).uri + "/" == loc))
 			return &(*it);
 	}
 	return (NULL);
@@ -239,7 +239,7 @@ t_location	*get_location(t_server *server, std::string uri) {
 std::string	*get_method(t_location &loc, std::string method) {
 	std::vector<std::string>::iterator it;
 
-	for (it = loc.method.begin(); it != loc.method.end(); ++it) {
+	for (it = loc.methods.begin(); it != loc.methods.end(); ++it) {
 		if (*it == method)
 			return &(*it);
 	}

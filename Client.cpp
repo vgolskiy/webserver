@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 13:26:01 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:04:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void		Client::accept_connection()
     _status = Client::ALIVE;
 }
 
-void Client::readRequest(int i)
+void Client::readRequest(const int i)
 {	
     int		buf_size = BUFFER_SIZE;
     
@@ -81,13 +81,13 @@ void Client::readRequest(int i)
         if (!to_recieve)
             _status = Client::EMPTY;
         else if (to_recieve == -1)
-            _request->parse_request(_to_parse);
+            _request->parse_request(_to_parse, i);
         else {
             buffer[to_recieve] = '\0';
             _to_parse += buffer;
             if (_request->get_status() == Request::BODY_PARSE)
                 _request->cut_remain_len(to_recieve);
-            _request->parse_request(_to_parse);
+            _request->parse_request(_to_parse, i);
         }
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {

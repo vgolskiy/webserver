@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 01:12:45 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:04:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ private:
 	std::map<std::string, std::string>	_headers;
 	std::string 						_body;
 	std::vector<std::string>			_env;
+	std::string							_location;
 
 	static std::string const			methods[];
 	static std::string const			headers[];
@@ -124,13 +125,13 @@ public:
 	~Request(void);
 
 	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
-	void		parse_request(std::string &lines);
+	void		parse_request(std::string &lines, const int i);
 	bool		parse_chunk_size(std::string &lines);
 	bool		parse_chunk_data(std::string &lines);
-	bool		check_start_line(const std::vector<std::string> &lines);
+	bool		check_start_line(const std::vector<std::string> &lines, const int i);
 	bool		set_up_headers(const std::vector<std::string> &lines);	
 	bool		check_hex_chunk(std::string &to_check);
-	void		set_cgi_meta_vars(int i);
+	void		set_cgi_meta_vars(const int i);
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
 	void		createResponce(void);
