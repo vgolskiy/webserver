@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 20:19:29 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 21:17:31 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,6 +326,10 @@ void Request::set_cgi_meta_vars(const int i) {
     std::string	header_found;
 	t_location*	loc = get_location(g_servers[i], _location);
 
+	/*
+	** The "basic" authentication scheme is based on the model that the
+	** client must authenticate itself with a user-ID and a password
+	*/
     if (!php && ((header_found = find_header("Authorization")) != "NULL"))
         _env.push_back("AUTH_TYPE=" + header_found);
     _env.push_back("CONTENT_LENGTH=" + std::to_string(_body.size()));
@@ -346,7 +350,8 @@ void Request::set_cgi_meta_vars(const int i) {
     else
         _env.push_back("QUERY_STRING=");
     
-    _env.push_back("REMOTE_ADDR=" + std::to_string(_client->get_s_addr())); // is it right convertion?
+	//Internet host address convertion from binary form into the IPv4 numbers-and-dots notation
+    _env.push_back("REMOTE_ADDR=" + inet_ntoaddr(_client->get_s_addr()));
     
     // REMOTE_IDENT - location authentification
     // REMOTE_USER
