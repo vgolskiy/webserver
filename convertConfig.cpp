@@ -196,7 +196,7 @@ void	clear_servers_configuration() {
 	int	fd;
 
 	for (size_t i = 0; i < g_servers.size(); ++i) {
-		if ((fd = g_servers[i]->socket->get_fd()) >= 0)
+		if (g_servers[i]->socket && (fd = g_servers[i]->socket->get_fd()) >= 0)
 			close (fd);
 		std::list<Client*>::iterator it = g_servers[i]->clients.begin();
 		std::list<Client*>::iterator ite = g_servers[i]->clients.end();
