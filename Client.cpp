@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 18:36:25 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 18:09:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ Client::~Client() {
 	if (_fd != -1)
 		close(_fd);
 	clear_request();
-} // TODO: close _fd; delete _request+_response
-//response will be deleted on server side
+}
 
 int         Client::get_fd(){return _fd;}
 
@@ -36,7 +35,7 @@ int			Client::get_status() const {return _status;}
 
 long		Client::get_start_time() const {return _time_start;}
 
-void	Client::accept_connection()
+void		Client::accept_connection()
 {
     int addrlen = sizeof(_address);
 
@@ -60,38 +59,41 @@ void	Client::accept_connection()
     _status = Client::ALIVE;
 }
 
-void Client::readRequest()
+void Client::readRequest(const int i)
 {	
-    // if no request - create one for this client
+    int		buf_size = BUFFER_SIZE;
+    
     if (!_request)
         _request = new Request(this);
-
     /*
 	** In case of chunk request we changing BUFFER_SIZE to chunk_size
 	** if remain len < buffer size -> change buffer size
     */
-    int		buf_size = _request->get_content_length() > 0 ? _request->get_content_length() : BUFFER_SIZE;
-    char	buffer[buf_size + 1];
-    memset(buffer, 0, buf_size);
-    // Requests may straddle multiple recv calls
-    //      – Need to maintain state information.
-    int		to_recieve = 0;
-    to_recieve = recv(_fd, &buffer, buf_size, 0);
-
-    // in nonblocking case -1 is returned if no messages are available
-    if (!to_recieve)
-        _status = Client::EMPTY;
-    else if (to_recieve == -1)
-		_request->parse_request(_to_parse); // parse what left
-    else {
-        buffer[to_recieve] = '\0';
-        _to_parse += buffer;
-        _request->parse_request(_to_parse); // added conditions
-            // cut what we've parsed in case if we parse body
-            // if (_request->get_status() == Request::BODY_PARSE)
-            //     _request->cut_remain_len(to_recieve);
+    while (1)
+    {
+        if (_request->get_status() == Request::BODY_PARSE && _request->get_remain_len() > 0)
+            buf_size = _request->get_remain_len() < BUFFER_SIZE ? _request->get_remain_len() : BUFFER_SIZE;
+        char	buffer[buf_size + 1];
+        memset(buffer, 0, buf_size);
+        int		to_recieve = 0;
+        to_recieve = recv(_fd, &buffer, buf_size, 0);
+        if (!to_recieve)
+            _status = Client::EMPTY;
+        else if (to_recieve == -1)
+            _request->parse_request(_to_parse, i);
+        else {
+            buffer[to_recieve] = '\0';
+            _to_parse += buffer;
+            if (_request->get_status() == Request::BODY_PARSE)
+                _request->cut_remain_len(to_recieve);
+            _request->parse_request(_to_parse, i);
+        }
+        if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
+        {
+            std::cout << "Status: " << _request->get_status() << std::endl;
+            break ;
+        }
     }
-	//memset(buffer, 0, sizeof(buffer));
-    // _request->parse_request(_to_parse);
-    // parse request;
+    if (_request->get_status() != Request::BAD_REQ)
+	    _request->set_cgi_meta_vars(i);
 }

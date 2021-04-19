@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/07 09:50:09 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:14:00 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ void		Config::clear_location(t_location &location) {
 	location.cgi_path = "";
 	location.index = "";
 	location.max_body = -1;
-	location.method.clear();
+	location.methods.clear();
 	location.php_path = "";
 	location.root = "";
 	location.uri = "";
@@ -295,7 +295,7 @@ int		Config::parse_method(t_location &location, std::string &s) {
 	tmp = split(s, ",");
 	for (size_t i = 0; i < tmp.size(); ++i) {
 		if ((tmp[i].length()) && (verify_method(tmp[i])))
-			location.method.push_back(tmp[i]);
+			location.methods.push_back(tmp[i]);
 		else {
 			error_message("Directive methods is invalid");
 			return (EXIT_FAILURE);

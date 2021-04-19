@@ -95,7 +95,7 @@ POST:
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
 
-#include "Config.hpp"
+# include "Config.hpp"
 #include <sstream>
 
 # define HTTP "HTTP/1.1"
@@ -111,6 +111,7 @@ private:
 	std::map<std::string, std::string>	_headers;
 	std::string 						_body;
 	std::vector<std::string>			_env;
+	std::string							_location;
 
 	static std::string const			methods[];
 	static std::string const			headers[];
@@ -124,28 +125,31 @@ private:
 	std::string							_response;
 public:
 	Request(Client *client);
-	~Request();
+	~Request(void);
 
 	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
-	void		parse_request(std::string &lines);
-	bool		parse_chunk(std::string &lines);
-	bool		check_start_line(const std::vector<std::string> &lines);
-	void		set_up_headers(const std::vector<std::string> &lines);	
-	void		set_cgi_meta_vars();
+	void		parse_request(std::string &lines, const int i);
+	bool		parse_chunk_size(std::string &lines);
+	bool		parse_chunk_data(std::string &lines);
+	bool		check_start_line(const std::vector<std::string> &lines, const int i);
+	bool		set_up_headers(const std::vector<std::string> &lines);
+	bool		check_hex_chunk(std::string &to_check);
+	void		set_cgi_meta_vars(const int i);
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
 
-	std::string server_date();
+	std::string server_date(void);
 
-	void		createResponse();
-	std::string get_response();
-	std::string	createHeader();
+	void		createResponse(void);
+	std::string get_response(void);
+	std::string	createHeader(void);
 
-	int			get_remain_len();
-	int 		get_status();
-	int			get_content_length();
-	void		print_parsed_request();
-	std::vector<std::string> get_env();
+	int			get_remain_len(void);
+	int 		get_status(void);
+	int			get_content_length(void);
+	void		print_parsed_request(void);
+	std::vector<std::string> get_env(void);
+	void		run_cgi_request(void);
 
 	enum status
 	{
@@ -155,6 +159,8 @@ public:
 		C_G_I,
 		MTH,
 		CHUNK,
+		CHUNK_DATA,
+		BAD_REQ,
 		DONE
 	};
 };

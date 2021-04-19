@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 18:36:25 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:04:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ public:
 	~Client();
 
 	void	accept_connection(void);
-	void	readRequest(void);
+	void	readRequest(const int i);
 
 	int		get_fd(void);
 	int		get_s_addr(void);

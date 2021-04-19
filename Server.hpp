@@ -6,11 +6,12 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:11:13 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 17:46:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 13:29:37 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef SERVER_HPP
+# define SERVER_HPP
 
 # include "Config.hpp"
 
@@ -22,3 +23,5 @@ void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
 void	delete_clients(std::vector<t_server*> &servers);
 void	deal_request(std::vector<t_server*> &servers,
 					fd_set &read_fd_sets, fd_set &write_fd_sets);
+
+#endif

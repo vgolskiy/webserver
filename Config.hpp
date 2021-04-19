@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 18:30:28 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 21:10:22 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ typedef struct							s_location
 {		
 	std::string							index;
 	std::string							root;
-	std::vector<std::string>			method;
+	std::vector<std::string>			methods;
 	std::string							uri;
 	std::string							php_path;
 	std::string							cgi;
@@ -199,11 +199,17 @@ void						clear_servers_configuration(void);
 bool						verify_directory(std::string &dir);
 bool						verify_file(std::string &file_path);
 
+//SERVER.CPP
+t_location					*get_location(t_server *server, std::string loc);
+std::string					*get_method(t_location &loc, std::string method);
+
 //UTILS.CPP
 void						exit_error(int err);
 void						exit_error_msg(std::string msg);
 void						signal_handler(int signal);
 void						signals(void);
 long						current_time(void);
+std::string					tail(const std::string &s, const size_t length);
+std::string					inet_ntoaddr(int n);
 
 #endif
