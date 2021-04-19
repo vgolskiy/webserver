@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 15:55:36 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 20:19:29 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -374,6 +374,9 @@ void Request::set_cgi_meta_vars(const int i) {
     // SERVER_PORT - get port from server[i]->get_port
     _env.push_back("SERVER_PORT=" + std::to_string(ntohs(g_servers[i]->port.front())));
     _env.push_back("SERVER_PROTOCOL=" + _version);
+}
+
+void Request::run_cgi_request() {
 }
 
 void Request::createResponce() {

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 15:04:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 20:19:29 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ public:
 	int			get_content_length(void);
 	void		print_parsed_request(void);
 	std::vector<std::string> get_env(void);
+	void		run_cgi_request(void);
 
 	enum status
 	{
