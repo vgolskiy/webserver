@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 01:14:26 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 13:36:15 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,10 @@ void						error_message(std::string message);
 void						clear_servers_configuration(void);
 bool						verify_directory(std::string &dir);
 bool						verify_file(std::string &file_path);
+
+//SERVER.CPP
 t_location					*get_location(t_server *server, std::string uri);
+std::string					*get_method(t_location &loc, std::string method);
 
 //UTILS.CPP
 void						exit_error(int err);

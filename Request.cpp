@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 01:20:20 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 13:42:28 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,13 +328,17 @@ void Request::set_cgi_meta_vars(int i)
         _env.push_back("CONTENT_TYPE=" + header_found);
     _env.push_back("GATEWAY_INTERFACE=CGI/1.1"); // check php (script?)
     
-    // _env.push_back("PATH_INFO="); // Location path? which one?
-    // _env.push_back("PATH_TRANSLATED=") // ?
+	//Defines location (uri)
+    _env.push_back("PATH_INFO=" + _uri);
 
+	//Full path to content
+    _env.push_back("PATH_TRANSLATED=" + loc->root);
+
+	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
     if (!_query_str.empty())
         _env.push_back("QUERY_STRING=" + _query_str);
     else
-        _env.push_back("QUERY_STRING="); // the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
+        _env.push_back("QUERY_STRING=");
     
     _env.push_back("REMOTE_ADDR=" + std::to_string(_client->get_s_addr())); // is it right convertion?
     
@@ -345,12 +349,10 @@ void Request::set_cgi_meta_vars(int i)
 		_env.push_back("REMOTE_USER=" + loc->auth.begin()->first);
 	}
 
-	//TODO: should be verified against possible methods upon location
-    if (!_method.empty())
-        _env.push_back("REQUEST_METHOD=" + _method);
+	//Method was verified against possible methods upon location
+    _env.push_back("REQUEST_METHOD=" + _method);
 
     // REQUEST_URI - location path (uri in Request) 
-	// TODO: should be verified that we have such location while request parsing
 	_env.push_back("REQUEST_URI=" + _uri);
 
 	//Full path name of the file to execute

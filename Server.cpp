@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 01:15:03 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 13:35:30 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,16 @@ t_location	*get_location(t_server *server, std::string uri) {
 
 	for (it = server->location.begin(); it != server->location.end(); ++it) {
 		if ((*it).uri == uri)
+			return &(*it);
+	}
+	return (NULL);
+}
+
+std::string	*get_method(t_location &loc, std::string method) {
+	std::vector<std::string>::iterator it;
+
+	for (it = loc.method.begin(); it != loc.method.end(); ++it) {
+		if (*it == method)
 			return &(*it);
 	}
 	return (NULL);
