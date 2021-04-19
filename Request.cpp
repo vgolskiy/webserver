@@ -297,12 +297,11 @@ std::string Request::server_date() {
 	strptime(s.c_str(), " %s ", &info);
 	strftime (buf, sizeof(buf), "%a, %d %b %Y %X %Z", &info);
 	std::string str = buf;
-	return str;
 	return "Date: " + str + "\r\n";
 }
 
 void Request::createResponse() {
-	std::string date = server_date();
+	//std::string date = server_date();
 	_response = "";
 	if (_method == "HEAD")
 	{
@@ -323,7 +322,7 @@ void Request::createResponse() {
 			++beg;
 		}
 		_response += "Content-Length: ";
-		_response += _body.length();
+		_response += std::to_string(_body.length());
 		_response += "\r\n";
 	}
 	else if (_method == "PUT")
