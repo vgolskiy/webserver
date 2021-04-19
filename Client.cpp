@@ -95,5 +95,6 @@ void Client::readRequest(const int i)
             break ;
         }
     }
-	_request->set_cgi_meta_vars(i);
+    if (_request->get_status() != Request::BAD_REQ)
+	    _request->set_cgi_meta_vars(i);
 }
