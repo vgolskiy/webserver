@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 15:14:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:35:39 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,21 +321,19 @@ std::string Request::find_header(std::string header)
     return empty_head;
 }
 
-void Request::set_cgi_meta_vars(const int i)
-{
-    std::string header_found;
-	t_location	*loc = get_location(g_servers[i], _uri);
-	//testing
-	if (!loc)
-		exit_error_msg("BADREQ: there is no such location");
+void Request::set_cgi_meta_vars(const int i) {
+	bool		php = tail(_uri, 4) == ".php" ? true : false;
+    std::string	header_found;
+	t_location*	loc = get_location(g_servers[i], _location);
 
-    if ((header_found = find_header("Authorization")) != "NULL") // check php (script?)
+    if (!php && ((header_found = find_header("Authorization")) != "NULL"))
         _env.push_back("AUTH_TYPE=" + header_found);
     _env.push_back("CONTENT_LENGTH=" + std::to_string(_body.size()));
     if ((header_found = find_header("Content-Type")) != "NULL")
         _env.push_back("CONTENT_TYPE=" + header_found);
-    _env.push_back("GATEWAY_INTERFACE=CGI/1.1"); // check php (script?)
-    
+	if (!php)
+    	_env.push_back("GATEWAY_INTERFACE=CGI/1.1");
+
 	//Defines location (uri)
     _env.push_back("PATH_INFO=" + _uri);
 
@@ -358,23 +356,24 @@ void Request::set_cgi_meta_vars(const int i)
 	}
 
 	//Method was verified against possible methods upon location
-    _env.push_back("REQUEST_METHOD=" + _method);
+	if (!php)
+		_env.push_back("REQUEST_METHOD=" + _method);
 
     // REQUEST_URI - location path (uri in Request) 
 	_env.push_back("REQUEST_URI=" + _uri);
 
 	//Full path name of the file to execute
 	// The leading "/" is not part of the path.  It is optional if the path is NULL
-    _env.push_back("SCRIPT_NAME=" + _uri + loc->cgi); 
-    
-    // SERVER_NAME - get name from server[i]->get_name
-	_env.push_back("SERVER_NAME=" + g_servers[i]->name.front());
+	if (!php) {
+		_env.push_back("SCRIPT_NAME=" + _uri + loc->cgi);
+		// SERVER_NAME - get name from server[i]->get_name
+		_env.push_back("SERVER_NAME=" + g_servers[i]->name.front());
+    	//Just name of our program
+    	_env.push_back("SERVER_SOFTWARE=webserv");
+	}
     // SERVER_PORT - get port from server[i]->get_port
     _env.push_back("SERVER_PORT=" + std::to_string(ntohs(g_servers[i]->port.front())));
     _env.push_back("SERVER_PROTOCOL=" + _version);
-
-    //Just name of our program
-    _env.push_back("SERVER_SOFTWARE=webserv");
 }
 
 void Request::createResponce() {

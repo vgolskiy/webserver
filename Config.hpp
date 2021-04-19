@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 15:08:28 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:26:50 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,5 +209,6 @@ void						exit_error_msg(std::string msg);
 void						signal_handler(int signal);
 void						signals(void);
 long						current_time(void);
+std::string					tail(const std::string &s, const size_t length);
 
 #endif

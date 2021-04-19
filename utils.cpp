@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:28:29 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 19:28:32 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:26:50 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,10 @@ long	current_time() {
 
 	gettimeofday(&time, NULL);
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
+
+std::string	tail(const std::string &s, const size_t length) {
+	if (length >= s.size())
+		return (s);
+	return (s.substr(s.size() - length));
 }
