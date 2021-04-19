@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 15:35:39 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/19 15:55:36 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line, const
 	** Verification that location is among available in server config
 	** Method is available in found location
 	*/
-	_location = _uri.substr(0, _uri.rfind("/"));
+	_location = _uri.rfind("/") ? _uri.substr(0, _uri.rfind("/")) : _uri;
 	if ((loc = get_location(g_servers[i], _location))) {
     	/* check the validity of the method from the location methods list */
     	for (size_t i = 0; i < loc->methods.size(); i++) {
