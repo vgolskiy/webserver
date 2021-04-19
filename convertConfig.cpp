@@ -198,8 +198,13 @@ void	clear_servers_configuration() {
 	for (size_t i = 0; i < g_servers.size(); ++i) {
 		if ((fd = g_servers[i]->socket->get_fd()) >= 0)
 			close (fd);
-		while (!g_servers[i]->clients.empty())
-			delete g_servers[i]->clients.front();
+		std::list<Client*>::iterator it = g_servers[i]->clients.begin();
+		std::list<Client*>::iterator ite = g_servers[i]->clients.end();
+		for (; it != ite; it++)
+		{
+			delete *it;
+			it =  g_servers[i]->clients.erase(it);
+		}
 		delete g_servers[i]->socket;
 		delete g_servers[i];
 	}
