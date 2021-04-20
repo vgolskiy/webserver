@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 15:15:09 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 16:34:26 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ Request::Request(Client *client)
     _status = INIT;
     _content_len = -1;
     _chunk = false;
+	_script_path = NULL;
+	_script_name = NULL;
 }
 
 Request::~Request() {}
@@ -385,6 +387,7 @@ void Request::set_cgi_meta_vars(const int i) {
     _env["SERVER_PROTOCOL"] = _version;
 }
 
+//Changing way of data storage map<string,string> -> vector<const char*>
 std::vector<const char*>	Request::convert_cgi_meta_vars() {
 	std::map<std::string, std::string>::const_iterator	it;
 	std::vector<const char*>	env;
@@ -394,10 +397,35 @@ std::vector<const char*>	Request::convert_cgi_meta_vars() {
 	return (env);
 }
 
-void Request::parse_script_file_name() {
+// _uri = /<location>/<arg>
+// Subject: Your program should call the cgi with the file requested as first argument
+void Request::parse_script_file_name(const int i) {
+	t_location*	loc = get_location(g_servers[i], _location);
+	size_t		pos = _uri.rfind("/");
+
+	if ((tail(_uri, 4) == ".php") && (loc->php_path.length())) {
+		_script_path = (loc->php_path).c_str();
+		_script_name = (_uri.substr(pos == std::string::npos ? 0 : pos + 1, std::string::npos)).c_str();
+	}
+	else
+		_script_path = (loc->cgi_path).c_str();
 }
 
 void Request::run_cgi_request() {
+	/*
+	** envp is an array of pointers to strings, conventionally of the
+    ** form key=value, which are passed as the environment of the new
+    ** program.  The envp array must be terminated by a NULL pointer.
+	*/
+	std::vector<const char*> envp = convert_cgi_meta_vars();
+
+	/*argv is an array of pointers to strings passed to the new program
+       as its command-line arguments.  By convention, the first of these
+       strings (i.e., argv[0]) should contain the filename associated
+       with the file being executed.  The argv array must be terminated
+       by a NULL pointer.  (Thus, in the new program, argv[argc] will be
+       NULL
+	   */
 }
 
 void Request::createResponce() {

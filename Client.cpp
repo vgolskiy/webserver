@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 14:27:41 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 16:32:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,8 @@ void		Client::accept_connection()
 }
 
 void Client::read_run_request(const int i)
-{	
-	std::vector<const char*>	env;
-	int							buf_size = BUFFER_SIZE;
+{
+	int	buf_size = BUFFER_SIZE;
     
     if (!_request)
         _request = new Request(this);
@@ -96,7 +95,8 @@ void Client::read_run_request(const int i)
         }
     }
     if (_request->get_status() != Request::BAD_REQ) {
+		_request->parse_script_file_name(i);
 	    _request->set_cgi_meta_vars(i);
-		env = _request->convert_cgi_meta_vars();
+		_request->run_cgi_request();
 	}
 }
