@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 21:10:22 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 11:26:49 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <sys/time.h>
+# include <cmath>
 
 //Server
 # include <sys/socket.h>
