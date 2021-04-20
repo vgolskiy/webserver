@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 20:28:53 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 21:01:29 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -417,15 +417,17 @@ void Request::run_cgi_request() {
     ** form key=value, which are passed as the environment of the new
     ** program.  The envp array must be terminated by a NULL pointer.
 	*/
-	std::vector<const char*> envp = convert_cgi_meta_vars();
+	std::vector<const char*>	envp = convert_cgi_meta_vars();
+	/*
+	** argv is an array of pointers to strings passed to the new program
+    ** as its command-line arguments.  By convention, the first of these
+    ** strings (i.e., argv[0]) should contain the filename associated
+    ** with the file being executed.  The argv array must be terminated
+    ** by a NULL pointer.
+	*/
+	const char*	args[] = {_script_path, _script_name, NULL};
 
-	/*argv is an array of pointers to strings passed to the new program
-       as its command-line arguments.  By convention, the first of these
-       strings (i.e., argv[0]) should contain the filename associated
-       with the file being executed.  The argv array must be terminated
-       by a NULL pointer.  (Thus, in the new program, argv[argc] will be
-       NULL
-	   */
+	
 }
 
 void Request::createResponce() {

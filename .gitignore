@@ -40,3 +40,6 @@ a.out.dSYM
 
 #Text
 text
+
+*.DS_Store
+webserv
