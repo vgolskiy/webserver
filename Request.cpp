@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 21:01:29 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 21:12:23 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -424,6 +424,8 @@ void Request::run_cgi_request() {
     ** strings (i.e., argv[0]) should contain the filename associated
     ** with the file being executed.  The argv array must be terminated
     ** by a NULL pointer.
+	** _script_path contains directory to php/cgi binary
+	** _script_name is NULL for cgi / gets php file name from _uri
 	*/
 	const char*	args[] = {_script_path, _script_name, NULL};
 
