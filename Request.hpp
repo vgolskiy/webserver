@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 13:01:25 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 14:26:42 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ public:
 	int 		get_status(void);
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
+	std::vector<const char*>	convert_cgi_meta_vars(void);
 
 	enum status
 	{
