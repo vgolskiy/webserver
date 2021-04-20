@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 16:34:26 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 19:10:21 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,7 +378,7 @@ void Request::set_cgi_meta_vars(const int i) {
 	if (!php) {
 		_env["SCRIPT_NAME"] = loc->exec;
 		// SERVER_NAME - get name from server[i]->get_name
-		_env["SERVER_NAME"] = g_servers[i]->name.front();
+		_env["SERVER_NAME"] = g_servers[i]->name;
     	//Just name of our program
     	_env["SERVER_SOFTWARE"] = "webserv";
 	}

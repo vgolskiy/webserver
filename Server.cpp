@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 14:20:23 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 19:10:21 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int		start_servers(std::vector<t_server*> &servers)
 		servers[i]->socket = new Socket(port, host);
 		servers[i]->socket->to_bind();
 		servers[i]->socket->to_listen(SOMAXCONN); // Max length for listen (?)
-		std::cout << "Server " << servers[i]->name.front() << " is litening to port " << ntohs(servers[i]->port.front()) << std::endl;
+		std::cout << "Server " << servers[i]->name << " is litening to port " << ntohs(servers[i]->port.front()) << std::endl;
     }
 	return (EXIT_SUCCESS);
 }
@@ -73,13 +73,13 @@ void	delete_upon_timeout(std::vector<t_server*> &servers, long timeout_server, l
 		for (it_cli = (*it)->clients.begin(); it_cli != (*it)->clients.end(); ++it_cli) {
 			if (((*it_cli)->get_status() == Client::ALIVE)
 				&& ((current_time() - (*it_cli)->get_start_time() > timeout_client * 1000))) {
-				std::cout << "Server " << (*it)->name.front() << " client waiting time is out" << std::endl;
+				std::cout << "Server " << (*it)->name << " client waiting time is out" << std::endl;
 				delete *it_cli;
 				it_cli = (*it)->clients.erase(it_cli);
 			}
 		}
 		if (current_time() - (*it)->time_start > timeout_server * 1000) {
-			std::cout << "Server " << (*it)->name.front() << " waiting time is out" << std::endl;
+			std::cout << "Server " << (*it)->name << " waiting time is out" << std::endl;
 			delete *it;
 			it = servers.erase(it);
 		}
@@ -97,7 +97,7 @@ void	add_new_client(std::vector<t_server*> &servers, const fd_set &read_fd_sets)
 			try {
 				new_cl->accept_connection();
 				servers[i]->clients.push_back(new_cl);
-				std::cout << "Client connected with a " << servers[i]->name.front() << std::endl;
+				std::cout << "Client connected with a " << servers[i]->name << std::endl;
 			}
 			catch (int e) {
 				error_message("Failed to connect with a client: " + std::string(strerror(e)));

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 11:26:49 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 19:06:50 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@
 
 //DEFAULT VALUES
 # define	CONFIG		"content/default"
-# define	SERVER_NAME	""
 
 // COLORS
 # define BLACK "\e[1;30m" 
@@ -137,7 +136,7 @@ class Client;
 //Default config parsing is used instead of initiation function
 typedef struct						s_server
 {
-	std::vector<std::string>		name;
+	std::string						name;
 	std::vector<std::string>		error_page;
 	std::vector<t_location> 		location;
 	std::string						host;

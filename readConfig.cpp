@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 15:14:00 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 19:08:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 void		Config::clear_server(t_server &server) {
 	server.error_page.clear();
 	server.host = "";
-	server.name.clear();
+	server.name = "";
 	server.port.clear();
 	server.location.clear();
 };
@@ -249,7 +249,7 @@ void	error_message(std::string message)
 */
 int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
 	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35) 
-		&& (to_parse[0] != NAME) && (to_parse[0] != ERR_PAGE))) {
+		&& (to_parse[0] != ERR_PAGE))) {
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
 	}
@@ -258,10 +258,8 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		return (EXIT_FAILURE);
 	}
 	to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
-	if ((to_parse[0] == NAME) && (!server.name.size())) {
-		for (size_t	i = 1; i != to_parse.size(); ++i)
-			server.name.push_back(to_parse[i]);
-	}
+	if ((to_parse[0] == NAME) && (!server.name.length()))
+		server.name = to_parse[1];
 	else if (to_parse[0] == PORT) {
 		if (verify_port(to_parse[1]))
 			server.port.push_back(htons(atoi(to_parse[1].c_str())));
@@ -476,8 +474,6 @@ bool	Config::verify_config()
 	{
 		if (!_servers[i].host.length())
 			_servers[i].host = LOCALHOST_IP;
-		if (!_servers[i].name.size())
-			_servers[i].name.push_back(SERVER_NAME);
 		if (!_servers[i].port.size())
 			return (false);
 		_servers[i].port.sort();
