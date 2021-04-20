@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 14:26:42 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 15:15:09 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -392,6 +392,9 @@ std::vector<const char*>	Request::convert_cgi_meta_vars() {
 	for (it = _env.begin(); it != _env.end(); ++it)
 		env.push_back(((*it).first + "=" + (*it).second).c_str());
 	return (env);
+}
+
+void Request::parse_script_file_name() {
 }
 
 void Request::run_cgi_request() {

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 14:26:42 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 15:11:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ private:
 	std::string 						_body;
 	std::map<std::string, std::string>	_env;
 	std::string							_location;
+	std::string							_script_name;
+	std::string							_script_path;
 
 	static std::string const			methods[];
 	static std::string const			headers[];
@@ -139,6 +141,7 @@ public:
 	int 		get_status(void);
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
+	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
 
 	enum status
