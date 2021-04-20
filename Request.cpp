@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 21:17:31 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 13:12:39 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Request::Request(Client *client)
     _version = "";
     _uri = "";
     _body = "";
+	_location = "";
     _client = client;
     _remain_len = 0;
     _status = INIT;
@@ -51,15 +52,17 @@ std::string const Request::headers[] = {
 	"User-Agent",
 };
 
-int Request::get_remain_len(){return _remain_len;}
+int Request::get_remain_len() {
+	return _remain_len;
+}
 
-int	Request::get_content_length() {return _content_len;}
+int Request::get_status() {
+	return _status;
+}
 
-int Request::get_status(){return _status;}
-
-void Request::cut_remain_len(int to_cut){_remain_len -= to_cut;}
-
-std::vector<std::string> Request::get_env(){return _env;}
+void Request::cut_remain_len(int to_cut) {
+	_remain_len -= to_cut;
+}
 
 void remove_spaces(std::string &str) 
 {
@@ -322,63 +325,64 @@ std::string Request::find_header(std::string header)
 }
 
 void Request::set_cgi_meta_vars(const int i) {
-	bool		php = tail(_uri, 4) == ".php" ? true : false;
-    std::string	header_found;
 	t_location*	loc = get_location(g_servers[i], _location);
+	bool		php = ((tail(_uri, 4) == ".php") && (loc->php_path.length())) ? true : false;
+    std::string	header_found;
 
 	/*
 	** The "basic" authentication scheme is based on the model that the
 	** client must authenticate itself with a user-ID and a password
 	*/
     if (!php && ((header_found = find_header("Authorization")) != "NULL"))
-        _env.push_back("AUTH_TYPE=" + header_found);
-    _env.push_back("CONTENT_LENGTH=" + std::to_string(_body.size()));
+        _env["AUTH_TYPE"] = header_found;
+    _env["CONTENT_LENGTH"] = std::to_string(_body.size());
     if ((header_found = find_header("Content-Type")) != "NULL")
-        _env.push_back("CONTENT_TYPE=" + header_found);
+        _env["CONTENT_TYPE"] = header_found;
 	if (!php)
-    	_env.push_back("GATEWAY_INTERFACE=CGI/1.1");
+    	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 
 	//Defines location (uri)
-    _env.push_back("PATH_INFO=" + _uri);
+	//Subject: Because you wont call the cgi directly use the full path as PATH_INFO
+    _env["PATH_INFO"] = loc->root + loc->exec;
 
-	//Full path to content
-    _env.push_back("PATH_TRANSLATED=" + loc->root);
+	//Full path to content: folder with script + script file name 
+    _env["PATH_TRANSLATED"] = loc->root + loc->exec;
 
 	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
     if (!_query_str.empty())
-        _env.push_back("QUERY_STRING=" + _query_str);
+        _env["QUERY_STRING"] = _query_str;
     else
-        _env.push_back("QUERY_STRING=");
+        _env["QUERY_STRING"];
     
 	//Internet host address convertion from binary form into the IPv4 numbers-and-dots notation
-    _env.push_back("REMOTE_ADDR=" + inet_ntoaddr(_client->get_s_addr()));
+    _env["REMOTE_ADDR"] + inet_ntoaddr(_client->get_s_addr());
     
     // REMOTE_IDENT - location authentification
     // REMOTE_USER
 	if (!loc->auth.begin()->first.empty()) {
-		_env.push_back("REMOTE_IDENT=" + loc->auth.begin()->first);
-		_env.push_back("REMOTE_USER=" + loc->auth.begin()->first);
+		_env["REMOTE_IDENT"] = loc->auth.begin()->first;
+		_env["REMOTE_USER"] = loc->auth.begin()->first;
 	}
 
 	//Method was verified against possible methods upon location
 	if (!php)
-		_env.push_back("REQUEST_METHOD=" + _method);
+		_env["REQUEST_METHOD"] = _method;
 
     // REQUEST_URI - location path (uri in Request) 
-	_env.push_back("REQUEST_URI=" + _uri);
+	_env["REQUEST_URI"] = _uri;
 
 	//Full path name of the file to execute
 	// The leading "/" is not part of the path.  It is optional if the path is NULL
 	if (!php) {
-		_env.push_back("SCRIPT_NAME=" + _uri + loc->cgi);
+		_env["SCRIPT_NAME"] = loc->exec;
 		// SERVER_NAME - get name from server[i]->get_name
-		_env.push_back("SERVER_NAME=" + g_servers[i]->name.front());
+		_env["SERVER_NAME"] = g_servers[i]->name.front();
     	//Just name of our program
-    	_env.push_back("SERVER_SOFTWARE=webserv");
+    	_env["SERVER_SOFTWARE"] = "webserv";
 	}
     // SERVER_PORT - get port from server[i]->get_port
-    _env.push_back("SERVER_PORT=" + std::to_string(ntohs(g_servers[i]->port.front())));
-    _env.push_back("SERVER_PROTOCOL=" + _version);
+    _env["SERVER_PORT"] = std::to_string(ntohs(g_servers[i]->port.front()));
+    _env["SERVER_PROTOCOL"] = _version;
 }
 
 void Request::run_cgi_request() {

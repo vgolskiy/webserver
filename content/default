@@ -5,7 +5,7 @@ server {
 	server_name	webserv;
 
 
-    location /wordpress {
+    location / {
         index   	index.php;
 		methods		GET,PUT,POST;
 		root		./content;

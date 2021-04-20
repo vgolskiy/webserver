@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 20:19:29 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 13:01:25 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ private:
 	std::string							_version;
 	std::map<std::string, std::string>	_headers;
 	std::string 						_body;
-	std::vector<std::string>			_env;
+	std::map<std::string, std::string>	_env;
 	std::string							_location;
 
 	static std::string const			methods[];
@@ -137,9 +137,7 @@ public:
 	void		createResponce(void);
 	int			get_remain_len(void);
 	int 		get_status(void);
-	int			get_content_length(void);
 	void		print_parsed_request(void);
-	std::vector<std::string> get_env(void);
 	void		run_cgi_request(void);
 
 	enum status
