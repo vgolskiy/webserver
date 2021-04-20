@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 19:06:50 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 20:01:22 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@
 # define	AUTO_INDEX 	"autoindex"
 # define	MAX_BODY 	"max_body" // should limit client body size
 # define	AUTH 		"auth"
-# define	EXEC		"exec"
 
 //For iteration of static lists - elements quantity getter
 # define	N_ELEMS(a) (int)(sizeof(a) / sizeof((a)[0]))
@@ -125,7 +124,6 @@ typedef struct							s_location
 	std::string							cgi;
 	std::string							cgi_path;
 	std::map<std::string, std::string>	auth;
-	std::string							exec;
 	int									auto_index;
 	int									max_body;
 	s_location() : auto_index(-1), max_body(-1) {}
@@ -136,14 +134,14 @@ class Client;
 //Default config parsing is used instead of initiation function
 typedef struct						s_server
 {
-	std::string						name;
-	std::vector<std::string>		error_page;
-	std::vector<t_location> 		location;
-	std::string						host;
-	std::list<unsigned short>		port;
-	long							time_start;
-	Socket							*socket;
-	std::list<Client*> 				clients;
+	std::string							name;
+	std::string							error_page;
+	std::vector<t_location> 			location;
+	std::string							host;
+	std::list<unsigned short>			port;
+	long								time_start;
+	Socket								*socket;
+	std::list<Client*> 					clients;
 }									t_server;
 
 //Global server configuration parameters structure

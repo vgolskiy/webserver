@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 19:10:21 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 20:28:53 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,10 +345,10 @@ void Request::set_cgi_meta_vars(const int i) {
 
 	//Defines location (uri)
 	//Subject: Because you wont call the cgi directly use the full path as PATH_INFO
-    _env["PATH_INFO"] = loc->root + loc->exec;
+    _env["PATH_INFO"] = _uri;
 
 	//Full path to content: folder with script + script file name 
-    _env["PATH_TRANSLATED"] = loc->root + loc->exec;
+    _env["PATH_TRANSLATED"] = _script_path;
 
 	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
     if (!_query_str.empty())
@@ -376,11 +376,11 @@ void Request::set_cgi_meta_vars(const int i) {
 	//Full path name of the file to execute
 	// The leading "/" is not part of the path.  It is optional if the path is NULL
 	if (!php) {
-		_env["SCRIPT_NAME"] = loc->exec;
+		_env["SCRIPT_NAME"] = _script_name ? _script_name : _uri;
 		// SERVER_NAME - get name from server[i]->get_name
 		_env["SERVER_NAME"] = g_servers[i]->name;
     	//Just name of our program
-    	_env["SERVER_SOFTWARE"] = "webserv";
+    	_env["SERVER_SOFTWARE"] = g_servers[i]->name;
 	}
     // SERVER_PORT - get port from server[i]->get_port
     _env["SERVER_PORT"] = std::to_string(ntohs(g_servers[i]->port.front()));
@@ -404,11 +404,11 @@ void Request::parse_script_file_name(const int i) {
 	size_t		pos = _uri.rfind("/");
 
 	if ((tail(_uri, 4) == ".php") && (loc->php_path.length())) {
-		_script_path = (loc->php_path).c_str();
+		_script_path = loc->php_path.c_str();
 		_script_name = (_uri.substr(pos == std::string::npos ? 0 : pos + 1, std::string::npos)).c_str();
 	}
 	else
-		_script_path = (loc->cgi_path).c_str();
+		_script_path = loc->cgi_path.c_str();
 }
 
 void Request::run_cgi_request() {

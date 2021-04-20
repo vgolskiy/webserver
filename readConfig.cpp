@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 19:08:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/20 20:11:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,8 +271,10 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		}
 	}
 	else if ((to_parse[0] == ERR_PAGE)) {
-		for (size_t i = 1; i < to_parse.size(); ++i)
-			server.error_page.push_back(to_parse[i]);
+		if (verify_directory(to_parse[1]))
+			server.error_page = to_parse[1];
+		else
+			return (EXIT_FAILURE);
 	}
 	else
 		error_message("Unknown or double parameter");
@@ -295,7 +297,7 @@ int		Config::parse_method(t_location &location, std::string &s) {
 		if ((tmp[i].length()) && (verify_method(tmp[i])))
 			location.methods.push_back(tmp[i]);
 		else {
-			error_message("Directive methods is invalid");
+			error_message("Methods parameter is invalid");
 			return (EXIT_FAILURE);
 		}
 	}
@@ -308,7 +310,7 @@ int		Config::parse_autoindex(t_location &location, std::string &s) {
 	else if (s == "off")
 		location.auto_index = false;
 	else {
-		error_message("Directive autoindex is invalid");
+		error_message("Autoindex parameter is invalid");
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
@@ -396,19 +398,13 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 	}
 	else if ((to_parse[0] == INDEX) && (!location.index.length()))
 		location.index = to_parse[1];
-	else if ((to_parse[0] == CGI_PATH) && (!location.cgi_path.length())) {
-		if (parse_directory(location.cgi_path, to_parse[1]))
-			return (EXIT_FAILURE);
-	}
-	else if ((to_parse[0] == PHP_PATH) && (!location.php_path.length())) {
-		if (parse_directory(location.php_path, to_parse[1]))
-			return (EXIT_FAILURE);
-	}
-	else if ((to_parse[0] == CGI) && (!location.cgi.length()) && (to_parse[0][0] == '.')
-		&& (std::count(to_parse[0].begin(), to_parse[0].end(), 46) == 1)) //file extention verification
+	else if ((to_parse[0] == CGI_PATH) && (!location.cgi_path.length()))
+		location.cgi_path = to_parse[1];
+	else if ((to_parse[0] == PHP_PATH) && (!location.php_path.length()))
+		location.php_path = to_parse[1];
+	else if ((to_parse[0] == CGI) && (!location.cgi.length()) && (to_parse[1][0] == '.')
+		&& (std::count(to_parse[1].begin(), to_parse[1].end(), 46) == 1)) //file extention verification
 		location.cgi = to_parse[1];
-	else if ((to_parse[0] == EXEC) && (!location.exec.length()))
-		location.exec = to_parse[1];
 	else if ((to_parse[0] == AUTO_INDEX) && (location.auto_index == -1)) {
 		if (parse_autoindex(location, to_parse[1]))
 			return (EXIT_FAILURE);
