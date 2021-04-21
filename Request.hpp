@@ -99,6 +99,8 @@ POST:
 
 # define HTTP "HTTP/1.1"
 
+#define TMP "tmp_file"
+
 class Client;
 class Request
 {
