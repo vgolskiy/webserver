@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:28:29 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/22 10:41:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 02:26:28 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void		signal_handler(int signal)
 void		exit_error(int err) {
 	error_message(strerror(err));
 	clear_servers_configuration();
-	exit(EXIT_FAILURE);
+	exit(err);
 }
 
 void		exit_error_msg(std::string msg) {

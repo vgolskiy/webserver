@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/22 21:45:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 02:32:06 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -437,26 +437,24 @@ void Request::run_cgi_request() {
 
     // open file to write in
     if ((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0 )
-        error_message("File can not be opened!");
+        exit_error(errno);
     if ((pipe(fds)) < 0)
-        error_message("Pipe's error!");
+    	exit_error(errno);
     pid = fork();
     if (pid < 0)
-        error_message("Fork's error!");
+        exit_error(errno);
     else if (pid == 0)
     {
         close(fds[1]);
         dup2(fds[0], 0); // stdin подключается к выходу канала
         close(fds[0]);
         dup2(tmp_fd, 1); // stdout подключается к временному файлу - происходит запись во временный файл
-        execve(_script_path, (char *const *)args, (char *const *)&envp[0]);
-        error_message("CGI program cannot be executed!");
-		exit(127);
+        if (execve(_script_path, (char *const *)args, (char *const *)&envp[0]) == -1)
+			exit_error(errno);
     }
-    else
-    {
+    else {
+		int	status = 0;
         close(fds[0]);
-        int status = 0;
         waitpid(pid, &status, 0);
         close(fds[1]);
         close(tmp_fd);
