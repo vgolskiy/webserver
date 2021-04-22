@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/22 21:36:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/22 21:45:17 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -481,7 +481,7 @@ bool		Config::verify_brackets(std::vector<std::string> &lines)
 ** - localhost is filled
 ** - ports are defined
 ** - ports are not the same within one server
-** check error pages order ???
+** - check error pages order
 ** ascii 47 /
 */
 

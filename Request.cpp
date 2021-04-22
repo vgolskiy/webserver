@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/22 18:23:53 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/22 21:45:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -427,7 +427,7 @@ void Request::run_cgi_request() {
 	** _script_path contains directory to php/cgi binary
 	** _script_name is NULL for cgi / gets php file name from _uri
 	*/
-	//const char*	args[] = {_script_path, _script_name, NULL};
+	const char*	args[] = {_script_path, _script_name, NULL};
 
     // Functions to use: execve, dup2, pipe, fork, waitpid.
     int fds[2];
