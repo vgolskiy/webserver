@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/22 21:45:17 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 02:19:15 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,13 +235,14 @@ int		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 };
 
 int		Config::parse_error_pages(t_server &server, std::string err, std::string err_page) {
-	size_t	pos = err_page.find_first_of("x") != std::string::npos ? err_page.find_first_of("x"): err_page.find_first_of(".");
+	size_t	pos = err_page.find_first_of("x.");
 
-	pos = pos - 1 < 0 ? 0 : pos - 1; 
 	if (pos == std::string::npos) {
 		error_message("Error parameter: wrong error file name");
 		return (EXIT_FAILURE);
 	}
+	pos = err_page.find("x") != std::string::npos ? err_page.find("x") : err_page.find(".");
+	pos = pos - 1 < 0 ? 0 : pos - 1; 
 	if (err.substr(0, pos) != err_page.substr(1, pos)) {
 		error_message("Error parameter: wrong error number");
 		return (EXIT_FAILURE);
@@ -513,7 +514,12 @@ bool	Config::verify_config() {
 
 			for (; it_err != _servers[i].error_page.end(); ++it_err) {
 				if (_servers[i].location[j].uri == (*it_err).second) {
-					(*it_err).second = _servers[i].location[j].root + (*it_err).second;
+					if (tail(_servers[i].location[j].root, 1) != "/")
+						(*it_err).second = _servers[i].location[j].root + "/" + (*it_err).first 
+							+ (*it_err).second.substr((*it_err).second.find("."), (*it_err).second.length());
+					else
+						(*it_err).second = _servers[i].location[j].root + (*it_err).first 
+							+ (*it_err).second.substr((*it_err).second.find("."), (*it_err).second.length());
 					qty++;
 				}
 			}
