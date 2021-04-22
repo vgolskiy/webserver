@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:28:29 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 11:30:18 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/22 10:41:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,3 +65,8 @@ std::string	inet_ntoaddr(int n) {
 	res += std::to_string((n / int(std::pow(256, 3))) % 256);
     return (res);
 }
+
+void	error_message(std::string message)
+{
+	std::cerr << message << std::endl;
+};

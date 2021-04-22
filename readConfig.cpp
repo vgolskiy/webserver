@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 20:11:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/22 21:36:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,7 @@ std::string const	Config::_headers[] = {
 ** File content line by line is parsed into server
 ** or server location parameters
 ** In case of no location provided error message is shown
-** ascii 35 #, 123 {, 125 }
+** ascii 35 #, 123 {, 125 }, 61 =
 */
 int		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 	std::vector<std::string>::iterator	it;
@@ -198,10 +198,11 @@ int		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 			continue ;
 		if (tokens[0] == LOCATION) {
 			if (((tokens.size() == 3) && (tokens[2][0] == 123))
-				|| ((tokens.size() == 2) && (tokens[1][tokens[1].length() - 1] == 123))) {
-				location.uri = tokens[1];
+				|| ((tokens.size() == 2) && (tokens[1][tokens[1].length() - 1] == 123))
+				|| ((tokens.size() == 4) && (tokens[1][0] == 61) && (tokens[3][0] == 123))) {
+				location.uri = tokens[1][0] != 61 ? tokens[1] : tokens[2];
 				it++;
-				tokens = parse_line(*it);				
+				tokens = parse_line(*it);
 				while (tokens[0][0] != 125) {
 					if (parse_servers_locations(tokens, location))
 						return (EXIT_FAILURE);
@@ -233,9 +234,24 @@ int		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 	return (EXIT_SUCCESS);
 };
 
-void	error_message(std::string message)
-{
-	std::cerr << message << std::endl;
+int		Config::parse_error_pages(t_server &server, std::string err, std::string err_page) {
+	size_t	pos = err_page.find_first_of("x") != std::string::npos ? err_page.find_first_of("x"): err_page.find_first_of(".");
+
+	pos = pos - 1 < 0 ? 0 : pos - 1; 
+	if (pos == std::string::npos) {
+		error_message("Error parameter: wrong error file name");
+		return (EXIT_FAILURE);
+	}
+	if (err.substr(0, pos) != err_page.substr(1, pos)) {
+		error_message("Error parameter: wrong error number");
+		return (EXIT_FAILURE);
+	}
+	if (server.error_page.find(err) != server.error_page.end()) {
+		error_message("Error parameter: double error number");
+		return (EXIT_FAILURE);		
+	}
+	server.error_page[err] = err_page;
+	return (EXIT_SUCCESS);
 };
 
 /*
@@ -271,10 +287,10 @@ int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_
 		}
 	}
 	else if ((to_parse[0] == ERR_PAGE)) {
-		if (verify_directory(to_parse[1]))
-			server.error_page = to_parse[1];
-		else
-			return (EXIT_FAILURE);
+		for (size_t i = 1; i != to_parse.size() - 1; ++i) {
+			if (parse_error_pages(server, to_parse[i], to_parse[to_parse.size() - 1]))
+				return (EXIT_FAILURE);
+		}
 	}
 	else
 		error_message("Unknown or double parameter");
@@ -373,6 +389,13 @@ int		Config::parse_auth(t_location &location, std::string &s) {
 	return (EXIT_SUCCESS);
 }
 
+/*
+** (none) If no modifiers are present, the location is interpreted as a prefix match.
+** This means that the location given will be matched against the beginning 
+** of the request URI to determine a match.
+** =: If an equal sign is used, this block will be considered a match 
+** if the request URI exactly matches the location given
+*/
 //ascii 123 { 46 .
 int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
@@ -462,27 +485,44 @@ bool		Config::verify_brackets(std::vector<std::string> &lines)
 ** ascii 47 /
 */
 
-bool	Config::verify_config()
-{
+bool	Config::verify_config() {
 	std::list<unsigned short>::iterator it;
+	size_t	qty = 0;
 
 	for (size_t i = 0; i != _servers.size(); i++)
 	{
 		if (!_servers[i].host.length())
 			_servers[i].host = LOCALHOST_IP;
-		if (!_servers[i].port.size())
+		if (!_servers[i].port.size()) {
+			error_message("Port is not set in configuration file");
 			return (false);
+		}
 		_servers[i].port.sort();
 		for (it = _servers[i].port.begin(); it != --(_servers[i].port.end()); it++) {
-			if (*it == *(++it))
+			if (*it == *(++it)) {
+				error_message("Ports double in configuration file");
 				return (false);
-		}
-		for (size_t i = 0; i != _servers.size(); ++i) {
-			for (size_t j = 0; j != _servers[i].location.size(); ++j) {
-				if (_servers[i].location[j].uri.front() != 47)
-					return (false);
 			}
 		}
+		for (size_t j = 0; j != _servers[i].location.size(); ++j) {
+			if (_servers[i].location[j].uri.front() != 47) {
+				error_message("Location name should start from /");
+				return (false);
+			}
+			std::map<std::string, std::string>::iterator	it_err = _servers[i].error_page.begin();
+
+			for (; it_err != _servers[i].error_page.end(); ++it_err) {
+				if (_servers[i].location[j].uri == (*it_err).second) {
+					(*it_err).second = _servers[i].location[j].root + (*it_err).second;
+					qty++;
+				}
+			}
+		}
+		if (qty != _servers[i].error_page.size()) {
+			error_message("Errors location was not set in configuration file");
+			return (false);
+		}
+		qty = 0;
 	}
 	return (true);
 };
