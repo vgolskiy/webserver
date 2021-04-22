@@ -51,14 +51,18 @@ int		start_servers(std::vector<t_server*> &servers)
 {
 	if (servers.empty())
 		return (EXIT_FAILURE);
-    for (size_t i = 0; i < servers.size(); i++) // TODO: error checking!
+	
+	//initialization should be separate - to avoid segfault in case of (to_bind || to_listen)'s error
+	for (size_t i = 0; i < servers.size(); i++)
     {
-		//primary port is the first port in list by default
 		unsigned short port = servers[i]->port.front();
 		std::string host = servers[i]->host;
 		servers[i]->socket = new Socket(port, host);
+	}
+    for (size_t i = 0; i < servers.size(); i++)
+    {
 		servers[i]->socket->to_bind();
-		servers[i]->socket->to_listen(SOMAXCONN); // Max length for listen (?)
+		servers[i]->socket->to_listen(SOMAXCONN);
 		std::cout << "Server " << servers[i]->name << " is litening to port " << ntohs(servers[i]->port.front()) << std::endl;
     }
 	return (EXIT_SUCCESS);

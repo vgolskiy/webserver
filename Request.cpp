@@ -429,7 +429,38 @@ void Request::run_cgi_request() {
 	*/
 	//const char*	args[] = {_script_path, _script_name, NULL};
 
-	
+    // Functions to use: execve, dup2, pipe, fork, waitpid.
+    int fds[2];
+    pid_t pid;
+    // const char *tmp_file;
+    int tmp_fd;
+
+    // open file to write in
+    if ((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0 )
+        error_message("File can not be opened!");
+    if ((pipe(fds)) < 0)
+        error_message("Pipe's error!");
+    pid = fork();
+    if (pid < 0)
+        error_message("Fork's error!");
+    else if (pid == 0)
+    {
+        close(fds[1]);
+        dup2(fds[0], 0); // stdin подключается к выходу канала
+        close(fds[0]);
+        dup2(tmp_fd, 1); // stdout подключается к временному файлу - происходит запись во временный файл
+        execve(_script_path, (char *const *)args, (char *const *)&envp[0]);
+        error_message("CGI program cannot be executed!");
+		exit(127);
+    }
+    else
+    {
+        close(fds[0]);
+        int status = 0;
+        waitpid(pid, &status, 0);
+        close(fds[1]);
+        close(tmp_fd);
+    }
 }
 
 void Request::createResponce() {
