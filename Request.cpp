@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/23 02:32:06 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 02:35:53 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -435,15 +435,16 @@ void Request::run_cgi_request() {
     // const char *tmp_file;
     int tmp_fd;
 
+	//In case of any problems during fork: exit with errno code
     // open file to write in
-    if ((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0 )
+    if ((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
         exit_error(errno);
     if ((pipe(fds)) < 0)
     	exit_error(errno);
     pid = fork();
     if (pid < 0)
         exit_error(errno);
-    else if (pid == 0)
+    else if (!pid)
     {
         close(fds[1]);
         dup2(fds[0], 0); // stdin подключается к выходу канала
