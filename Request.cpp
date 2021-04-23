@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/23 02:35:53 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:21:18 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -441,12 +441,12 @@ void Request::run_cgi_request() {
         exit_error(errno);
     if ((pipe(fds)) < 0)
     	exit_error(errno);
+	if (_method == "GET")
+        close(fds[1]);
     pid = fork();
     if (pid < 0)
         exit_error(errno);
-    else if (!pid)
-    {
-        close(fds[1]);
+    else if (!pid) {
         dup2(fds[0], 0); // stdin подключается к выходу канала
         close(fds[0]);
         dup2(tmp_fd, 1); // stdout подключается к временному файлу - происходит запись во временный файл
