@@ -138,7 +138,6 @@ public:
 	bool		parse_chunk_data(std::string &lines);
 	bool		check_start_line(const std::vector<std::string> &lines, const int i);
 	bool		set_up_headers(const std::vector<std::string> &lines);	
-	bool		check_hex_chunk(std::string &to_check);
 	void		set_cgi_meta_vars(const int i);
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);

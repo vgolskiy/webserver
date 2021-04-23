@@ -174,24 +174,17 @@ void Request::parse_init(std::vector<std::string> &split_lines, std::string &ori
     }
 }
 
-bool Request::check_hex_chunk(std::string &to_check)
-{
-    (void)to_check;
-    return true;
-}
 
 // <длина блока в HEX><\r\n><содержание блока><\r\n>
 bool Request::parse_chunk_size(std::string &lines)
 {
-    if (lines.find("\r\n") == std::string::npos) // If there is nothing
+    size_t      pos;
+    std::string str;
+
+    if ((pos = lines.find("\r\n")) == std::string::npos) // If there is nothing
         return false;
-    if (check_hex_chunk(lines) == false)
-    {
-        error_message("Bad chunk request!");
-        _status = Request::BAD_REQ;
-        return false;
-    }
-    _content_len = std::strtol(lines.c_str(), 0, 10); // TODO: change base
+    str = lines.substr(0, pos);
+    _content_len = std::strtol(lines.c_str(), 0, 16); // TODO: change base
     _remain_len = _content_len;
     lines.erase(0, lines.find("\r\n") + 2);
     _status = Request::CHUNK_DATA;
@@ -212,7 +205,7 @@ bool Request::parse_chunk_data(std::string &lines)
         lines.erase(0, _content_len); // +2 - to erase "\r\n"
         if (lines.find("\r\n") != 0) // so there is no \r\n
         {
-            std::cout << "Bad request chunk data\n";
+            std::cout << "Bad request chunk data!\n";
             _status = Request::BAD_REQ;
             return false;
         }
@@ -220,7 +213,7 @@ bool Request::parse_chunk_data(std::string &lines)
         _status = Request::CHUNK;
         return true;
     }
-
+    std::cout << "Bad request chunk length!\n";
     return false;
 }
 
