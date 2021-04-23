@@ -221,17 +221,17 @@ bool Request::parse_chunk_data(std::string &lines)
 
 void Request::print_parsed_request()
 {
-    std::cout << GREEN"-------PRINT PARSED REQUEST-------"RESET << std::endl;
+    std::cout << GREEN"-------PRINT PARSED REQUEST-------" RESET << std::endl;
 
-    std::cout << BLUE"METHOD: " << _method << "\n"RESET;
-    std::cout << BROWN"URI: " << _uri << "\n"RESET;
-    std::cout << RED"VERSION: "<< _version << "\n"RESET;
+    std::cout << BLUE"METHOD: " << _method << "\n" RESET;
+    std::cout << BROWN"URI: " << _uri << "\n" RESET;
+    std::cout << RED"VERSION: "<< _version << "\n" RESET;
 
     std::map<std::string, std::string>::iterator  it = _headers.begin();
     std::map<std::string, std::string>::iterator  ite = _headers.end();
-    std::cout << BLACK"\nHEADERS:\n"RESET;
+    std::cout << BLACK"\nHEADERS:\n" RESET;
     for (; it != ite; it++)
-        std::cout << ""MAGENTA << (*it).first << RESET": "CYAN << (*it).second << "\n"RESET;
+        std::cout << "" MAGENTA << (*it).first << RESET": " CYAN << (*it).second << "\n" RESET;
     std::cout << std::endl;
 }
 
@@ -393,8 +393,11 @@ std::string Request::server_date() {
 	char buf[29];
 	gettimeofday(&time, NULL);
 	std::string s = std::to_string(time.tv_sec);
+
 	strptime(s.c_str(), " %s ", &info);
-	strftime (buf, sizeof(buf), "%a, %d %b %Y %X %Z", &info);
+	//форматировать время как строку
+	//a - день недели, d - день месяца и тд
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %X %Z", &info);
 	std::string str = buf;
 	return "Date: " + str + "\r\n";
 }
@@ -460,7 +463,7 @@ std::string Request::createHeader() {
 //	_response += "Server: " + "\r\n";
 //	_response += "Transfer-Encoding: " + "\r\n";
 //	_response += "WWW-Authenticate: " + "\r\n";
-//	return _response;
+	return _response;
 }
 
 
