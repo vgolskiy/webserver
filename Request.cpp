@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/23 11:52:26 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:58:41 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,6 +411,7 @@ void Request::parse_script_file_name(const int i) {
 		_script_path = loc->cgi_path.c_str();
 }
 
+// Functions to use: execve, dup2, pipe, fork, waitpid
 void Request::run_cgi_request() {
 	/*
 	** envp is an array of pointers to strings, conventionally of the
@@ -428,27 +429,24 @@ void Request::run_cgi_request() {
 	** _script_name is NULL for cgi / gets php file name from _uri
 	*/
 	const char*	args[] = {_script_path, _script_name, NULL};
-
-    // Functions to use: execve, dup2, pipe, fork, waitpid.
-    int fds[2];
-    pid_t pid;
-    // const char *tmp_file;
-    int tmp_fd;
+    int 		pipe_fds[2];
+    pid_t 		pid;
+    int 		tmp_fd;
 
 	//In case of any problems during fork: exit with errno code
-    // open file to write in
+    //Opening file to write in
     if (((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
-		|| ((pipe(fds)) < 0))
+		|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);
     pid = fork();
     if (pid < 0)
         exit_error(errno);
     else if (!pid) {
-		close(fds[PIPE_IN]);
+		close(pipe_fds[PIPE_IN]);
 		// stdin подключается к выходу канала
-        if (dup2(fds[PIPE_OUT], STDIN_FILENO) < 0)
+        if (dup2(pipe_fds[PIPE_OUT], STDIN_FILENO) < 0)
 			exit_error(errno);
-        close(fds[PIPE_OUT]);
+        close(pipe_fds[PIPE_OUT]);
 		// stdout подключается к временному файлу - происходит запись во временный файл
 		if ((dup2(tmp_fd, STDOUT_FILENO) < 0)
 			|| (execve(_script_path, (char *const *)args, (char *const *)&envp[0]) < 0))
@@ -456,9 +454,9 @@ void Request::run_cgi_request() {
     }
     else {
 		int	status = 0;
-        close(fds[PIPE_OUT]);
+        close(pipe_fds[PIPE_OUT]);
         waitpid(pid, &status, 0);
-        close(fds[PIPE_IN]);
+        close(pipe_fds[PIPE_IN]);
         close(tmp_fd);
     }
 }
