@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/23 11:31:06 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:42:40 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -445,18 +445,18 @@ void Request::run_cgi_request() {
     if (pid < 0)
         exit_error(errno);
     else if (!pid) {
-		close(fds[1]);
-        dup2(fds[0], 0); // stdin подключается к выходу канала
-        close(fds[0]);
+		close(fds[PIPE_IN]);
+        if (dup2(fds[PIPE_OUT], 0) < 0); // stdin подключается к выходу канала
+        close(fds[PIPE_OUT]);
         dup2(tmp_fd, 1); // stdout подключается к временному файлу - происходит запись во временный файл
-        if (execve(_script_path, (char *const *)args, (char *const *)&envp[0]) == -1)
+        if (execve(_script_path, (char *const *)args, (char *const *)&envp[0]) < 0)
 			exit_error(errno);
     }
     else {
 		int	status = 0;
-        close(fds[0]);
+        close(fds[PIPE_OUT]);
         waitpid(pid, &status, 0);
-        close(fds[1]);
+        close(fds[PIPE_IN]);
         close(tmp_fd);
     }
 }

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 16:30:06 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:42:40 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,9 @@ POST:
 
 # include "Config.hpp"
 
-# define HTTP "HTTP/1.1"
+# define HTTP		"HTTP/1.1"
+# define PIPE_IN	1
+# define PIPE_OUT	0
 
 #define TMP "tmp_file"
 
