@@ -126,6 +126,8 @@ private:
 	int									_remain_len; // bytes left to read
 	int									_content_len;
 	bool								_chunk;
+
+	std::string _response;
 public:
 	Request(Client *client);
 	~Request(void);
