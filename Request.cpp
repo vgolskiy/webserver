@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/23 11:42:40 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:52:26 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -437,19 +437,21 @@ void Request::run_cgi_request() {
 
 	//In case of any problems during fork: exit with errno code
     // open file to write in
-    if ((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
-        exit_error(errno);
-    if ((pipe(fds)) < 0)
+    if (((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
+		|| ((pipe(fds)) < 0))
     	exit_error(errno);
     pid = fork();
     if (pid < 0)
         exit_error(errno);
     else if (!pid) {
 		close(fds[PIPE_IN]);
-        if (dup2(fds[PIPE_OUT], 0) < 0); // stdin подключается к выходу канала
+		// stdin подключается к выходу канала
+        if (dup2(fds[PIPE_OUT], STDIN_FILENO) < 0)
+			exit_error(errno);
         close(fds[PIPE_OUT]);
-        dup2(tmp_fd, 1); // stdout подключается к временному файлу - происходит запись во временный файл
-        if (execve(_script_path, (char *const *)args, (char *const *)&envp[0]) < 0)
+		// stdout подключается к временному файлу - происходит запись во временный файл
+		if ((dup2(tmp_fd, STDOUT_FILENO) < 0)
+			|| (execve(_script_path, (char *const *)args, (char *const *)&envp[0]) < 0))
 			exit_error(errno);
     }
     else {
