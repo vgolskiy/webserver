@@ -1,41 +1,93 @@
 server {
-    listen 8080;
-	listen localhost:8000;
-
+    listen 		8080;
+	listen 		localhost:8080;
 	server_name	webserv;
 
+	error_page  400 401 404 405 413 /4xx.html;
 
-    location /wordpress {
-        index   	index.php;
-		methods		GET,PUT,POST;
-		root		./content;
-		cgi_path	./content;
-		php_path	./content;
-		autoindex	off;
-		auth		test:test;
+	location = /4xx.html {
+		root	./content/error/4xx;
+	}
+
+	error_page	500 501 /50x.html;
+
+	location = /50x.html {
+		root	./content/error/50x;
+	}
+
+    location /	{
+		methods	    GET;
+        root	    ./content;
+		index	    index.html;
+		cgi			.bla;
+		cgi_path    ./content/cgi_tester;
     }
 
-    error_page   500 502 503 504;
-	
+    location /put_test	{
+		methods		PUT;
+		root 		./content;
+	}
+
+    location /post_body	{
+		methods		POST;
+		root 		./content;
+		index 		index.html;
+		max_body	100;
+	}
+
+    location /directory	{
+		methods		GET,POST;
+		root 		./content/YoupiBanane;
+		cgi			.bla;
+		index 		youpi.bad_extension;
+		cgi_path    ./content/cgi_tester;
+	}
 }
 
 server {
-    listen 8080;
-	listen localhost:8080;
-
+    listen 		8000;
+	listen 		localhost:8000;
 	server_name	webserv;
 
+	error_page  400 401 404 405 413 /4xx.html;
 
-    location /wordpress {
-        index   	index.php;
-		methods		GET,PUT,POST;
-		root		./content;
-		cgi_path	./content;
-		php_path	./content;
-		autoindex	off;
-		auth		test:test;
+	location = /4xx.html {
+		root	./content/error/4xx;
+	}
+
+	error_page	500 501 /50x.html;
+
+	location = /50x.html {
+		root	./content/error/50x;
+	}
+	
+    location /	{
+		methods		GET,POST,HEAD,PUT;
+        root		./content;
+		index		index.html;
+		php_path	/usr/bin/php;
+		cgi			.bla;
+		cgi_path	./content/cgi_tester;
     }
 
-    error_page   500 502 503 504;
-	
+    location /autoindex	{
+		methods		GET,POST,HEAD,PUT;
+        root    	./content;
+		index		index.html;
+		autoindex	on;
+    }
+
+    location /no_autoindex	{
+		methods		GET,POST,HEAD,PUT;
+        root    	./content;
+		index		index.html;
+		autoindex	off;
+    }
+
+    location /auth	{
+		methods	    GET;
+		index		auth.html;
+		root 		./content/auth;
+		auth 		user:pass;
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 21:17:31 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:58:41 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,14 @@ Request::Request(Client *client)
     _version = "";
     _uri = "";
     _body = "";
+	_location = "";
     _client = client;
     _remain_len = 0;
     _status = INIT;
     _content_len = -1;
     _chunk = false;
+	_script_path = NULL;
+	_script_name = NULL;
 }
 
 Request::~Request() {}
@@ -51,15 +54,17 @@ std::string const Request::headers[] = {
 	"User-Agent",
 };
 
-int Request::get_remain_len(){return _remain_len;}
+int Request::get_remain_len() {
+	return _remain_len;
+}
 
-int	Request::get_content_length() {return _content_len;}
+int Request::get_status() {
+	return _status;
+}
 
-int Request::get_status(){return _status;}
-
-void Request::cut_remain_len(int to_cut){_remain_len -= to_cut;}
-
-std::vector<std::string> Request::get_env(){return _env;}
+void Request::cut_remain_len(int to_cut) {
+	_remain_len -= to_cut;
+}
 
 void remove_spaces(std::string &str) 
 {
@@ -311,7 +316,7 @@ void Request::parse_request(std::string &lines, const int i)
 
 std::string Request::find_header(std::string header)
 {
-    std::string empty_head = "NULL";
+    std::string empty_head = "NULL"; 
     std::map<std::string, std::string>::iterator it = _headers.begin();
     std::map<std::string, std::string>::iterator ite = _headers.end();
 
@@ -322,66 +327,138 @@ std::string Request::find_header(std::string header)
 }
 
 void Request::set_cgi_meta_vars(const int i) {
-	bool		php = tail(_uri, 4) == ".php" ? true : false;
-    std::string	header_found;
 	t_location*	loc = get_location(g_servers[i], _location);
+	bool		php = ((tail(_uri, 4) == ".php") && (loc->php_path.length())) ? true : false;
+    std::string	header_found;
 
 	/*
 	** The "basic" authentication scheme is based on the model that the
 	** client must authenticate itself with a user-ID and a password
 	*/
     if (!php && ((header_found = find_header("Authorization")) != "NULL"))
-        _env.push_back("AUTH_TYPE=" + header_found);
-    _env.push_back("CONTENT_LENGTH=" + std::to_string(_body.size()));
+        _env["AUTH_TYPE"] = header_found;
+    _env["CONTENT_LENGTH"] = std::to_string(_body.size());
     if ((header_found = find_header("Content-Type")) != "NULL")
-        _env.push_back("CONTENT_TYPE=" + header_found);
+        _env["CONTENT_TYPE"] = header_found;
 	if (!php)
-    	_env.push_back("GATEWAY_INTERFACE=CGI/1.1");
+    	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 
 	//Defines location (uri)
-    _env.push_back("PATH_INFO=" + _uri);
+	//Subject: Because you wont call the cgi directly use the full path as PATH_INFO
+    _env["PATH_INFO"] = _uri;
 
-	//Full path to content
-    _env.push_back("PATH_TRANSLATED=" + loc->root);
+	//Full path to content: folder with script + script file name
+    _env["PATH_TRANSLATED"] = _script_path;
 
 	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
     if (!_query_str.empty())
-        _env.push_back("QUERY_STRING=" + _query_str);
+        _env["QUERY_STRING"] = _query_str;
     else
-        _env.push_back("QUERY_STRING=");
+        _env["QUERY_STRING"];
     
 	//Internet host address convertion from binary form into the IPv4 numbers-and-dots notation
-    _env.push_back("REMOTE_ADDR=" + inet_ntoaddr(_client->get_s_addr()));
+    _env["REMOTE_ADDR"] + inet_ntoaddr(_client->get_s_addr());
     
     // REMOTE_IDENT - location authentification
     // REMOTE_USER
 	if (!loc->auth.begin()->first.empty()) {
-		_env.push_back("REMOTE_IDENT=" + loc->auth.begin()->first);
-		_env.push_back("REMOTE_USER=" + loc->auth.begin()->first);
+		_env["REMOTE_IDENT"] = loc->auth.begin()->first;
+		_env["REMOTE_USER"] = loc->auth.begin()->first;
 	}
 
 	//Method was verified against possible methods upon location
 	if (!php)
-		_env.push_back("REQUEST_METHOD=" + _method);
+		_env["REQUEST_METHOD"] = _method;
 
-    // REQUEST_URI - location path (uri in Request)
-	_env.push_back("REQUEST_URI=" + _uri);
+    // REQUEST_URI - location path (uri in Request) 
+	_env["REQUEST_URI"] = _uri;
 
 	//Full path name of the file to execute
 	// The leading "/" is not part of the path.  It is optional if the path is NULL
 	if (!php) {
-		_env.push_back("SCRIPT_NAME=" + _uri + loc->cgi);
+		_env["SCRIPT_NAME"] = _script_name ? _script_name : _uri;
 		// SERVER_NAME - get name from server[i]->get_name
-		_env.push_back("SERVER_NAME=" + g_servers[i]->name.front());
+		_env["SERVER_NAME"] = g_servers[i]->name;
     	//Just name of our program
-    	_env.push_back("SERVER_SOFTWARE=webserv");
+    	_env["SERVER_SOFTWARE"] = g_servers[i]->name;
 	}
     // SERVER_PORT - get port from server[i]->get_port
-    _env.push_back("SERVER_PORT=" + std::to_string(ntohs(g_servers[i]->port.front())));
-    _env.push_back("SERVER_PROTOCOL=" + _version);
+    _env["SERVER_PORT"] = std::to_string(ntohs(g_servers[i]->port.front()));
+    _env["SERVER_PROTOCOL"] = _version;
 }
 
+//Changing way of data storage map<string,string> -> vector<const char*>
+std::vector<const char*>	Request::convert_cgi_meta_vars() {
+	std::map<std::string, std::string>::const_iterator	it;
+	std::vector<const char*>	env;
+
+	for (it = _env.begin(); it != _env.end(); ++it)
+		env.push_back(((*it).first + "=" + (*it).second).c_str());
+	return (env);
+}
+
+// _uri = /<location>/<arg>
+// Subject: Your program should call the cgi with the file requested as first argument
+void Request::parse_script_file_name(const int i) {
+	t_location*	loc = get_location(g_servers[i], _location);
+	size_t		pos = _uri.rfind("/");
+
+	if ((tail(_uri, 4) == ".php") && (loc->php_path.length())) {
+		_script_path = loc->php_path.c_str();
+		_script_name = (_uri.substr(pos == std::string::npos ? 0 : pos + 1, std::string::npos)).c_str();
+	}
+	else
+		_script_path = loc->cgi_path.c_str();
+}
+
+// Functions to use: execve, dup2, pipe, fork, waitpid
 void Request::run_cgi_request() {
+	/*
+	** envp is an array of pointers to strings, conventionally of the
+    ** form key=value, which are passed as the environment of the new
+    ** program.  The envp array must be terminated by a NULL pointer.
+	*/
+	std::vector<const char*>	envp = convert_cgi_meta_vars();
+	/*
+	** argv is an array of pointers to strings passed to the new program
+    ** as its command-line arguments.  By convention, the first of these
+    ** strings (i.e., argv[0]) should contain the filename associated
+    ** with the file being executed.  The argv array must be terminated
+    ** by a NULL pointer.
+	** _script_path contains directory to php/cgi binary
+	** _script_name is NULL for cgi / gets php file name from _uri
+	*/
+	const char*	args[] = {_script_path, _script_name, NULL};
+    int 		pipe_fds[2];
+    pid_t 		pid;
+    int 		tmp_fd;
+
+	//In case of any problems during fork: exit with errno code
+    //Opening file to write in
+    if (((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
+		|| ((pipe(pipe_fds)) < 0))
+    	exit_error(errno);
+    pid = fork();
+    if (pid < 0)
+        exit_error(errno);
+    else if (!pid) {
+		close(pipe_fds[PIPE_IN]);
+		// stdin подключается к выходу канала
+        if (dup2(pipe_fds[PIPE_OUT], STDIN_FILENO) < 0)
+			exit_error(errno);
+        close(pipe_fds[PIPE_OUT]);
+		// stdout подключается к временному файлу - происходит запись во временный файл
+		if ((dup2(tmp_fd, STDOUT_FILENO) < 0)
+			|| (execve(_script_path, (char *const *)args, (char *const *)&envp[0]) < 0))
+			exit_error(errno);
+    }
+    else {
+		int	status = 0;
+        close(pipe_fds[PIPE_OUT]);
+        waitpid(pid, &status, 0);
+        close(pipe_fds[PIPE_IN]);
+        close(tmp_fd);
+    }
 }
 
 //дата для даты и для последнего редактирования
@@ -448,22 +525,3 @@ void Request::createResponse() {
 std::string Request::get_response() {
 	return _response;
 }
-
-std::string Request::createHeader() {
-//	_response = "";
-//	_response += "Allow: " + "\r\n";
-//	_response += "Content-Language: " + "\r\n";
-//	_response += "Content-Length: " + "\r\n";
-//	_response += "Content-Location: " + "\r\n";
-//	_response += "Content-Type: " + "\r\n";
-//	_response += "Date: " + "\r\n";
-//	_response += "Last-Modified: " + "\r\n";
-//	_response += "Location: " + "\r\n";
-//	_response += "Retry-After: " + "\r\n";
-//	_response += "Server: " + "\r\n";
-//	_response += "Transfer-Encoding: " + "\r\n";
-//	_response += "WWW-Authenticate: " + "\r\n";
-	return _response;
-}
-
-

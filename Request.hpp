@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 19:30:01 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:42:40 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,12 @@ POST:
 #define REQUEST_HPP
 
 # include "Config.hpp"
-#include <sstream>
 
-# define HTTP "HTTP/1.1"
+# define HTTP		"HTTP/1.1"
+# define PIPE_IN	1
+# define PIPE_OUT	0
+
+#define TMP "tmp_file"
 
 class Client;
 class Request
@@ -110,8 +113,10 @@ private:
 	std::string							_version;
 	std::map<std::string, std::string>	_headers;
 	std::string 						_body;
-	std::vector<std::string>			_env;
+	std::map<std::string, std::string>	_env;
 	std::string							_location;
+	const char*							_script_name;
+	const char*							_script_path;
 
 	static std::string const			methods[];
 	static std::string const			headers[];
@@ -121,8 +126,6 @@ private:
 	int									_remain_len; // bytes left to read
 	int									_content_len;
 	bool								_chunk;
-
-	std::string							_response;
 public:
 	Request(Client *client);
 	~Request(void);
@@ -132,7 +135,7 @@ public:
 	bool		parse_chunk_size(std::string &lines);
 	bool		parse_chunk_data(std::string &lines);
 	bool		check_start_line(const std::vector<std::string> &lines, const int i);
-	bool		set_up_headers(const std::vector<std::string> &lines);
+	bool		set_up_headers(const std::vector<std::string> &lines);	
 	bool		check_hex_chunk(std::string &to_check);
 	void		set_cgi_meta_vars(const int i);
 	void		cut_remain_len(int to_cut);
@@ -146,10 +149,10 @@ public:
 
 	int			get_remain_len(void);
 	int 		get_status(void);
-	int			get_content_length(void);
 	void		print_parsed_request(void);
-	std::vector<std::string> get_env(void);
 	void		run_cgi_request(void);
+	void		parse_script_file_name(const int i);
+	std::vector<const char*>	convert_cgi_meta_vars(void);
 
 	enum status
 	{

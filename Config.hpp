@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/19 21:10:22 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/22 10:41:33 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <sys/time.h>
+# include <cmath>
 
 //Server
 # include <sys/socket.h>
@@ -44,7 +45,6 @@
 
 //DEFAULT VALUES
 # define	CONFIG		"content/default"
-# define	SERVER_NAME	""
 
 // COLORS
 # define BLACK "\e[1;30m" 
@@ -95,7 +95,6 @@
 # define	AUTO_INDEX 	"autoindex"
 # define	MAX_BODY 	"max_body" // should limit client body size
 # define	AUTH 		"auth"
-# define	EXEC		"exec"
 
 //For iteration of static lists - elements quantity getter
 # define	N_ELEMS(a) (int)(sizeof(a) / sizeof((a)[0]))
@@ -125,7 +124,6 @@ typedef struct							s_location
 	std::string							cgi;
 	std::string							cgi_path;
 	std::map<std::string, std::string>	auth;
-	std::string							exec;
 	int									auto_index;
 	int									max_body;
 	s_location() : auto_index(-1), max_body(-1) {}
@@ -136,14 +134,14 @@ class Client;
 //Default config parsing is used instead of initiation function
 typedef struct						s_server
 {
-	std::vector<std::string>		name;
-	std::vector<std::string>		error_page;
-	std::vector<t_location> 		location;
-	std::string						host;
-	std::list<unsigned short>		port;
-	long							time_start;
-	Socket							*socket;
-	std::list<Client*> 				clients;
+	std::string							name;
+	std::map<std::string, std::string>	error_page;
+	std::vector<t_location> 			location;
+	std::string							host;
+	std::list<unsigned short>			port;
+	long								time_start;
+	Socket								*socket;
+	std::list<Client*> 					clients;
 }									t_server;
 
 //Global server configuration parameters structure
@@ -183,6 +181,7 @@ private:
 	int							parse_autoindex(t_location &location, std::string &s);
 	int							parse_directory(std::string &dir, std::string &s);
 	int							parse_auth(t_location &location, std::string &s);
+	int							parse_error_pages(t_server &server, std::string err, std::string err_page);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
@@ -194,7 +193,6 @@ bool						is_all_numbers(std::string s);
 int							ft_atoi(const char *str);
 std::string					read_file(const char *file_path);
 std::vector<std::string>	split(const std::string &s, const std::string &delimiter);
-void						error_message(std::string message);
 void						clear_servers_configuration(void);
 bool						verify_directory(std::string &dir);
 bool						verify_file(std::string &file_path);
@@ -204,6 +202,7 @@ t_location					*get_location(t_server *server, std::string loc);
 std::string					*get_method(t_location &loc, std::string method);
 
 //UTILS.CPP
+void						error_message(std::string message);
 void						exit_error(int err);
 void						exit_error_msg(std::string msg);
 void						signal_handler(int signal);
