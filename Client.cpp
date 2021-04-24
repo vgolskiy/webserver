@@ -84,19 +84,54 @@ void Client::read_run_request(const int i)
         else {
             buffer[to_recieve] = '\0';
             _to_parse += buffer;
+            std::cout << "REQUEST TO PARSE\n";
+            std::cout << _to_parse << std::endl;
             if (_request->get_status() == Request::BODY_PARSE)
                 _request->cut_remain_len(to_recieve);
             _request->parse_request(_to_parse, i);
         }
-        if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
+        if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ || _request->get_status() == Request::PNG)
         {
             std::cout << "Status: " << _request->get_status() << std::endl;
             break ;
         }
     }
-    if (_request->get_status() != Request::BAD_REQ) {
-		_request->parse_script_file_name(i);
-	    _request->set_cgi_meta_vars(i);
-		_request->run_cgi_request();
-	}
+    // if (_request->get_status() != Request::BAD_REQ) {
+	// 	_request->parse_script_file_name(i);
+	//     _request->set_cgi_meta_vars(i);
+	// 	_request->run_cgi_request();
+	// }
+    if (Request::DONE)
+    {
+        std::string response = "HTTP/1.1 404 Not Found\r\nDate: Sun, 18 Oct 2012 10:36:20 GMT\r\nServer: Apache/2.2.14 (Win32)\r\nContent-Type: text/html; image/png\r\n\r\n<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested resource could not be found. As well as your sex life.</p><p><img src=\"/content/error_images/error_400.png\" width=60%></p></body></html>\r\n\r\n";
+        // std::string response = "HTTP/1.1 404 Not Found\r\nDate: Sun, 18 Oct 2012 10:36:20 GMT\r\nServer: Apache/2.2.14 (Win32)\r\nContent-Type: text/html; multipart/form-data; charset=iso-8859-1\r\n\r\n/Users/rmanfred/School21/web_collab/content/error/4xx/404.html\r\n\r\n";
+        send(_fd, response.c_str(), response.length(), 0);
+    }
+    if (Request::PNG)
+    {
+        int				was_read;
+	    int				fd;
+	    char			*buf = NULL;
+        std::string		res = "";
+
+        std::string response = "HTTP/1.1 200 OK\r\nDate: Sun, 18 Oct 2012 10:36:20 GMT\r\nServer: Apache/2.2.14 (Win32)\r\nContent-Type: text/html\r\n\r\n";
+
+        fd = open(PICTURE, O_RDONLY);
+        if (fd == -1)
+            std::cout << "Fd cannot be opened\n";
+        if (!(buf = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char)))) {
+            close(fd);
+            throw (-1);
+        }
+        while ((was_read = read(fd, buf, BUFFER_SIZE)) > 0)
+            res.append(buf);
+        close(fd);
+        free(buf);
+        response += res;
+        std::cout << "Res length: " << res.length() << std::endl;
+        response += "\r\n\r\n";
+        ssize_t p;
+        p = send(_fd, response.c_str(), response.length(), 0);
+        std::cout << "Send returns: " << p << std::endl;
+    }
 }

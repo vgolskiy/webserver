@@ -144,6 +144,12 @@ bool Request::check_start_line(const std::vector<std::string> &start_line, const
 	** Method is available in found location
 	*/
 	_location = _uri.rfind("/") ? _uri.substr(0, _uri.rfind("/")) : _uri;
+    if (_uri == "/content/error_images/error_400.png")
+    {
+        _status = Request::PNG;
+        _method = "GET";
+        return true;
+    }
 	if ((loc = get_location(g_servers[i], _location))) {
     	/* check the validity of the method from the location methods list */
     	for (size_t i = 0; i < loc->methods.size(); i++) {
@@ -253,6 +259,8 @@ void Request::parse_request(std::string &lines, const int i)
                 error_message("Bad request sent by client!");
                 _status = Request::BAD_REQ;
             }
+            if (_status == Request::PNG)
+                return ;
         }
         if (_status == Request::HEADERS && !split_lines.empty())
         {

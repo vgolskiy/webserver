@@ -45,6 +45,7 @@
 
 //DEFAULT VALUES
 # define	CONFIG		"content/default"
+# define	PICTURE		"content/error_images/error_400.png"
 
 // COLORS
 # define BLACK "\e[1;30m" 
