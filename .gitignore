@@ -38,6 +38,14 @@ a.out.dSYM
 #Vscode
 .vscode
 
+#clion
+cmake-build-debug/
+.idea/
+CMakeLists.txt
+
+
+#Webserv
+webserv
 #Text
 text
 

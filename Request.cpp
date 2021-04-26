@@ -219,17 +219,17 @@ bool Request::parse_chunk_data(std::string &lines)
 
 void Request::print_parsed_request()
 {
-    std::cout << GREEN"-------PRINT PARSED REQUEST-------"RESET << std::endl;
+    std::cout << GREEN"-------PRINT PARSED REQUEST-------" RESET << std::endl;
 
-    std::cout << BLUE"METHOD: " << _method << "\n"RESET;
-    std::cout << BROWN"URI: " << _uri << "\n"RESET;
-    std::cout << RED"VERSION: "<< _version << "\n"RESET;
+    std::cout << BLUE"METHOD: " << _method << "\n" RESET;
+    std::cout << BROWN"URI: " << _uri << "\n" RESET;
+    std::cout << RED"VERSION: "<< _version << "\n" RESET;
 
     std::map<std::string, std::string>::iterator  it = _headers.begin();
     std::map<std::string, std::string>::iterator  ite = _headers.end();
-    std::cout << BLACK"\nHEADERS:\n"RESET;
+    std::cout << BLACK"\nHEADERS:\n" RESET;
     for (; it != ite; it++)
-        std::cout << ""MAGENTA << (*it).first << RESET": "CYAN << (*it).second << "\n"RESET;
+        std::cout << "" MAGENTA << (*it).first << RESET": " CYAN << (*it).second << "\n" RESET;
     std::cout << std::endl;
 }
 
@@ -340,7 +340,7 @@ void Request::set_cgi_meta_vars(const int i) {
 	//Subject: Because you wont call the cgi directly use the full path as PATH_INFO
     _env["PATH_INFO"] = _uri;
 
-	//Full path to content: folder with script + script file name 
+	//Full path to content: folder with script + script file name
     _env["PATH_TRANSLATED"] = _script_path;
 
 	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
@@ -454,12 +454,67 @@ void Request::run_cgi_request() {
     }
 }
 
-void Request::createResponce() {
-	if (_method == "PUT")
-	{
+//дата для даты и для последнего редактирования
+//struct stat {
+//	dev_t         st_dev;      /* устройство */
+//	ino_t         st_ino;      /* inode */
+//	mode_t        st_mode;     /* режим доступа */
+//	nlink_t       st_nlink;    /* количество жестких ссылок */
+//	uid_t         st_uid;      /* идентификатор пользователя-владельца */
+//	gid_t         st_gid;      /* идентификатор группы-владельца */
+//	dev_t         st_rdev;     /* тип устройства */
+//	/* (если это устройство) */
+//	off_t         st_size;     /* общий размер в байтах */
+//	blksize_t     st_blksize;  /* размер блока ввода-вывода */
+//	/* в файловой системе */
+//	blkcnt_t      st_blocks;   /* количество выделенных блоков */
+//	time_t        st_atime;    /* время последнего доступа */
+//	time_t        st_mtime;    /* время последней модификации */
+//	time_t        st_ctime;    /* время последнего изменения */
+//};
 
+
+std::string Request::server_date() {
+	struct tm info;
+	struct timeval time;
+	char buf[29];
+	gettimeofday(&time, NULL);
+	std::string s = std::to_string(time.tv_sec);
+
+	strptime(s.c_str(), " %s ", &info);
+	//форматировать время как строку
+	//a - день недели, d - день месяца и тд
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %X %Z", &info);
+	std::string str = buf;
+	return "Date: " + str + "\r\n";
+}
+
+void Request::createResponse() {
+	//std::string date = server_date();
+	_response = "";
+	if (_method == "HEAD")
+	{
+		_response += "HTTP/1.1 200 OK"; //OK - status
+		_response += "\r\n";
+		_headers["Date"] = server_date();
+		std::map<std::string, std::string>::iterator beg = _headers.begin();
+		std::map<std::string, std::string>::iterator end = _headers.end();
+		while (beg != end)
+		{
+			if ((*beg).second != "")
+			{
+				_response += (*beg).first;
+				_response += ": ";
+				_response += (*beg).second;
+				_response += "\r\n";
+			}
+			++beg;
+		}
+		_response += "Content-Length: ";
+		_response += std::to_string(_body.length());
+		_response += "\r\n";
 	}
-	else if (_method == "HEAD")
+	else if (_method == "PUT")
 	{
 
 	}
@@ -469,11 +524,14 @@ void Request::createResponce() {
 	}
 	else if (_method == "POST")
 	{
-		//CGI
+
 	}
 	//else if (/*без метода*/)
 	//{
 	//
 	//}
+}
 
+std::string Request::get_response() {
+	return _response;
 }

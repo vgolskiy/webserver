@@ -126,6 +126,8 @@ private:
 	int									_remain_len; // bytes left to read
 	int									_content_len;
 	bool								_chunk;
+
+	std::string _response;
 public:
 	Request(Client *client);
 	~Request(void);
@@ -139,7 +141,13 @@ public:
 	void		set_cgi_meta_vars(const int i);
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
-	void		createResponce(void);
+
+	std::string server_date(void);
+
+	void		createResponse(void);
+	std::string get_response(void);
+	std::string	createHeader(void);
+
 	int			get_remain_len(void);
 	int 		get_status(void);
 	void		print_parsed_request(void);

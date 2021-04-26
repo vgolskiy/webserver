@@ -33,6 +33,8 @@ private:
 	Request				*_request;
 	long				_time_start;
 
+
+
 public:
 	/*
 	Statuses:
