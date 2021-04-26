@@ -52,3 +52,8 @@ text
 *.DS_Store
 webserv
 tmp_file
+
+#CLion
+.idea/
+cmake-build-debug/
+CMakeLists.txt
