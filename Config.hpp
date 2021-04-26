@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/22 10:41:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/26 22:35:39 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,5 +210,7 @@ void						signals(void);
 long						current_time(void);
 std::string					tail(const std::string &s, const size_t length);
 std::string					inet_ntoaddr(int n);
+std::string					base64_encode(const std::string &s);
+std::string					base64_decode(const std::string &s);
 
 #endif
