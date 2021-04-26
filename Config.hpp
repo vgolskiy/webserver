@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/26 22:35:39 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/26 23:24:32 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@
 
 //For iteration of static lists - elements quantity getter
 # define	N_ELEMS(a) (int)(sizeof(a) / sizeof((a)[0]))
+# define	BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
 //testing
 template <typename T>
