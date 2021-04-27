@@ -83,6 +83,11 @@ bool Request::set_up_headers(const std::vector<std::string> &lines)
     for (size_t i = 1; i < lines.size(); i++)
     {
         tmp = split(lines[i], ":"); // TODO: special case for localhost:XXXX
+        if(tmp.size() < 2)
+        {
+            std::cout << "Invalid number of arguments for the header: " << tmp[0] << std::endl;
+            return false;
+        }
         for (size_t i = 0; i < tmp.size(); i++)
             remove_spaces(tmp[i]);
         for (size_t j = 0; j != headers->size(); j++)
@@ -102,6 +107,14 @@ bool Request::set_up_headers(const std::vector<std::string> &lines)
                         std::cout << "Autorization error!\nInvalid number of argumnets!\n";
                         return false ;
                     }
+                }
+                else if (tmp[0] == "Host" && tmp.size() == 3)
+                {
+                    std::string to_ret;
+                    to_ret.append(tmp[1]);
+                    to_ret += ":";
+                    to_ret.append(tmp[2]);
+                    _headers[headers[j]] = to_ret;
                 }
                 else
                     _headers[headers[j]] = tmp[1];
@@ -236,6 +249,8 @@ void Request::print_parsed_request()
     std::cout << BLACK"\nHEADERS:\n" RESET;
     for (; it != ite; it++)
         std::cout << "" MAGENTA << (*it).first << RESET": " CYAN << (*it).second << "\n" RESET;
+    
+    std::cout << "" MAGENTA << "Authorization" << RESET": " CYAN << _autorize[0] << "\n" RESET;
     std::cout << std::endl;
 }
 
