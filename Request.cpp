@@ -82,7 +82,7 @@ bool Request::set_up_headers(const std::vector<std::string> &lines)
 
     for (size_t i = 1; i < lines.size(); i++)
     {
-        tmp = split(lines[i], ":"); // TODO: special case for localhost:XXXX
+        tmp = split(lines[i], ":");
         if(tmp.size() < 2)
         {
             std::cout << "Invalid number of arguments for the header: " << tmp[0] << std::endl;
