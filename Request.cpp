@@ -454,24 +454,7 @@ void Request::run_cgi_request() {
     }
 }
 
-//дата для даты и для последнего редактирования
-//struct stat {
-//	dev_t         st_dev;      /* устройство */
-//	ino_t         st_ino;      /* inode */
-//	mode_t        st_mode;     /* режим доступа */
-//	nlink_t       st_nlink;    /* количество жестких ссылок */
-//	uid_t         st_uid;      /* идентификатор пользователя-владельца */
-//	gid_t         st_gid;      /* идентификатор группы-владельца */
-//	dev_t         st_rdev;     /* тип устройства */
-//	/* (если это устройство) */
-//	off_t         st_size;     /* общий размер в байтах */
-//	blksize_t     st_blksize;  /* размер блока ввода-вывода */
-//	/* в файловой системе */
-//	blkcnt_t      st_blocks;   /* количество выделенных блоков */
-//	time_t        st_atime;    /* время последнего доступа */
-//	time_t        st_mtime;    /* время последней модификации */
-//	time_t        st_ctime;    /* время последнего изменения */
-//};
+
 
 
 std::string Request::server_date() {
@@ -487,6 +470,11 @@ std::string Request::server_date() {
 	strftime(buf, sizeof(buf), "%a, %d %b %Y %X %Z", &info);
 	std::string str = buf;
 	return "Date: " + str + "\r\n";
+}
+
+std::string Request::last_modified(void) {
+	struct stat st;
+
 }
 
 void Request::createResponse() {
@@ -535,3 +523,5 @@ void Request::createResponse() {
 std::string Request::get_response() {
 	return _response;
 }
+
+

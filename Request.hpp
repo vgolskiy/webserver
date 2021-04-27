@@ -143,10 +143,10 @@ public:
 	std::string	find_header(std::string header);
 
 	std::string server_date(void);
+	std::string last_modified(void);
 
 	void		createResponse(void);
 	std::string get_response(void);
-	std::string	createHeader(void);
 
 	int			get_remain_len(void);
 	int 		get_status(void);
