@@ -112,6 +112,7 @@ private:
 	std::string							_uri;
 	std::string							_version;
 	std::map<std::string, std::string>	_headers;
+	std::vector<std::string>			_autorize;
 	std::string 						_body;
 	std::map<std::string, std::string>	_env;
 	std::string							_location;
@@ -127,7 +128,7 @@ private:
 	int									_content_len;
 	bool								_chunk;
 
-	std::string _response;
+	std::string 						_response;
 public:
 	Request(Client *client);
 	~Request(void);

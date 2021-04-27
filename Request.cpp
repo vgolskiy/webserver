@@ -79,11 +79,9 @@ void remove_spaces(std::string &str)
 bool Request::set_up_headers(const std::vector<std::string> &lines)
 {
     std::vector<std::string>    tmp;
-    bool                        flag;
 
     for (size_t i = 1; i < lines.size(); i++)
     {
-        flag = false;
         tmp = split(lines[i], ":"); // TODO: special case for localhost:XXXX
         for (size_t i = 0; i < tmp.size(); i++)
             remove_spaces(tmp[i]);
@@ -96,8 +94,17 @@ bool Request::set_up_headers(const std::vector<std::string> &lines)
                     error_message("Repetitive header in the request!");
                     return false ;
                 }
-                _headers[headers[j]] = tmp[1];
-                flag = true;
+                if (tmp[0] == "Authorization")
+                {
+                    _autorize = split(tmp[1], " ");
+                    if (_autorize.size() != 2)
+                    {
+                        std::cout << "Autorization error!\nInvalid number of argumnets!\n";
+                        return false ;
+                    }
+                }
+                else
+                    _headers[headers[j]] = tmp[1];
             }
         }
         if (tmp[0] == "Content-Length")
@@ -173,7 +180,6 @@ void Request::parse_init(std::vector<std::string> &split_lines, std::string &ori
         }
     }
 }
-
 
 // <длина блока в HEX><\r\n><содержание блока><\r\n>
 bool Request::parse_chunk_size(std::string &lines)
@@ -329,7 +335,10 @@ void Request::set_cgi_meta_vars(const int i) {
 	** client must authenticate itself with a user-ID and a password
 	*/
     if (!php && ((header_found = find_header("Authorization")) != "NULL"))
-        _env["AUTH_TYPE"] = header_found;
+    {
+        if (!_autorize.empty() && _autorize[0] == "Basic")
+            _env["AUTH_TYPE"] = header_found;
+    }
     _env["CONTENT_LENGTH"] = std::to_string(_body.size());
     if ((header_found = find_header("Content-Type")) != "NULL")
         _env["CONTENT_TYPE"] = header_found;
