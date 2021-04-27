@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/27 20:57:45 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/27 21:12:43 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,9 +378,9 @@ void Request::set_cgi_meta_vars() {
     
     // REMOTE_IDENT - location authentification
     // REMOTE_USER
-	if (!loc->auth.begin()->first.empty()) {
-		_env["REMOTE_IDENT"] = loc->auth.begin()->first;
-		_env["REMOTE_USER"] = loc->auth.begin()->first;
+	if (!_autorize.empty()) {
+		_env["REMOTE_IDENT"] = _autorize.begin()->first;
+		_env["REMOTE_USER"] = _autorize.begin()->first;
 	}
 
 	//Method was verified against possible methods upon location
