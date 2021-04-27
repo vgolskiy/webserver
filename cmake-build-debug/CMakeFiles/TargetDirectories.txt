@@ -1,3 +1,0 @@
-/Users/rmanfred/School21/web_collab/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/rmanfred/School21/web_collab/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/rmanfred/School21/web_collab/cmake-build-debug/CMakeFiles/web_collab.dir
