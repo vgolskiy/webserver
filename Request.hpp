@@ -158,7 +158,8 @@ public:
 		CHUNK_DATA,
 		BAD_REQ,
 		DONE,
-		PNG
+		PNG,
+		FAV
 	};
 };
 

@@ -67,10 +67,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/cwindom/Desktop/webserver
+CMAKE_SOURCE_DIR = /Users/rmanfred/School21/web_collab
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/cwindom/Desktop/webserver/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/rmanfred/School21/web_collab/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -99,9 +99,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/cwindom/Desktop/webserver/cmake-build-debug/CMakeFiles /Users/cwindom/Desktop/webserver/cmake-build-debug//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/rmanfred/School21/web_collab/cmake-build-debug/CMakeFiles /Users/rmanfred/School21/web_collab/cmake-build-debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/cwindom/Desktop/webserver/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/rmanfred/School21/web_collab/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -130,17 +130,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named webserver
+# Target rules for targets named web_collab
 
 # Build rule for target.
-webserver: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 webserver
-.PHONY : webserver
+web_collab: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 web_collab
+.PHONY : web_collab
 
 # fast build rule for target.
-webserver/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/build
-.PHONY : webserver/fast
+web_collab/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/build
+.PHONY : web_collab/fast
 
 Client.o: Client.cpp.o
 
@@ -148,7 +148,7 @@ Client.o: Client.cpp.o
 
 # target to build an object file
 Client.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Client.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Client.cpp.o
 .PHONY : Client.cpp.o
 
 Client.i: Client.cpp.i
@@ -157,7 +157,7 @@ Client.i: Client.cpp.i
 
 # target to preprocess a source file
 Client.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Client.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Client.cpp.i
 .PHONY : Client.cpp.i
 
 Client.s: Client.cpp.s
@@ -166,7 +166,7 @@ Client.s: Client.cpp.s
 
 # target to generate assembly for a file
 Client.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Client.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Client.cpp.s
 .PHONY : Client.cpp.s
 
 Request.o: Request.cpp.o
@@ -175,7 +175,7 @@ Request.o: Request.cpp.o
 
 # target to build an object file
 Request.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Request.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Request.cpp.o
 .PHONY : Request.cpp.o
 
 Request.i: Request.cpp.i
@@ -184,7 +184,7 @@ Request.i: Request.cpp.i
 
 # target to preprocess a source file
 Request.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Request.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Request.cpp.i
 .PHONY : Request.cpp.i
 
 Request.s: Request.cpp.s
@@ -193,7 +193,7 @@ Request.s: Request.cpp.s
 
 # target to generate assembly for a file
 Request.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Request.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Request.cpp.s
 .PHONY : Request.cpp.s
 
 Server.o: Server.cpp.o
@@ -202,7 +202,7 @@ Server.o: Server.cpp.o
 
 # target to build an object file
 Server.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Server.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Server.cpp.o
 .PHONY : Server.cpp.o
 
 Server.i: Server.cpp.i
@@ -211,7 +211,7 @@ Server.i: Server.cpp.i
 
 # target to preprocess a source file
 Server.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Server.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Server.cpp.i
 .PHONY : Server.cpp.i
 
 Server.s: Server.cpp.s
@@ -220,7 +220,7 @@ Server.s: Server.cpp.s
 
 # target to generate assembly for a file
 Server.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Server.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Server.cpp.s
 .PHONY : Server.cpp.s
 
 Socket.o: Socket.cpp.o
@@ -229,7 +229,7 @@ Socket.o: Socket.cpp.o
 
 # target to build an object file
 Socket.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Socket.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Socket.cpp.o
 .PHONY : Socket.cpp.o
 
 Socket.i: Socket.cpp.i
@@ -238,7 +238,7 @@ Socket.i: Socket.cpp.i
 
 # target to preprocess a source file
 Socket.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Socket.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Socket.cpp.i
 .PHONY : Socket.cpp.i
 
 Socket.s: Socket.cpp.s
@@ -247,35 +247,8 @@ Socket.s: Socket.cpp.s
 
 # target to generate assembly for a file
 Socket.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/Socket.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/Socket.cpp.s
 .PHONY : Socket.cpp.s
-
-client_test.o: client_test.cpp.o
-
-.PHONY : client_test.o
-
-# target to build an object file
-client_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/client_test.cpp.o
-.PHONY : client_test.cpp.o
-
-client_test.i: client_test.cpp.i
-
-.PHONY : client_test.i
-
-# target to preprocess a source file
-client_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/client_test.cpp.i
-.PHONY : client_test.cpp.i
-
-client_test.s: client_test.cpp.s
-
-.PHONY : client_test.s
-
-# target to generate assembly for a file
-client_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/client_test.cpp.s
-.PHONY : client_test.cpp.s
 
 convertConfig.o: convertConfig.cpp.o
 
@@ -283,7 +256,7 @@ convertConfig.o: convertConfig.cpp.o
 
 # target to build an object file
 convertConfig.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/convertConfig.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/convertConfig.cpp.o
 .PHONY : convertConfig.cpp.o
 
 convertConfig.i: convertConfig.cpp.i
@@ -292,7 +265,7 @@ convertConfig.i: convertConfig.cpp.i
 
 # target to preprocess a source file
 convertConfig.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/convertConfig.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/convertConfig.cpp.i
 .PHONY : convertConfig.cpp.i
 
 convertConfig.s: convertConfig.cpp.s
@@ -301,7 +274,7 @@ convertConfig.s: convertConfig.cpp.s
 
 # target to generate assembly for a file
 convertConfig.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/convertConfig.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/convertConfig.cpp.s
 .PHONY : convertConfig.cpp.s
 
 libft/ft_atoi.o: libft/ft_atoi.c.o
@@ -310,7 +283,7 @@ libft/ft_atoi.o: libft/ft_atoi.c.o
 
 # target to build an object file
 libft/ft_atoi.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_atoi.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_atoi.c.o
 .PHONY : libft/ft_atoi.c.o
 
 libft/ft_atoi.i: libft/ft_atoi.c.i
@@ -319,7 +292,7 @@ libft/ft_atoi.i: libft/ft_atoi.c.i
 
 # target to preprocess a source file
 libft/ft_atoi.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_atoi.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_atoi.c.i
 .PHONY : libft/ft_atoi.c.i
 
 libft/ft_atoi.s: libft/ft_atoi.c.s
@@ -328,7 +301,7 @@ libft/ft_atoi.s: libft/ft_atoi.c.s
 
 # target to generate assembly for a file
 libft/ft_atoi.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_atoi.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_atoi.c.s
 .PHONY : libft/ft_atoi.c.s
 
 libft/ft_bzero.o: libft/ft_bzero.c.o
@@ -337,7 +310,7 @@ libft/ft_bzero.o: libft/ft_bzero.c.o
 
 # target to build an object file
 libft/ft_bzero.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_bzero.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_bzero.c.o
 .PHONY : libft/ft_bzero.c.o
 
 libft/ft_bzero.i: libft/ft_bzero.c.i
@@ -346,7 +319,7 @@ libft/ft_bzero.i: libft/ft_bzero.c.i
 
 # target to preprocess a source file
 libft/ft_bzero.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_bzero.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_bzero.c.i
 .PHONY : libft/ft_bzero.c.i
 
 libft/ft_bzero.s: libft/ft_bzero.c.s
@@ -355,7 +328,7 @@ libft/ft_bzero.s: libft/ft_bzero.c.s
 
 # target to generate assembly for a file
 libft/ft_bzero.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_bzero.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_bzero.c.s
 .PHONY : libft/ft_bzero.c.s
 
 libft/ft_calloc.o: libft/ft_calloc.c.o
@@ -364,7 +337,7 @@ libft/ft_calloc.o: libft/ft_calloc.c.o
 
 # target to build an object file
 libft/ft_calloc.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_calloc.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_calloc.c.o
 .PHONY : libft/ft_calloc.c.o
 
 libft/ft_calloc.i: libft/ft_calloc.c.i
@@ -373,7 +346,7 @@ libft/ft_calloc.i: libft/ft_calloc.c.i
 
 # target to preprocess a source file
 libft/ft_calloc.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_calloc.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_calloc.c.i
 .PHONY : libft/ft_calloc.c.i
 
 libft/ft_calloc.s: libft/ft_calloc.c.s
@@ -382,7 +355,7 @@ libft/ft_calloc.s: libft/ft_calloc.c.s
 
 # target to generate assembly for a file
 libft/ft_calloc.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_calloc.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_calloc.c.s
 .PHONY : libft/ft_calloc.c.s
 
 libft/ft_isalnum.o: libft/ft_isalnum.c.o
@@ -391,7 +364,7 @@ libft/ft_isalnum.o: libft/ft_isalnum.c.o
 
 # target to build an object file
 libft/ft_isalnum.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isalnum.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isalnum.c.o
 .PHONY : libft/ft_isalnum.c.o
 
 libft/ft_isalnum.i: libft/ft_isalnum.c.i
@@ -400,7 +373,7 @@ libft/ft_isalnum.i: libft/ft_isalnum.c.i
 
 # target to preprocess a source file
 libft/ft_isalnum.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isalnum.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isalnum.c.i
 .PHONY : libft/ft_isalnum.c.i
 
 libft/ft_isalnum.s: libft/ft_isalnum.c.s
@@ -409,7 +382,7 @@ libft/ft_isalnum.s: libft/ft_isalnum.c.s
 
 # target to generate assembly for a file
 libft/ft_isalnum.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isalnum.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isalnum.c.s
 .PHONY : libft/ft_isalnum.c.s
 
 libft/ft_isalpha.o: libft/ft_isalpha.c.o
@@ -418,7 +391,7 @@ libft/ft_isalpha.o: libft/ft_isalpha.c.o
 
 # target to build an object file
 libft/ft_isalpha.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isalpha.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isalpha.c.o
 .PHONY : libft/ft_isalpha.c.o
 
 libft/ft_isalpha.i: libft/ft_isalpha.c.i
@@ -427,7 +400,7 @@ libft/ft_isalpha.i: libft/ft_isalpha.c.i
 
 # target to preprocess a source file
 libft/ft_isalpha.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isalpha.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isalpha.c.i
 .PHONY : libft/ft_isalpha.c.i
 
 libft/ft_isalpha.s: libft/ft_isalpha.c.s
@@ -436,7 +409,7 @@ libft/ft_isalpha.s: libft/ft_isalpha.c.s
 
 # target to generate assembly for a file
 libft/ft_isalpha.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isalpha.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isalpha.c.s
 .PHONY : libft/ft_isalpha.c.s
 
 libft/ft_isascii.o: libft/ft_isascii.c.o
@@ -445,7 +418,7 @@ libft/ft_isascii.o: libft/ft_isascii.c.o
 
 # target to build an object file
 libft/ft_isascii.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isascii.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isascii.c.o
 .PHONY : libft/ft_isascii.c.o
 
 libft/ft_isascii.i: libft/ft_isascii.c.i
@@ -454,7 +427,7 @@ libft/ft_isascii.i: libft/ft_isascii.c.i
 
 # target to preprocess a source file
 libft/ft_isascii.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isascii.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isascii.c.i
 .PHONY : libft/ft_isascii.c.i
 
 libft/ft_isascii.s: libft/ft_isascii.c.s
@@ -463,7 +436,7 @@ libft/ft_isascii.s: libft/ft_isascii.c.s
 
 # target to generate assembly for a file
 libft/ft_isascii.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isascii.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isascii.c.s
 .PHONY : libft/ft_isascii.c.s
 
 libft/ft_isdigit.o: libft/ft_isdigit.c.o
@@ -472,7 +445,7 @@ libft/ft_isdigit.o: libft/ft_isdigit.c.o
 
 # target to build an object file
 libft/ft_isdigit.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isdigit.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isdigit.c.o
 .PHONY : libft/ft_isdigit.c.o
 
 libft/ft_isdigit.i: libft/ft_isdigit.c.i
@@ -481,7 +454,7 @@ libft/ft_isdigit.i: libft/ft_isdigit.c.i
 
 # target to preprocess a source file
 libft/ft_isdigit.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isdigit.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isdigit.c.i
 .PHONY : libft/ft_isdigit.c.i
 
 libft/ft_isdigit.s: libft/ft_isdigit.c.s
@@ -490,7 +463,7 @@ libft/ft_isdigit.s: libft/ft_isdigit.c.s
 
 # target to generate assembly for a file
 libft/ft_isdigit.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isdigit.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isdigit.c.s
 .PHONY : libft/ft_isdigit.c.s
 
 libft/ft_isprint.o: libft/ft_isprint.c.o
@@ -499,7 +472,7 @@ libft/ft_isprint.o: libft/ft_isprint.c.o
 
 # target to build an object file
 libft/ft_isprint.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isprint.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isprint.c.o
 .PHONY : libft/ft_isprint.c.o
 
 libft/ft_isprint.i: libft/ft_isprint.c.i
@@ -508,7 +481,7 @@ libft/ft_isprint.i: libft/ft_isprint.c.i
 
 # target to preprocess a source file
 libft/ft_isprint.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isprint.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isprint.c.i
 .PHONY : libft/ft_isprint.c.i
 
 libft/ft_isprint.s: libft/ft_isprint.c.s
@@ -517,7 +490,7 @@ libft/ft_isprint.s: libft/ft_isprint.c.s
 
 # target to generate assembly for a file
 libft/ft_isprint.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isprint.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isprint.c.s
 .PHONY : libft/ft_isprint.c.s
 
 libft/ft_isspace.o: libft/ft_isspace.c.o
@@ -526,7 +499,7 @@ libft/ft_isspace.o: libft/ft_isspace.c.o
 
 # target to build an object file
 libft/ft_isspace.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isspace.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isspace.c.o
 .PHONY : libft/ft_isspace.c.o
 
 libft/ft_isspace.i: libft/ft_isspace.c.i
@@ -535,7 +508,7 @@ libft/ft_isspace.i: libft/ft_isspace.c.i
 
 # target to preprocess a source file
 libft/ft_isspace.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isspace.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isspace.c.i
 .PHONY : libft/ft_isspace.c.i
 
 libft/ft_isspace.s: libft/ft_isspace.c.s
@@ -544,7 +517,7 @@ libft/ft_isspace.s: libft/ft_isspace.c.s
 
 # target to generate assembly for a file
 libft/ft_isspace.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_isspace.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_isspace.c.s
 .PHONY : libft/ft_isspace.c.s
 
 libft/ft_itoa.o: libft/ft_itoa.c.o
@@ -553,7 +526,7 @@ libft/ft_itoa.o: libft/ft_itoa.c.o
 
 # target to build an object file
 libft/ft_itoa.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_itoa.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_itoa.c.o
 .PHONY : libft/ft_itoa.c.o
 
 libft/ft_itoa.i: libft/ft_itoa.c.i
@@ -562,7 +535,7 @@ libft/ft_itoa.i: libft/ft_itoa.c.i
 
 # target to preprocess a source file
 libft/ft_itoa.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_itoa.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_itoa.c.i
 .PHONY : libft/ft_itoa.c.i
 
 libft/ft_itoa.s: libft/ft_itoa.c.s
@@ -571,7 +544,7 @@ libft/ft_itoa.s: libft/ft_itoa.c.s
 
 # target to generate assembly for a file
 libft/ft_itoa.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_itoa.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_itoa.c.s
 .PHONY : libft/ft_itoa.c.s
 
 libft/ft_lstadd_back.o: libft/ft_lstadd_back.c.o
@@ -580,7 +553,7 @@ libft/ft_lstadd_back.o: libft/ft_lstadd_back.c.o
 
 # target to build an object file
 libft/ft_lstadd_back.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstadd_back.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstadd_back.c.o
 .PHONY : libft/ft_lstadd_back.c.o
 
 libft/ft_lstadd_back.i: libft/ft_lstadd_back.c.i
@@ -589,7 +562,7 @@ libft/ft_lstadd_back.i: libft/ft_lstadd_back.c.i
 
 # target to preprocess a source file
 libft/ft_lstadd_back.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstadd_back.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstadd_back.c.i
 .PHONY : libft/ft_lstadd_back.c.i
 
 libft/ft_lstadd_back.s: libft/ft_lstadd_back.c.s
@@ -598,7 +571,7 @@ libft/ft_lstadd_back.s: libft/ft_lstadd_back.c.s
 
 # target to generate assembly for a file
 libft/ft_lstadd_back.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstadd_back.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstadd_back.c.s
 .PHONY : libft/ft_lstadd_back.c.s
 
 libft/ft_lstadd_front.o: libft/ft_lstadd_front.c.o
@@ -607,7 +580,7 @@ libft/ft_lstadd_front.o: libft/ft_lstadd_front.c.o
 
 # target to build an object file
 libft/ft_lstadd_front.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstadd_front.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstadd_front.c.o
 .PHONY : libft/ft_lstadd_front.c.o
 
 libft/ft_lstadd_front.i: libft/ft_lstadd_front.c.i
@@ -616,7 +589,7 @@ libft/ft_lstadd_front.i: libft/ft_lstadd_front.c.i
 
 # target to preprocess a source file
 libft/ft_lstadd_front.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstadd_front.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstadd_front.c.i
 .PHONY : libft/ft_lstadd_front.c.i
 
 libft/ft_lstadd_front.s: libft/ft_lstadd_front.c.s
@@ -625,7 +598,7 @@ libft/ft_lstadd_front.s: libft/ft_lstadd_front.c.s
 
 # target to generate assembly for a file
 libft/ft_lstadd_front.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstadd_front.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstadd_front.c.s
 .PHONY : libft/ft_lstadd_front.c.s
 
 libft/ft_lstclear.o: libft/ft_lstclear.c.o
@@ -634,7 +607,7 @@ libft/ft_lstclear.o: libft/ft_lstclear.c.o
 
 # target to build an object file
 libft/ft_lstclear.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstclear.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstclear.c.o
 .PHONY : libft/ft_lstclear.c.o
 
 libft/ft_lstclear.i: libft/ft_lstclear.c.i
@@ -643,7 +616,7 @@ libft/ft_lstclear.i: libft/ft_lstclear.c.i
 
 # target to preprocess a source file
 libft/ft_lstclear.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstclear.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstclear.c.i
 .PHONY : libft/ft_lstclear.c.i
 
 libft/ft_lstclear.s: libft/ft_lstclear.c.s
@@ -652,7 +625,7 @@ libft/ft_lstclear.s: libft/ft_lstclear.c.s
 
 # target to generate assembly for a file
 libft/ft_lstclear.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstclear.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstclear.c.s
 .PHONY : libft/ft_lstclear.c.s
 
 libft/ft_lstdelone.o: libft/ft_lstdelone.c.o
@@ -661,7 +634,7 @@ libft/ft_lstdelone.o: libft/ft_lstdelone.c.o
 
 # target to build an object file
 libft/ft_lstdelone.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstdelone.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstdelone.c.o
 .PHONY : libft/ft_lstdelone.c.o
 
 libft/ft_lstdelone.i: libft/ft_lstdelone.c.i
@@ -670,7 +643,7 @@ libft/ft_lstdelone.i: libft/ft_lstdelone.c.i
 
 # target to preprocess a source file
 libft/ft_lstdelone.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstdelone.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstdelone.c.i
 .PHONY : libft/ft_lstdelone.c.i
 
 libft/ft_lstdelone.s: libft/ft_lstdelone.c.s
@@ -679,7 +652,7 @@ libft/ft_lstdelone.s: libft/ft_lstdelone.c.s
 
 # target to generate assembly for a file
 libft/ft_lstdelone.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstdelone.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstdelone.c.s
 .PHONY : libft/ft_lstdelone.c.s
 
 libft/ft_lstiter.o: libft/ft_lstiter.c.o
@@ -688,7 +661,7 @@ libft/ft_lstiter.o: libft/ft_lstiter.c.o
 
 # target to build an object file
 libft/ft_lstiter.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstiter.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstiter.c.o
 .PHONY : libft/ft_lstiter.c.o
 
 libft/ft_lstiter.i: libft/ft_lstiter.c.i
@@ -697,7 +670,7 @@ libft/ft_lstiter.i: libft/ft_lstiter.c.i
 
 # target to preprocess a source file
 libft/ft_lstiter.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstiter.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstiter.c.i
 .PHONY : libft/ft_lstiter.c.i
 
 libft/ft_lstiter.s: libft/ft_lstiter.c.s
@@ -706,7 +679,7 @@ libft/ft_lstiter.s: libft/ft_lstiter.c.s
 
 # target to generate assembly for a file
 libft/ft_lstiter.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstiter.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstiter.c.s
 .PHONY : libft/ft_lstiter.c.s
 
 libft/ft_lstlast.o: libft/ft_lstlast.c.o
@@ -715,7 +688,7 @@ libft/ft_lstlast.o: libft/ft_lstlast.c.o
 
 # target to build an object file
 libft/ft_lstlast.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstlast.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstlast.c.o
 .PHONY : libft/ft_lstlast.c.o
 
 libft/ft_lstlast.i: libft/ft_lstlast.c.i
@@ -724,7 +697,7 @@ libft/ft_lstlast.i: libft/ft_lstlast.c.i
 
 # target to preprocess a source file
 libft/ft_lstlast.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstlast.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstlast.c.i
 .PHONY : libft/ft_lstlast.c.i
 
 libft/ft_lstlast.s: libft/ft_lstlast.c.s
@@ -733,7 +706,7 @@ libft/ft_lstlast.s: libft/ft_lstlast.c.s
 
 # target to generate assembly for a file
 libft/ft_lstlast.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstlast.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstlast.c.s
 .PHONY : libft/ft_lstlast.c.s
 
 libft/ft_lstmap.o: libft/ft_lstmap.c.o
@@ -742,7 +715,7 @@ libft/ft_lstmap.o: libft/ft_lstmap.c.o
 
 # target to build an object file
 libft/ft_lstmap.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstmap.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstmap.c.o
 .PHONY : libft/ft_lstmap.c.o
 
 libft/ft_lstmap.i: libft/ft_lstmap.c.i
@@ -751,7 +724,7 @@ libft/ft_lstmap.i: libft/ft_lstmap.c.i
 
 # target to preprocess a source file
 libft/ft_lstmap.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstmap.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstmap.c.i
 .PHONY : libft/ft_lstmap.c.i
 
 libft/ft_lstmap.s: libft/ft_lstmap.c.s
@@ -760,7 +733,7 @@ libft/ft_lstmap.s: libft/ft_lstmap.c.s
 
 # target to generate assembly for a file
 libft/ft_lstmap.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstmap.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstmap.c.s
 .PHONY : libft/ft_lstmap.c.s
 
 libft/ft_lstnew.o: libft/ft_lstnew.c.o
@@ -769,7 +742,7 @@ libft/ft_lstnew.o: libft/ft_lstnew.c.o
 
 # target to build an object file
 libft/ft_lstnew.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstnew.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstnew.c.o
 .PHONY : libft/ft_lstnew.c.o
 
 libft/ft_lstnew.i: libft/ft_lstnew.c.i
@@ -778,7 +751,7 @@ libft/ft_lstnew.i: libft/ft_lstnew.c.i
 
 # target to preprocess a source file
 libft/ft_lstnew.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstnew.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstnew.c.i
 .PHONY : libft/ft_lstnew.c.i
 
 libft/ft_lstnew.s: libft/ft_lstnew.c.s
@@ -787,7 +760,7 @@ libft/ft_lstnew.s: libft/ft_lstnew.c.s
 
 # target to generate assembly for a file
 libft/ft_lstnew.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstnew.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstnew.c.s
 .PHONY : libft/ft_lstnew.c.s
 
 libft/ft_lstsize.o: libft/ft_lstsize.c.o
@@ -796,7 +769,7 @@ libft/ft_lstsize.o: libft/ft_lstsize.c.o
 
 # target to build an object file
 libft/ft_lstsize.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstsize.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstsize.c.o
 .PHONY : libft/ft_lstsize.c.o
 
 libft/ft_lstsize.i: libft/ft_lstsize.c.i
@@ -805,7 +778,7 @@ libft/ft_lstsize.i: libft/ft_lstsize.c.i
 
 # target to preprocess a source file
 libft/ft_lstsize.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstsize.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstsize.c.i
 .PHONY : libft/ft_lstsize.c.i
 
 libft/ft_lstsize.s: libft/ft_lstsize.c.s
@@ -814,7 +787,7 @@ libft/ft_lstsize.s: libft/ft_lstsize.c.s
 
 # target to generate assembly for a file
 libft/ft_lstsize.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_lstsize.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_lstsize.c.s
 .PHONY : libft/ft_lstsize.c.s
 
 libft/ft_memccpy.o: libft/ft_memccpy.c.o
@@ -823,7 +796,7 @@ libft/ft_memccpy.o: libft/ft_memccpy.c.o
 
 # target to build an object file
 libft/ft_memccpy.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memccpy.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memccpy.c.o
 .PHONY : libft/ft_memccpy.c.o
 
 libft/ft_memccpy.i: libft/ft_memccpy.c.i
@@ -832,7 +805,7 @@ libft/ft_memccpy.i: libft/ft_memccpy.c.i
 
 # target to preprocess a source file
 libft/ft_memccpy.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memccpy.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memccpy.c.i
 .PHONY : libft/ft_memccpy.c.i
 
 libft/ft_memccpy.s: libft/ft_memccpy.c.s
@@ -841,7 +814,7 @@ libft/ft_memccpy.s: libft/ft_memccpy.c.s
 
 # target to generate assembly for a file
 libft/ft_memccpy.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memccpy.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memccpy.c.s
 .PHONY : libft/ft_memccpy.c.s
 
 libft/ft_memchr.o: libft/ft_memchr.c.o
@@ -850,7 +823,7 @@ libft/ft_memchr.o: libft/ft_memchr.c.o
 
 # target to build an object file
 libft/ft_memchr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memchr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memchr.c.o
 .PHONY : libft/ft_memchr.c.o
 
 libft/ft_memchr.i: libft/ft_memchr.c.i
@@ -859,7 +832,7 @@ libft/ft_memchr.i: libft/ft_memchr.c.i
 
 # target to preprocess a source file
 libft/ft_memchr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memchr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memchr.c.i
 .PHONY : libft/ft_memchr.c.i
 
 libft/ft_memchr.s: libft/ft_memchr.c.s
@@ -868,7 +841,7 @@ libft/ft_memchr.s: libft/ft_memchr.c.s
 
 # target to generate assembly for a file
 libft/ft_memchr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memchr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memchr.c.s
 .PHONY : libft/ft_memchr.c.s
 
 libft/ft_memcmp.o: libft/ft_memcmp.c.o
@@ -877,7 +850,7 @@ libft/ft_memcmp.o: libft/ft_memcmp.c.o
 
 # target to build an object file
 libft/ft_memcmp.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memcmp.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memcmp.c.o
 .PHONY : libft/ft_memcmp.c.o
 
 libft/ft_memcmp.i: libft/ft_memcmp.c.i
@@ -886,7 +859,7 @@ libft/ft_memcmp.i: libft/ft_memcmp.c.i
 
 # target to preprocess a source file
 libft/ft_memcmp.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memcmp.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memcmp.c.i
 .PHONY : libft/ft_memcmp.c.i
 
 libft/ft_memcmp.s: libft/ft_memcmp.c.s
@@ -895,7 +868,7 @@ libft/ft_memcmp.s: libft/ft_memcmp.c.s
 
 # target to generate assembly for a file
 libft/ft_memcmp.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memcmp.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memcmp.c.s
 .PHONY : libft/ft_memcmp.c.s
 
 libft/ft_memcpy.o: libft/ft_memcpy.c.o
@@ -904,7 +877,7 @@ libft/ft_memcpy.o: libft/ft_memcpy.c.o
 
 # target to build an object file
 libft/ft_memcpy.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memcpy.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memcpy.c.o
 .PHONY : libft/ft_memcpy.c.o
 
 libft/ft_memcpy.i: libft/ft_memcpy.c.i
@@ -913,7 +886,7 @@ libft/ft_memcpy.i: libft/ft_memcpy.c.i
 
 # target to preprocess a source file
 libft/ft_memcpy.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memcpy.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memcpy.c.i
 .PHONY : libft/ft_memcpy.c.i
 
 libft/ft_memcpy.s: libft/ft_memcpy.c.s
@@ -922,7 +895,7 @@ libft/ft_memcpy.s: libft/ft_memcpy.c.s
 
 # target to generate assembly for a file
 libft/ft_memcpy.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memcpy.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memcpy.c.s
 .PHONY : libft/ft_memcpy.c.s
 
 libft/ft_memmove.o: libft/ft_memmove.c.o
@@ -931,7 +904,7 @@ libft/ft_memmove.o: libft/ft_memmove.c.o
 
 # target to build an object file
 libft/ft_memmove.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memmove.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memmove.c.o
 .PHONY : libft/ft_memmove.c.o
 
 libft/ft_memmove.i: libft/ft_memmove.c.i
@@ -940,7 +913,7 @@ libft/ft_memmove.i: libft/ft_memmove.c.i
 
 # target to preprocess a source file
 libft/ft_memmove.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memmove.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memmove.c.i
 .PHONY : libft/ft_memmove.c.i
 
 libft/ft_memmove.s: libft/ft_memmove.c.s
@@ -949,7 +922,7 @@ libft/ft_memmove.s: libft/ft_memmove.c.s
 
 # target to generate assembly for a file
 libft/ft_memmove.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memmove.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memmove.c.s
 .PHONY : libft/ft_memmove.c.s
 
 libft/ft_memset.o: libft/ft_memset.c.o
@@ -958,7 +931,7 @@ libft/ft_memset.o: libft/ft_memset.c.o
 
 # target to build an object file
 libft/ft_memset.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memset.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memset.c.o
 .PHONY : libft/ft_memset.c.o
 
 libft/ft_memset.i: libft/ft_memset.c.i
@@ -967,7 +940,7 @@ libft/ft_memset.i: libft/ft_memset.c.i
 
 # target to preprocess a source file
 libft/ft_memset.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memset.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memset.c.i
 .PHONY : libft/ft_memset.c.i
 
 libft/ft_memset.s: libft/ft_memset.c.s
@@ -976,7 +949,7 @@ libft/ft_memset.s: libft/ft_memset.c.s
 
 # target to generate assembly for a file
 libft/ft_memset.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_memset.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_memset.c.s
 .PHONY : libft/ft_memset.c.s
 
 libft/ft_nbrlen.o: libft/ft_nbrlen.c.o
@@ -985,7 +958,7 @@ libft/ft_nbrlen.o: libft/ft_nbrlen.c.o
 
 # target to build an object file
 libft/ft_nbrlen.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_nbrlen.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_nbrlen.c.o
 .PHONY : libft/ft_nbrlen.c.o
 
 libft/ft_nbrlen.i: libft/ft_nbrlen.c.i
@@ -994,7 +967,7 @@ libft/ft_nbrlen.i: libft/ft_nbrlen.c.i
 
 # target to preprocess a source file
 libft/ft_nbrlen.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_nbrlen.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_nbrlen.c.i
 .PHONY : libft/ft_nbrlen.c.i
 
 libft/ft_nbrlen.s: libft/ft_nbrlen.c.s
@@ -1003,7 +976,7 @@ libft/ft_nbrlen.s: libft/ft_nbrlen.c.s
 
 # target to generate assembly for a file
 libft/ft_nbrlen.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_nbrlen.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_nbrlen.c.s
 .PHONY : libft/ft_nbrlen.c.s
 
 libft/ft_nbrlen_base.o: libft/ft_nbrlen_base.c.o
@@ -1012,7 +985,7 @@ libft/ft_nbrlen_base.o: libft/ft_nbrlen_base.c.o
 
 # target to build an object file
 libft/ft_nbrlen_base.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_nbrlen_base.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_nbrlen_base.c.o
 .PHONY : libft/ft_nbrlen_base.c.o
 
 libft/ft_nbrlen_base.i: libft/ft_nbrlen_base.c.i
@@ -1021,7 +994,7 @@ libft/ft_nbrlen_base.i: libft/ft_nbrlen_base.c.i
 
 # target to preprocess a source file
 libft/ft_nbrlen_base.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_nbrlen_base.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_nbrlen_base.c.i
 .PHONY : libft/ft_nbrlen_base.c.i
 
 libft/ft_nbrlen_base.s: libft/ft_nbrlen_base.c.s
@@ -1030,7 +1003,7 @@ libft/ft_nbrlen_base.s: libft/ft_nbrlen_base.c.s
 
 # target to generate assembly for a file
 libft/ft_nbrlen_base.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_nbrlen_base.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_nbrlen_base.c.s
 .PHONY : libft/ft_nbrlen_base.c.s
 
 libft/ft_putchar.o: libft/ft_putchar.c.o
@@ -1039,7 +1012,7 @@ libft/ft_putchar.o: libft/ft_putchar.c.o
 
 # target to build an object file
 libft/ft_putchar.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putchar.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putchar.c.o
 .PHONY : libft/ft_putchar.c.o
 
 libft/ft_putchar.i: libft/ft_putchar.c.i
@@ -1048,7 +1021,7 @@ libft/ft_putchar.i: libft/ft_putchar.c.i
 
 # target to preprocess a source file
 libft/ft_putchar.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putchar.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putchar.c.i
 .PHONY : libft/ft_putchar.c.i
 
 libft/ft_putchar.s: libft/ft_putchar.c.s
@@ -1057,7 +1030,7 @@ libft/ft_putchar.s: libft/ft_putchar.c.s
 
 # target to generate assembly for a file
 libft/ft_putchar.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putchar.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putchar.c.s
 .PHONY : libft/ft_putchar.c.s
 
 libft/ft_putchar_fd.o: libft/ft_putchar_fd.c.o
@@ -1066,7 +1039,7 @@ libft/ft_putchar_fd.o: libft/ft_putchar_fd.c.o
 
 # target to build an object file
 libft/ft_putchar_fd.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putchar_fd.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putchar_fd.c.o
 .PHONY : libft/ft_putchar_fd.c.o
 
 libft/ft_putchar_fd.i: libft/ft_putchar_fd.c.i
@@ -1075,7 +1048,7 @@ libft/ft_putchar_fd.i: libft/ft_putchar_fd.c.i
 
 # target to preprocess a source file
 libft/ft_putchar_fd.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putchar_fd.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putchar_fd.c.i
 .PHONY : libft/ft_putchar_fd.c.i
 
 libft/ft_putchar_fd.s: libft/ft_putchar_fd.c.s
@@ -1084,7 +1057,7 @@ libft/ft_putchar_fd.s: libft/ft_putchar_fd.c.s
 
 # target to generate assembly for a file
 libft/ft_putchar_fd.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putchar_fd.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putchar_fd.c.s
 .PHONY : libft/ft_putchar_fd.c.s
 
 libft/ft_putendl_fd.o: libft/ft_putendl_fd.c.o
@@ -1093,7 +1066,7 @@ libft/ft_putendl_fd.o: libft/ft_putendl_fd.c.o
 
 # target to build an object file
 libft/ft_putendl_fd.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putendl_fd.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putendl_fd.c.o
 .PHONY : libft/ft_putendl_fd.c.o
 
 libft/ft_putendl_fd.i: libft/ft_putendl_fd.c.i
@@ -1102,7 +1075,7 @@ libft/ft_putendl_fd.i: libft/ft_putendl_fd.c.i
 
 # target to preprocess a source file
 libft/ft_putendl_fd.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putendl_fd.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putendl_fd.c.i
 .PHONY : libft/ft_putendl_fd.c.i
 
 libft/ft_putendl_fd.s: libft/ft_putendl_fd.c.s
@@ -1111,7 +1084,7 @@ libft/ft_putendl_fd.s: libft/ft_putendl_fd.c.s
 
 # target to generate assembly for a file
 libft/ft_putendl_fd.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putendl_fd.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putendl_fd.c.s
 .PHONY : libft/ft_putendl_fd.c.s
 
 libft/ft_putnbr.o: libft/ft_putnbr.c.o
@@ -1120,7 +1093,7 @@ libft/ft_putnbr.o: libft/ft_putnbr.c.o
 
 # target to build an object file
 libft/ft_putnbr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr.c.o
 .PHONY : libft/ft_putnbr.c.o
 
 libft/ft_putnbr.i: libft/ft_putnbr.c.i
@@ -1129,7 +1102,7 @@ libft/ft_putnbr.i: libft/ft_putnbr.c.i
 
 # target to preprocess a source file
 libft/ft_putnbr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr.c.i
 .PHONY : libft/ft_putnbr.c.i
 
 libft/ft_putnbr.s: libft/ft_putnbr.c.s
@@ -1138,7 +1111,7 @@ libft/ft_putnbr.s: libft/ft_putnbr.c.s
 
 # target to generate assembly for a file
 libft/ft_putnbr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr.c.s
 .PHONY : libft/ft_putnbr.c.s
 
 libft/ft_putnbr_base.o: libft/ft_putnbr_base.c.o
@@ -1147,7 +1120,7 @@ libft/ft_putnbr_base.o: libft/ft_putnbr_base.c.o
 
 # target to build an object file
 libft/ft_putnbr_base.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr_base.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr_base.c.o
 .PHONY : libft/ft_putnbr_base.c.o
 
 libft/ft_putnbr_base.i: libft/ft_putnbr_base.c.i
@@ -1156,7 +1129,7 @@ libft/ft_putnbr_base.i: libft/ft_putnbr_base.c.i
 
 # target to preprocess a source file
 libft/ft_putnbr_base.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr_base.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr_base.c.i
 .PHONY : libft/ft_putnbr_base.c.i
 
 libft/ft_putnbr_base.s: libft/ft_putnbr_base.c.s
@@ -1165,7 +1138,7 @@ libft/ft_putnbr_base.s: libft/ft_putnbr_base.c.s
 
 # target to generate assembly for a file
 libft/ft_putnbr_base.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr_base.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr_base.c.s
 .PHONY : libft/ft_putnbr_base.c.s
 
 libft/ft_putnbr_fd.o: libft/ft_putnbr_fd.c.o
@@ -1174,7 +1147,7 @@ libft/ft_putnbr_fd.o: libft/ft_putnbr_fd.c.o
 
 # target to build an object file
 libft/ft_putnbr_fd.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr_fd.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr_fd.c.o
 .PHONY : libft/ft_putnbr_fd.c.o
 
 libft/ft_putnbr_fd.i: libft/ft_putnbr_fd.c.i
@@ -1183,7 +1156,7 @@ libft/ft_putnbr_fd.i: libft/ft_putnbr_fd.c.i
 
 # target to preprocess a source file
 libft/ft_putnbr_fd.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr_fd.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr_fd.c.i
 .PHONY : libft/ft_putnbr_fd.c.i
 
 libft/ft_putnbr_fd.s: libft/ft_putnbr_fd.c.s
@@ -1192,7 +1165,7 @@ libft/ft_putnbr_fd.s: libft/ft_putnbr_fd.c.s
 
 # target to generate assembly for a file
 libft/ft_putnbr_fd.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnbr_fd.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnbr_fd.c.s
 .PHONY : libft/ft_putnbr_fd.c.s
 
 libft/ft_putnstr.o: libft/ft_putnstr.c.o
@@ -1201,7 +1174,7 @@ libft/ft_putnstr.o: libft/ft_putnstr.c.o
 
 # target to build an object file
 libft/ft_putnstr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnstr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnstr.c.o
 .PHONY : libft/ft_putnstr.c.o
 
 libft/ft_putnstr.i: libft/ft_putnstr.c.i
@@ -1210,7 +1183,7 @@ libft/ft_putnstr.i: libft/ft_putnstr.c.i
 
 # target to preprocess a source file
 libft/ft_putnstr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnstr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnstr.c.i
 .PHONY : libft/ft_putnstr.c.i
 
 libft/ft_putnstr.s: libft/ft_putnstr.c.s
@@ -1219,7 +1192,7 @@ libft/ft_putnstr.s: libft/ft_putnstr.c.s
 
 # target to generate assembly for a file
 libft/ft_putnstr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putnstr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putnstr.c.s
 .PHONY : libft/ft_putnstr.c.s
 
 libft/ft_putstr.o: libft/ft_putstr.c.o
@@ -1228,7 +1201,7 @@ libft/ft_putstr.o: libft/ft_putstr.c.o
 
 # target to build an object file
 libft/ft_putstr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putstr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putstr.c.o
 .PHONY : libft/ft_putstr.c.o
 
 libft/ft_putstr.i: libft/ft_putstr.c.i
@@ -1237,7 +1210,7 @@ libft/ft_putstr.i: libft/ft_putstr.c.i
 
 # target to preprocess a source file
 libft/ft_putstr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putstr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putstr.c.i
 .PHONY : libft/ft_putstr.c.i
 
 libft/ft_putstr.s: libft/ft_putstr.c.s
@@ -1246,7 +1219,7 @@ libft/ft_putstr.s: libft/ft_putstr.c.s
 
 # target to generate assembly for a file
 libft/ft_putstr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putstr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putstr.c.s
 .PHONY : libft/ft_putstr.c.s
 
 libft/ft_putstr_fd.o: libft/ft_putstr_fd.c.o
@@ -1255,7 +1228,7 @@ libft/ft_putstr_fd.o: libft/ft_putstr_fd.c.o
 
 # target to build an object file
 libft/ft_putstr_fd.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putstr_fd.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putstr_fd.c.o
 .PHONY : libft/ft_putstr_fd.c.o
 
 libft/ft_putstr_fd.i: libft/ft_putstr_fd.c.i
@@ -1264,7 +1237,7 @@ libft/ft_putstr_fd.i: libft/ft_putstr_fd.c.i
 
 # target to preprocess a source file
 libft/ft_putstr_fd.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putstr_fd.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putstr_fd.c.i
 .PHONY : libft/ft_putstr_fd.c.i
 
 libft/ft_putstr_fd.s: libft/ft_putstr_fd.c.s
@@ -1273,7 +1246,7 @@ libft/ft_putstr_fd.s: libft/ft_putstr_fd.c.s
 
 # target to generate assembly for a file
 libft/ft_putstr_fd.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_putstr_fd.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_putstr_fd.c.s
 .PHONY : libft/ft_putstr_fd.c.s
 
 libft/ft_rev_arr.o: libft/ft_rev_arr.c.o
@@ -1282,7 +1255,7 @@ libft/ft_rev_arr.o: libft/ft_rev_arr.c.o
 
 # target to build an object file
 libft/ft_rev_arr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_rev_arr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_rev_arr.c.o
 .PHONY : libft/ft_rev_arr.c.o
 
 libft/ft_rev_arr.i: libft/ft_rev_arr.c.i
@@ -1291,7 +1264,7 @@ libft/ft_rev_arr.i: libft/ft_rev_arr.c.i
 
 # target to preprocess a source file
 libft/ft_rev_arr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_rev_arr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_rev_arr.c.i
 .PHONY : libft/ft_rev_arr.c.i
 
 libft/ft_rev_arr.s: libft/ft_rev_arr.c.s
@@ -1300,7 +1273,7 @@ libft/ft_rev_arr.s: libft/ft_rev_arr.c.s
 
 # target to generate assembly for a file
 libft/ft_rev_arr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_rev_arr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_rev_arr.c.s
 .PHONY : libft/ft_rev_arr.c.s
 
 libft/ft_split.o: libft/ft_split.c.o
@@ -1309,7 +1282,7 @@ libft/ft_split.o: libft/ft_split.c.o
 
 # target to build an object file
 libft/ft_split.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_split.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_split.c.o
 .PHONY : libft/ft_split.c.o
 
 libft/ft_split.i: libft/ft_split.c.i
@@ -1318,7 +1291,7 @@ libft/ft_split.i: libft/ft_split.c.i
 
 # target to preprocess a source file
 libft/ft_split.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_split.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_split.c.i
 .PHONY : libft/ft_split.c.i
 
 libft/ft_split.s: libft/ft_split.c.s
@@ -1327,7 +1300,7 @@ libft/ft_split.s: libft/ft_split.c.s
 
 # target to generate assembly for a file
 libft/ft_split.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_split.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_split.c.s
 .PHONY : libft/ft_split.c.s
 
 libft/ft_strchr.o: libft/ft_strchr.c.o
@@ -1336,7 +1309,7 @@ libft/ft_strchr.o: libft/ft_strchr.c.o
 
 # target to build an object file
 libft/ft_strchr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strchr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strchr.c.o
 .PHONY : libft/ft_strchr.c.o
 
 libft/ft_strchr.i: libft/ft_strchr.c.i
@@ -1345,7 +1318,7 @@ libft/ft_strchr.i: libft/ft_strchr.c.i
 
 # target to preprocess a source file
 libft/ft_strchr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strchr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strchr.c.i
 .PHONY : libft/ft_strchr.c.i
 
 libft/ft_strchr.s: libft/ft_strchr.c.s
@@ -1354,7 +1327,7 @@ libft/ft_strchr.s: libft/ft_strchr.c.s
 
 # target to generate assembly for a file
 libft/ft_strchr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strchr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strchr.c.s
 .PHONY : libft/ft_strchr.c.s
 
 libft/ft_strcmp.o: libft/ft_strcmp.c.o
@@ -1363,7 +1336,7 @@ libft/ft_strcmp.o: libft/ft_strcmp.c.o
 
 # target to build an object file
 libft/ft_strcmp.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strcmp.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strcmp.c.o
 .PHONY : libft/ft_strcmp.c.o
 
 libft/ft_strcmp.i: libft/ft_strcmp.c.i
@@ -1372,7 +1345,7 @@ libft/ft_strcmp.i: libft/ft_strcmp.c.i
 
 # target to preprocess a source file
 libft/ft_strcmp.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strcmp.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strcmp.c.i
 .PHONY : libft/ft_strcmp.c.i
 
 libft/ft_strcmp.s: libft/ft_strcmp.c.s
@@ -1381,7 +1354,7 @@ libft/ft_strcmp.s: libft/ft_strcmp.c.s
 
 # target to generate assembly for a file
 libft/ft_strcmp.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strcmp.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strcmp.c.s
 .PHONY : libft/ft_strcmp.c.s
 
 libft/ft_strdup.o: libft/ft_strdup.c.o
@@ -1390,7 +1363,7 @@ libft/ft_strdup.o: libft/ft_strdup.c.o
 
 # target to build an object file
 libft/ft_strdup.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strdup.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strdup.c.o
 .PHONY : libft/ft_strdup.c.o
 
 libft/ft_strdup.i: libft/ft_strdup.c.i
@@ -1399,7 +1372,7 @@ libft/ft_strdup.i: libft/ft_strdup.c.i
 
 # target to preprocess a source file
 libft/ft_strdup.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strdup.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strdup.c.i
 .PHONY : libft/ft_strdup.c.i
 
 libft/ft_strdup.s: libft/ft_strdup.c.s
@@ -1408,7 +1381,7 @@ libft/ft_strdup.s: libft/ft_strdup.c.s
 
 # target to generate assembly for a file
 libft/ft_strdup.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strdup.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strdup.c.s
 .PHONY : libft/ft_strdup.c.s
 
 libft/ft_strjoin.o: libft/ft_strjoin.c.o
@@ -1417,7 +1390,7 @@ libft/ft_strjoin.o: libft/ft_strjoin.c.o
 
 # target to build an object file
 libft/ft_strjoin.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strjoin.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strjoin.c.o
 .PHONY : libft/ft_strjoin.c.o
 
 libft/ft_strjoin.i: libft/ft_strjoin.c.i
@@ -1426,7 +1399,7 @@ libft/ft_strjoin.i: libft/ft_strjoin.c.i
 
 # target to preprocess a source file
 libft/ft_strjoin.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strjoin.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strjoin.c.i
 .PHONY : libft/ft_strjoin.c.i
 
 libft/ft_strjoin.s: libft/ft_strjoin.c.s
@@ -1435,7 +1408,7 @@ libft/ft_strjoin.s: libft/ft_strjoin.c.s
 
 # target to generate assembly for a file
 libft/ft_strjoin.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strjoin.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strjoin.c.s
 .PHONY : libft/ft_strjoin.c.s
 
 libft/ft_strlcat.o: libft/ft_strlcat.c.o
@@ -1444,7 +1417,7 @@ libft/ft_strlcat.o: libft/ft_strlcat.c.o
 
 # target to build an object file
 libft/ft_strlcat.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlcat.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlcat.c.o
 .PHONY : libft/ft_strlcat.c.o
 
 libft/ft_strlcat.i: libft/ft_strlcat.c.i
@@ -1453,7 +1426,7 @@ libft/ft_strlcat.i: libft/ft_strlcat.c.i
 
 # target to preprocess a source file
 libft/ft_strlcat.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlcat.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlcat.c.i
 .PHONY : libft/ft_strlcat.c.i
 
 libft/ft_strlcat.s: libft/ft_strlcat.c.s
@@ -1462,7 +1435,7 @@ libft/ft_strlcat.s: libft/ft_strlcat.c.s
 
 # target to generate assembly for a file
 libft/ft_strlcat.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlcat.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlcat.c.s
 .PHONY : libft/ft_strlcat.c.s
 
 libft/ft_strlcpy.o: libft/ft_strlcpy.c.o
@@ -1471,7 +1444,7 @@ libft/ft_strlcpy.o: libft/ft_strlcpy.c.o
 
 # target to build an object file
 libft/ft_strlcpy.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlcpy.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlcpy.c.o
 .PHONY : libft/ft_strlcpy.c.o
 
 libft/ft_strlcpy.i: libft/ft_strlcpy.c.i
@@ -1480,7 +1453,7 @@ libft/ft_strlcpy.i: libft/ft_strlcpy.c.i
 
 # target to preprocess a source file
 libft/ft_strlcpy.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlcpy.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlcpy.c.i
 .PHONY : libft/ft_strlcpy.c.i
 
 libft/ft_strlcpy.s: libft/ft_strlcpy.c.s
@@ -1489,7 +1462,7 @@ libft/ft_strlcpy.s: libft/ft_strlcpy.c.s
 
 # target to generate assembly for a file
 libft/ft_strlcpy.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlcpy.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlcpy.c.s
 .PHONY : libft/ft_strlcpy.c.s
 
 libft/ft_strlen.o: libft/ft_strlen.c.o
@@ -1498,7 +1471,7 @@ libft/ft_strlen.o: libft/ft_strlen.c.o
 
 # target to build an object file
 libft/ft_strlen.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlen.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlen.c.o
 .PHONY : libft/ft_strlen.c.o
 
 libft/ft_strlen.i: libft/ft_strlen.c.i
@@ -1507,7 +1480,7 @@ libft/ft_strlen.i: libft/ft_strlen.c.i
 
 # target to preprocess a source file
 libft/ft_strlen.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlen.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlen.c.i
 .PHONY : libft/ft_strlen.c.i
 
 libft/ft_strlen.s: libft/ft_strlen.c.s
@@ -1516,7 +1489,7 @@ libft/ft_strlen.s: libft/ft_strlen.c.s
 
 # target to generate assembly for a file
 libft/ft_strlen.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strlen.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strlen.c.s
 .PHONY : libft/ft_strlen.c.s
 
 libft/ft_strmapi.o: libft/ft_strmapi.c.o
@@ -1525,7 +1498,7 @@ libft/ft_strmapi.o: libft/ft_strmapi.c.o
 
 # target to build an object file
 libft/ft_strmapi.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strmapi.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strmapi.c.o
 .PHONY : libft/ft_strmapi.c.o
 
 libft/ft_strmapi.i: libft/ft_strmapi.c.i
@@ -1534,7 +1507,7 @@ libft/ft_strmapi.i: libft/ft_strmapi.c.i
 
 # target to preprocess a source file
 libft/ft_strmapi.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strmapi.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strmapi.c.i
 .PHONY : libft/ft_strmapi.c.i
 
 libft/ft_strmapi.s: libft/ft_strmapi.c.s
@@ -1543,7 +1516,7 @@ libft/ft_strmapi.s: libft/ft_strmapi.c.s
 
 # target to generate assembly for a file
 libft/ft_strmapi.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strmapi.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strmapi.c.s
 .PHONY : libft/ft_strmapi.c.s
 
 libft/ft_strncmp.o: libft/ft_strncmp.c.o
@@ -1552,7 +1525,7 @@ libft/ft_strncmp.o: libft/ft_strncmp.c.o
 
 # target to build an object file
 libft/ft_strncmp.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strncmp.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strncmp.c.o
 .PHONY : libft/ft_strncmp.c.o
 
 libft/ft_strncmp.i: libft/ft_strncmp.c.i
@@ -1561,7 +1534,7 @@ libft/ft_strncmp.i: libft/ft_strncmp.c.i
 
 # target to preprocess a source file
 libft/ft_strncmp.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strncmp.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strncmp.c.i
 .PHONY : libft/ft_strncmp.c.i
 
 libft/ft_strncmp.s: libft/ft_strncmp.c.s
@@ -1570,7 +1543,7 @@ libft/ft_strncmp.s: libft/ft_strncmp.c.s
 
 # target to generate assembly for a file
 libft/ft_strncmp.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strncmp.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strncmp.c.s
 .PHONY : libft/ft_strncmp.c.s
 
 libft/ft_strndup.o: libft/ft_strndup.c.o
@@ -1579,7 +1552,7 @@ libft/ft_strndup.o: libft/ft_strndup.c.o
 
 # target to build an object file
 libft/ft_strndup.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strndup.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strndup.c.o
 .PHONY : libft/ft_strndup.c.o
 
 libft/ft_strndup.i: libft/ft_strndup.c.i
@@ -1588,7 +1561,7 @@ libft/ft_strndup.i: libft/ft_strndup.c.i
 
 # target to preprocess a source file
 libft/ft_strndup.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strndup.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strndup.c.i
 .PHONY : libft/ft_strndup.c.i
 
 libft/ft_strndup.s: libft/ft_strndup.c.s
@@ -1597,7 +1570,7 @@ libft/ft_strndup.s: libft/ft_strndup.c.s
 
 # target to generate assembly for a file
 libft/ft_strndup.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strndup.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strndup.c.s
 .PHONY : libft/ft_strndup.c.s
 
 libft/ft_strnew.o: libft/ft_strnew.c.o
@@ -1606,7 +1579,7 @@ libft/ft_strnew.o: libft/ft_strnew.c.o
 
 # target to build an object file
 libft/ft_strnew.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strnew.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strnew.c.o
 .PHONY : libft/ft_strnew.c.o
 
 libft/ft_strnew.i: libft/ft_strnew.c.i
@@ -1615,7 +1588,7 @@ libft/ft_strnew.i: libft/ft_strnew.c.i
 
 # target to preprocess a source file
 libft/ft_strnew.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strnew.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strnew.c.i
 .PHONY : libft/ft_strnew.c.i
 
 libft/ft_strnew.s: libft/ft_strnew.c.s
@@ -1624,7 +1597,7 @@ libft/ft_strnew.s: libft/ft_strnew.c.s
 
 # target to generate assembly for a file
 libft/ft_strnew.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strnew.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strnew.c.s
 .PHONY : libft/ft_strnew.c.s
 
 libft/ft_strnstr.o: libft/ft_strnstr.c.o
@@ -1633,7 +1606,7 @@ libft/ft_strnstr.o: libft/ft_strnstr.c.o
 
 # target to build an object file
 libft/ft_strnstr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strnstr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strnstr.c.o
 .PHONY : libft/ft_strnstr.c.o
 
 libft/ft_strnstr.i: libft/ft_strnstr.c.i
@@ -1642,7 +1615,7 @@ libft/ft_strnstr.i: libft/ft_strnstr.c.i
 
 # target to preprocess a source file
 libft/ft_strnstr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strnstr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strnstr.c.i
 .PHONY : libft/ft_strnstr.c.i
 
 libft/ft_strnstr.s: libft/ft_strnstr.c.s
@@ -1651,7 +1624,7 @@ libft/ft_strnstr.s: libft/ft_strnstr.c.s
 
 # target to generate assembly for a file
 libft/ft_strnstr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strnstr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strnstr.c.s
 .PHONY : libft/ft_strnstr.c.s
 
 libft/ft_strrchr.o: libft/ft_strrchr.c.o
@@ -1660,7 +1633,7 @@ libft/ft_strrchr.o: libft/ft_strrchr.c.o
 
 # target to build an object file
 libft/ft_strrchr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strrchr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strrchr.c.o
 .PHONY : libft/ft_strrchr.c.o
 
 libft/ft_strrchr.i: libft/ft_strrchr.c.i
@@ -1669,7 +1642,7 @@ libft/ft_strrchr.i: libft/ft_strrchr.c.i
 
 # target to preprocess a source file
 libft/ft_strrchr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strrchr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strrchr.c.i
 .PHONY : libft/ft_strrchr.c.i
 
 libft/ft_strrchr.s: libft/ft_strrchr.c.s
@@ -1678,7 +1651,7 @@ libft/ft_strrchr.s: libft/ft_strrchr.c.s
 
 # target to generate assembly for a file
 libft/ft_strrchr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strrchr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strrchr.c.s
 .PHONY : libft/ft_strrchr.c.s
 
 libft/ft_strtrim.o: libft/ft_strtrim.c.o
@@ -1687,7 +1660,7 @@ libft/ft_strtrim.o: libft/ft_strtrim.c.o
 
 # target to build an object file
 libft/ft_strtrim.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strtrim.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strtrim.c.o
 .PHONY : libft/ft_strtrim.c.o
 
 libft/ft_strtrim.i: libft/ft_strtrim.c.i
@@ -1696,7 +1669,7 @@ libft/ft_strtrim.i: libft/ft_strtrim.c.i
 
 # target to preprocess a source file
 libft/ft_strtrim.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strtrim.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strtrim.c.i
 .PHONY : libft/ft_strtrim.c.i
 
 libft/ft_strtrim.s: libft/ft_strtrim.c.s
@@ -1705,7 +1678,7 @@ libft/ft_strtrim.s: libft/ft_strtrim.c.s
 
 # target to generate assembly for a file
 libft/ft_strtrim.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_strtrim.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_strtrim.c.s
 .PHONY : libft/ft_strtrim.c.s
 
 libft/ft_substr.o: libft/ft_substr.c.o
@@ -1714,7 +1687,7 @@ libft/ft_substr.o: libft/ft_substr.c.o
 
 # target to build an object file
 libft/ft_substr.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_substr.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_substr.c.o
 .PHONY : libft/ft_substr.c.o
 
 libft/ft_substr.i: libft/ft_substr.c.i
@@ -1723,7 +1696,7 @@ libft/ft_substr.i: libft/ft_substr.c.i
 
 # target to preprocess a source file
 libft/ft_substr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_substr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_substr.c.i
 .PHONY : libft/ft_substr.c.i
 
 libft/ft_substr.s: libft/ft_substr.c.s
@@ -1732,7 +1705,7 @@ libft/ft_substr.s: libft/ft_substr.c.s
 
 # target to generate assembly for a file
 libft/ft_substr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_substr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_substr.c.s
 .PHONY : libft/ft_substr.c.s
 
 libft/ft_tolower.o: libft/ft_tolower.c.o
@@ -1741,7 +1714,7 @@ libft/ft_tolower.o: libft/ft_tolower.c.o
 
 # target to build an object file
 libft/ft_tolower.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_tolower.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_tolower.c.o
 .PHONY : libft/ft_tolower.c.o
 
 libft/ft_tolower.i: libft/ft_tolower.c.i
@@ -1750,7 +1723,7 @@ libft/ft_tolower.i: libft/ft_tolower.c.i
 
 # target to preprocess a source file
 libft/ft_tolower.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_tolower.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_tolower.c.i
 .PHONY : libft/ft_tolower.c.i
 
 libft/ft_tolower.s: libft/ft_tolower.c.s
@@ -1759,7 +1732,7 @@ libft/ft_tolower.s: libft/ft_tolower.c.s
 
 # target to generate assembly for a file
 libft/ft_tolower.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_tolower.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_tolower.c.s
 .PHONY : libft/ft_tolower.c.s
 
 libft/ft_toupper.o: libft/ft_toupper.c.o
@@ -1768,7 +1741,7 @@ libft/ft_toupper.o: libft/ft_toupper.c.o
 
 # target to build an object file
 libft/ft_toupper.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_toupper.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_toupper.c.o
 .PHONY : libft/ft_toupper.c.o
 
 libft/ft_toupper.i: libft/ft_toupper.c.i
@@ -1777,7 +1750,7 @@ libft/ft_toupper.i: libft/ft_toupper.c.i
 
 # target to preprocess a source file
 libft/ft_toupper.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_toupper.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_toupper.c.i
 .PHONY : libft/ft_toupper.c.i
 
 libft/ft_toupper.s: libft/ft_toupper.c.s
@@ -1786,7 +1759,7 @@ libft/ft_toupper.s: libft/ft_toupper.c.s
 
 # target to generate assembly for a file
 libft/ft_toupper.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_toupper.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_toupper.c.s
 .PHONY : libft/ft_toupper.c.s
 
 libft/ft_uitoa_base.o: libft/ft_uitoa_base.c.o
@@ -1795,7 +1768,7 @@ libft/ft_uitoa_base.o: libft/ft_uitoa_base.c.o
 
 # target to build an object file
 libft/ft_uitoa_base.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_uitoa_base.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_uitoa_base.c.o
 .PHONY : libft/ft_uitoa_base.c.o
 
 libft/ft_uitoa_base.i: libft/ft_uitoa_base.c.i
@@ -1804,7 +1777,7 @@ libft/ft_uitoa_base.i: libft/ft_uitoa_base.c.i
 
 # target to preprocess a source file
 libft/ft_uitoa_base.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_uitoa_base.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_uitoa_base.c.i
 .PHONY : libft/ft_uitoa_base.c.i
 
 libft/ft_uitoa_base.s: libft/ft_uitoa_base.c.s
@@ -1813,7 +1786,7 @@ libft/ft_uitoa_base.s: libft/ft_uitoa_base.c.s
 
 # target to generate assembly for a file
 libft/ft_uitoa_base.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/libft/ft_uitoa_base.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/libft/ft_uitoa_base.c.s
 .PHONY : libft/ft_uitoa_base.c.s
 
 main.o: main.cpp.o
@@ -1822,7 +1795,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -1831,7 +1804,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -1840,7 +1813,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 readConfig.o: readConfig.cpp.o
@@ -1849,7 +1822,7 @@ readConfig.o: readConfig.cpp.o
 
 # target to build an object file
 readConfig.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/readConfig.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/readConfig.cpp.o
 .PHONY : readConfig.cpp.o
 
 readConfig.i: readConfig.cpp.i
@@ -1858,7 +1831,7 @@ readConfig.i: readConfig.cpp.i
 
 # target to preprocess a source file
 readConfig.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/readConfig.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/readConfig.cpp.i
 .PHONY : readConfig.cpp.i
 
 readConfig.s: readConfig.cpp.s
@@ -1867,62 +1840,8 @@ readConfig.s: readConfig.cpp.s
 
 # target to generate assembly for a file
 readConfig.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/readConfig.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/readConfig.cpp.s
 .PHONY : readConfig.cpp.s
-
-server_test.o: server_test.cpp.o
-
-.PHONY : server_test.o
-
-# target to build an object file
-server_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/server_test.cpp.o
-.PHONY : server_test.cpp.o
-
-server_test.i: server_test.cpp.i
-
-.PHONY : server_test.i
-
-# target to preprocess a source file
-server_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/server_test.cpp.i
-.PHONY : server_test.cpp.i
-
-server_test.s: server_test.cpp.s
-
-.PHONY : server_test.s
-
-# target to generate assembly for a file
-server_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/server_test.cpp.s
-.PHONY : server_test.cpp.s
-
-server_tools.o: server_tools.cpp.o
-
-.PHONY : server_tools.o
-
-# target to build an object file
-server_tools.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/server_tools.cpp.o
-.PHONY : server_tools.cpp.o
-
-server_tools.i: server_tools.cpp.i
-
-.PHONY : server_tools.i
-
-# target to preprocess a source file
-server_tools.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/server_tools.cpp.i
-.PHONY : server_tools.cpp.i
-
-server_tools.s: server_tools.cpp.s
-
-.PHONY : server_tools.s
-
-# target to generate assembly for a file
-server_tools.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/server_tools.cpp.s
-.PHONY : server_tools.cpp.s
 
 utils.o: utils.cpp.o
 
@@ -1930,7 +1849,7 @@ utils.o: utils.cpp.o
 
 # target to build an object file
 utils.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/utils.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/utils.cpp.o
 .PHONY : utils.cpp.o
 
 utils.i: utils.cpp.i
@@ -1939,7 +1858,7 @@ utils.i: utils.cpp.i
 
 # target to preprocess a source file
 utils.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/utils.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/utils.cpp.i
 .PHONY : utils.cpp.i
 
 utils.s: utils.cpp.s
@@ -1948,7 +1867,7 @@ utils.s: utils.cpp.s
 
 # target to generate assembly for a file
 utils.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserver.dir/build.make CMakeFiles/webserver.dir/utils.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/web_collab.dir/build.make CMakeFiles/web_collab.dir/utils.cpp.s
 .PHONY : utils.cpp.s
 
 # Help Target
@@ -1959,7 +1878,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... webserver"
+	@echo "... web_collab"
 	@echo "... Client.o"
 	@echo "... Client.i"
 	@echo "... Client.s"
@@ -1972,9 +1891,6 @@ help:
 	@echo "... Socket.o"
 	@echo "... Socket.i"
 	@echo "... Socket.s"
-	@echo "... client_test.o"
-	@echo "... client_test.i"
-	@echo "... client_test.s"
 	@echo "... convertConfig.o"
 	@echo "... convertConfig.i"
 	@echo "... convertConfig.s"
@@ -2152,12 +2068,6 @@ help:
 	@echo "... readConfig.o"
 	@echo "... readConfig.i"
 	@echo "... readConfig.s"
-	@echo "... server_test.o"
-	@echo "... server_test.i"
-	@echo "... server_test.s"
-	@echo "... server_tools.o"
-	@echo "... server_tools.i"
-	@echo "... server_tools.s"
 	@echo "... utils.o"
 	@echo "... utils.i"
 	@echo "... utils.s"

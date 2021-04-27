@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.19)
-project(webserver)
+project(web_collab)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 98)
 
 include_directories(.)
 include_directories(libft)
 
-add_executable(webserver
+add_executable(web_collab
         libft/ft_atoi.c
         libft/ft_bzero.c
         libft/ft_calloc.c
@@ -64,9 +64,10 @@ add_executable(webserver
         libft/ft_toupper.c
         libft/ft_uitoa_base.c
         libft/libft.h
+#        2_client_test.cpp
         Client.cpp
         Client.hpp
-        client_test.cpp
+#        client_test.cpp
         Config.hpp
         convertConfig.cpp
         main.cpp
@@ -76,8 +77,7 @@ add_executable(webserver
         Response.hpp
         Server.cpp
         Server.hpp
-        server_test.cpp
-        server_tools.cpp
+#        server_test.cpp
         Socket.cpp
         Socket.hpp
         utils.cpp)

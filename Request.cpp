@@ -150,6 +150,12 @@ bool Request::check_start_line(const std::vector<std::string> &start_line, const
         _method = "GET";
         return true;
     }
+    if (_uri == "/favicon.ico" || _uri == "/apple-touch-icon-precomposed.png" || _uri == "/apple-touch-icon.png")
+    {
+        _status = Request::FAV;
+        _method = "GET";
+        return true;
+    }
 	if ((loc = get_location(g_servers[i], _location))) {
     	/* check the validity of the method from the location methods list */
     	for (size_t i = 0; i < loc->methods.size(); i++) {
@@ -260,6 +266,8 @@ void Request::parse_request(std::string &lines, const int i)
                 _status = Request::BAD_REQ;
             }
             if (_status == Request::PNG)
+                return ;
+            if (_status == Request::FAV)
                 return ;
         }
         if (_status == Request::HEADERS && !split_lines.empty())
