@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/time.h>
 //дата для даты и для последнего редактирования
 //struct stat {
 //	dev_t         st_dev;      /* устройство */
@@ -20,20 +21,40 @@
 //	time_t        st_mtime;    /* время последней модификации */
 //	time_t        st_ctime;    /* время последнего изменения */
 //};
-std::string get_date(time_t t){
-	struct tm info;
-	char buffer[64];
 
-	std::string s = std::to_string(t);
+std::string server_date() {
+	struct tm info;
+	struct timeval time;
+	char buf[29];
+	gettimeofday(&time, NULL);
+	std::string s = std::to_string(time.tv_sec);
 	strptime(s.c_str(), " %s ", &info);
-	strftime (buffer, sizeof(buffer), "%a, %d %b %Y %X %Z", &info);
-	std::string str = buffer;
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %X", &info);
+	std::string str = buf;
+	str += " GMT";
 	return str;
 }
+
+std::string get_last_modified()
+{
+	struct tm info;
+	char buf[29];
+	struct stat st;
+	stat("config", &st);
+	std::string s = std::to_string(st.st_mtimespec.tv_sec);
+	strptime(s.c_str(), " %s ", &info);
+	strftime (buf, sizeof(buf), "%a, %d %b %Y %X", &info);
+	std::string str = buf;
+	str += " GMT";
+	return str;
+}
+
 int main()
 {
-	struct stat buf;
-	stat("config", &buf);
-	std::cout << get_date(buf.st_mtimespec.tv_sec);
+	std::cout << get_last_modified() << std::endl;
+	std::cout << server_date();
+//	struct stat buf;
+//	stat("config", &buf);
+//	std::cout << get_date(buf.st_mtimespec.tv_sec);
 	return (0);
 }

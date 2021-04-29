@@ -137,14 +137,13 @@ public:
 	bool		parse_chunk_size(std::string &lines);
 	bool		parse_chunk_data(std::string &lines);
 	bool		check_start_line(const std::vector<std::string> &lines, const int i);
-	bool		set_up_headers(const std::vector<std::string> &lines);	
+	bool		set_up_headers(const std::vector<std::string> &lines);
 	void		set_cgi_meta_vars(const int i);
 	void		cut_remain_len(int to_cut);
 	std::string	find_header(std::string header);
 
 	std::string server_date(void);
-	std::string last_modified(void);
-
+	std::string last_modified(std::string file);
 	void		createResponse(void);
 	std::string get_response(void);
 

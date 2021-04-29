@@ -454,37 +454,40 @@ void Request::run_cgi_request() {
     }
 }
 
-
-
-
 std::string Request::server_date() {
 	struct tm info;
 	struct timeval time;
 	char buf[29];
 	gettimeofday(&time, NULL);
 	std::string s = std::to_string(time.tv_sec);
-
 	strptime(s.c_str(), " %s ", &info);
-	//форматировать время как строку
-	//a - день недели, d - день месяца и тд
-	strftime(buf, sizeof(buf), "%a, %d %b %Y %X %Z", &info);
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %X", &info);
 	std::string str = buf;
-	return "Date: " + str + "\r\n";
+	str += " GMT";
+	return str;
 }
 
-std::string Request::last_modified(void) {
+std::string Request::last_modified(std::string file) {
+	struct tm info;
+	char buf[29];
 	struct stat st;
-
+	stat(file.c_str(), &st);
+	std::string s = std::to_string(st.st_mtimespec.tv_sec);
+	strptime(s.c_str(), " %s ", &info);
+	strftime (buf, sizeof(buf), "%a, %d %b %Y %X", &info);
+	std::string str = buf;
+	str += " GMT";
+	return str;
 }
 
 void Request::createResponse() {
-	//std::string date = server_date();
 	_response = "";
 	if (_method == "HEAD")
 	{
 		_response += "HTTP/1.1 200 OK"; //OK - status
 		_response += "\r\n";
 		_headers["Date"] = server_date();
+		//_headers["Last-Modified"] = last_modified();
 		std::map<std::string, std::string>::iterator beg = _headers.begin();
 		std::map<std::string, std::string>::iterator end = _headers.end();
 		while (beg != end)
