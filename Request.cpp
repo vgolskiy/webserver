@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/23 11:58:41 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/01 11:41:35 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ std::string const Request::methods[] = {
 std::string const Request::headers[] = {
 	"Accept-Charsets",
 	"Accept-Language",
+	"Allow", //
 	"Authorization",
 	"Content-Language",
 	"Content-Length",
@@ -49,9 +50,13 @@ std::string const Request::headers[] = {
 	"Date",
 	"Host",
 	"Last-Modified",
+	"Location", //
 	"Referer",
+	"Retry-After", //
+	"Server", //
 	"Transfer-Encoding",
 	"User-Agent",
+	"WWW-Authenticate", //
 };
 
 int Request::get_remain_len() {
@@ -484,25 +489,16 @@ void Request::createResponse() {
 	_response = "";
 	if (_method == "HEAD")
 	{
+		_headers["Date"] = server_date();
 		_response += "HTTP/1.1 200 OK"; //OK - status
 		_response += "\r\n";
-		_headers["Date"] = server_date();
-		//_headers["Last-Modified"] = last_modified();
-		std::map<std::string, std::string>::iterator beg = _headers.begin();
-		std::map<std::string, std::string>::iterator end = _headers.end();
-		while (beg != end)
-		{
-			if ((*beg).second != "")
-			{
-				_response += (*beg).first;
-				_response += ": ";
-				_response += (*beg).second;
-				_response += "\r\n";
-			}
-			++beg;
-		}
-		_response += "Content-Length: ";
-		_response += std::to_string(_body.length());
+		_response += "Date" + _headers["Date"];
+		_response += "\r\n";
+		_response += "Server" + _headers["Server"];
+		_response += "\r\n";
+		_response += "Connection" + _headers["Connection"];
+		_response += "\r\n";
+		_response += "Content-Type" + _headers["Content-Type"];
 		_response += "\r\n";
 	}
 	else if (_method == "PUT")
@@ -511,7 +507,20 @@ void Request::createResponse() {
 	}
 	else if (_method == "GET")
 	{
-
+		_response = "";
+		_headers["Date"] = server_date();
+		_response += "HTTP/1.1 200 OK"; //OK - status
+		_response += "\r\n";
+		_response += "Date" + _headers["Date"];
+		_response += "\r\n";
+		_response += "Server" + _headers["Server"];
+		_response += "\r\n";
+		_response += "Connection" + _headers["Connection"];
+		_response += "\r\n";
+		_response += "Content-Type" + _headers["Content-Type"];
+		_response += "\r\n";
+		_response += _body;
+		_response += "\r\n";
 	}
 	else if (_method == "POST")
 	{

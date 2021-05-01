@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 16:32:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/01 11:25:15 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,6 @@ void Client::read_run_request(const int i)
 	    _request->set_cgi_meta_vars(i);
 		_request->run_cgi_request();
 	}
+    send(_fd, get_request()->get_response().c_str(), get_request()
+    ->get_response().length(), 0);
 }
