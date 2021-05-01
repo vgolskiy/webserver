@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/22 10:41:33 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/27 20:21:35 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 # define	SPACES		" \f\n\r\t\v"
 
 //DEFAULT VALUES
-# define	CONFIG		"content/default"
+# define	CONFIG		"./content/default"
 
 // COLORS
 # define BLACK "\e[1;30m" 
@@ -75,7 +75,7 @@
 // If the listen directive is not included at all, 
 // the “standard” port is 80/tcp and the “default” port is 8000/tcp
 // Ports cannot be the same within one server
-# define	LOCALHOST	"localhost"
+# define	LOCALHOST		"localhost"
 # define	LOCALHOST_IP	"127.0.0.1"
 # define	ZEROES_IP		"0.0.0.0"
 # define	BROADCAST_IP	"255.255.255.255"
@@ -98,6 +98,7 @@
 
 //For iteration of static lists - elements quantity getter
 # define	N_ELEMS(a) (int)(sizeof(a) / sizeof((a)[0]))
+# define	BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
 //testing
 template <typename T>
@@ -210,5 +211,7 @@ void						signals(void);
 long						current_time(void);
 std::string					tail(const std::string &s, const size_t length);
 std::string					inet_ntoaddr(int n);
+std::string					base64_encode(const std::string &s);
+std::string					base64_decode(const std::string &s);
 
 #endif

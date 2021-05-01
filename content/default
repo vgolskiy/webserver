@@ -89,5 +89,6 @@ server {
 		index		auth.html;
 		root 		./content/auth;
 		auth 		user:pass;
+		auth		new:game;
 	}
 }

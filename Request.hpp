@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/23 11:42:40 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/27 20:12:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,17 +101,25 @@ POST:
 # define PIPE_IN	1
 # define PIPE_OUT	0
 
+# define HOST			"Host"
+# define AUTHORIZATION	"Authorization"
+# define CONTENT_LEN	"Content-Length"
+# define TRANSF_ENCODE	"Transfer-Encoding"
+# define CHUNKED		"chunked"
+
 #define TMP "tmp_file"
 
 class Client;
 class Request
 {
 private:
+	const int							_i;
 	std::string							_query_str;
 	std::string							_method;
 	std::string							_uri;
 	std::string							_version;
 	std::map<std::string, std::string>	_headers;
+	std::map<std::string, std::string>	_autorize;
 	std::string 						_body;
 	std::map<std::string, std::string>	_env;
 	std::string							_location;
@@ -127,31 +135,31 @@ private:
 	int									_content_len;
 	bool								_chunk;
 
-	std::string _response;
+	std::string 						_response;
 public:
-	Request(Client *client);
+	Request(Client *client, const int i);
 	~Request(void);
 
 	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
-	void		parse_request(std::string &lines, const int i);
+	void		parse_request(std::string &lines);
 	bool		parse_chunk_size(std::string &lines);
 	bool		parse_chunk_data(std::string &lines);
-	bool		check_start_line(const std::vector<std::string> &lines, const int i);
+	bool		check_start_line(const std::vector<std::string> &lines);
 	bool		set_up_headers(const std::vector<std::string> &lines);
-	void		set_cgi_meta_vars(const int i);
+	void		set_cgi_meta_vars(void);
 	void		cut_remain_len(int to_cut);
-	std::string	find_header(std::string header);
-
+	std::string*	find_header(std::string header);
 	std::string server_date(void);
 	std::string last_modified(std::string file);
 	void		createResponse(void);
 	std::string get_response(void);
+	std::string	createHeader(void);
 
 	int			get_remain_len(void);
 	int 		get_status(void);
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
-	void		parse_script_file_name(const int i);
+	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
 
 	enum status

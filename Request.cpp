@@ -12,8 +12,7 @@
 
 #include "Request.hpp"
 
-Request::Request(Client *client) 
-{
+Request::Request(Client *client, const int i) : _i(i) {
     _method = "";
     _query_str = "";
     _version = "";
@@ -81,53 +80,79 @@ void remove_spaces(std::string &str)
     str = std::string(&chr[i]);
 }
 
-bool Request::set_up_headers(const std::vector<std::string> &lines)
-{
+bool Request::set_up_headers(const std::vector<std::string> &lines) {
+	std::map<std::string, std::string>::iterator	it;
+	t_location*	loc = get_location(g_servers[_i], _location);
     std::vector<std::string>    tmp;
-    bool                        flag;
 
-    for (size_t i = 1; i < lines.size(); i++)
-    {
-        flag = false;
-        tmp = split(lines[i], ":"); // TODO: special case for localhost:XXXX
-        for (size_t i = 0; i < tmp.size(); i++)
+    for (size_t i = 1; i < lines.size(); ++i) {
+        tmp = split(lines[i], ":");
+        if(tmp.size() < 2) {
+            std::cout << "Invalid number of arguments for the header: " << tmp[0] << std::endl;
+            return (false);
+        }
+        for (size_t i = 0; i < tmp.size(); ++i)
             remove_spaces(tmp[i]);
-        for (size_t j = 0; j != headers->size(); j++)
-        {
-            if (tmp[0] == headers[j])
-            {
-                if (find_header(tmp[0]) != "NULL")
-                {
-                    error_message("Repetitive header in the request!");
-                    return false ;
+        for (size_t j = 0; j != headers->size(); ++j) {
+            if (tmp[0] == headers[j]) {
+                if (find_header(tmp[0])) {
+                    error_message("Repetitive header in the request");
+                    return (false);
                 }
-                _headers[headers[j]] = tmp[1];
-                flag = true;
+                if (tmp[0] == AUTHORIZATION) {
+					if (!loc->auth.size()) {
+					    error_message("Autorization error: excessive header for this location");
+                        return (false);
+					}
+                    tmp = split(tmp[1], " ");
+                    if (tmp.size() != 2) {
+                        error_message("Autorization error: invalid number of arguments");
+                        return (false);
+                    }
+					else if (tmp[0] != "Basic") {
+                        error_message("Autorization error: unsupported authorization type");
+                        return (false);
+					}
+					tmp = split(base64_decode(tmp[1]), ":");
+					if ((tmp.size() == 2)
+						&& ((it = loc->auth.find(tmp[0])) != loc->auth.end())
+						&& ((*it).second == tmp[1]))
+						_autorize.insert(*it);
+					else {
+                        error_message("Autorization error: wrong credentials");
+                        return (false);
+					}
+                }
+                else if ((tmp[0] == HOST) && (tmp.size() == 3)) {
+                    std::string to_ret;
+                    to_ret.append(tmp[1]);
+                    to_ret += ":";
+                    to_ret.append(tmp[2]);
+                    _headers[headers[j]] = to_ret;
+                }
+                else
+                    _headers[headers[j]] = tmp[1];
             }
         }
-        if (tmp[0] == "Content-Length")
-        {   
-            try
-            {
+        if (tmp[0] == CONTENT_LEN) {
+            try {
                 _content_len = std::stoi(tmp[1]);
                 _remain_len = _content_len;
             }
-            catch(const std::exception& e)
-            {
-                std::cerr << e.what() << '\n';
+            catch(const std::exception& e) {
+                error_message(e.what());
             }
         }
-        if (tmp[0] == "Transfer-Encoding" && tmp[1] == "chunked")
-        {
+        if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED)) {
             _chunk = true;
             _content_len = -1;
         }
         tmp.clear();
     }
-    return true;
+    return (true);
 }
 
-bool Request::check_start_line(const std::vector<std::string> &start_line, const int i) {
+bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	t_location	*loc;
 
     /* check number of arguments */
@@ -149,7 +174,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line, const
 	** Method is available in found location
 	*/
 	_location = _uri.rfind("/") ? _uri.substr(0, _uri.rfind("/")) : _uri;
-	if ((loc = get_location(g_servers[i], _location))) {
+	if ((loc = get_location(g_servers[_i], _location))) {
     	/* check the validity of the method from the location methods list */
     	for (size_t i = 0; i < loc->methods.size(); i++) {
         	if (start_line[0] == loc->methods[i])
@@ -199,7 +224,7 @@ bool Request::parse_chunk_size(std::string &lines)
 
 bool Request::parse_chunk_data(std::string &lines)
 {
-    if (_content_len == 0 && lines == "\r\n")
+    if ((!_content_len) && (lines == "\r\n"))
     {
         _status = Request::DONE;
         return false;
@@ -230,15 +255,19 @@ void Request::print_parsed_request()
     std::cout << BROWN"URI: " << _uri << "\n" RESET;
     std::cout << RED"VERSION: "<< _version << "\n" RESET;
 
-    std::map<std::string, std::string>::iterator  it = _headers.begin();
-    std::map<std::string, std::string>::iterator  ite = _headers.end();
-    std::cout << BLACK"\nHEADERS:\n" RESET;
-    for (; it != ite; it++)
-        std::cout << "" MAGENTA << (*it).first << RESET": " CYAN << (*it).second << "\n" RESET;
-    std::cout << std::endl;
+	if (!(_status == Request::BAD_REQ)) {
+    	std::map<std::string, std::string>::iterator  it = _headers.begin();
+    	std::map<std::string, std::string>::iterator  ite = _headers.end();
+    	std::cout << BLACK"\nHEADERS:\n" RESET;
+    	for (; it != ite; it++)
+        	std::cout << "" MAGENTA << (*it).first << RESET": " CYAN << (*it).second << "\n" RESET;
+
+    	std::cout << "" MAGENTA << "Authorization" << RESET": " CYAN << _autorize.begin()->first << ":" << _autorize.begin()->second << "\n" RESET;
+    	std::cout << std::endl;
+	}
 }
 
-void Request::parse_request(std::string &lines, const int i)
+void Request::parse_request(std::string &lines)
 {
     std::vector<std::string>    split_lines;
     
@@ -253,7 +282,7 @@ void Request::parse_request(std::string &lines, const int i)
         {
             std::vector<std::string>    start_line;
             start_line = split(split_lines[0], " ");
-            if (!check_start_line(start_line, i))
+            if (!check_start_line(start_line))
             {
                 error_message("Bad request sent by client!");
                 _status = Request::BAD_REQ;
@@ -267,10 +296,7 @@ void Request::parse_request(std::string &lines, const int i)
                 split_lines = split(split_lines[0], "\r\n");
             }
             if ((set_up_headers(split_lines)) == false)
-            {
-                std::cout << "Bad request headers\n";
                 _status = BAD_REQ;
-            }
             if (lines.find("\r\n\r\n", 0) != std::string::npos && _status != BAD_REQ)
             {
                 lines.erase(0, lines.find("\r\n\r\n") + 4);
@@ -296,7 +322,7 @@ void Request::parse_request(std::string &lines, const int i)
             return ;
     if (_status == Request::CHUNK_DATA)
         if (parse_chunk_data(lines))
-            return(parse_request(lines, i));
+            return(parse_request(lines));
     /* check-print request - delete later */
     if (_status == Request::BAD_REQ)
     {
@@ -312,32 +338,31 @@ void Request::parse_request(std::string &lines, const int i)
 
 // TODO: coding special signs from URL: !#%^&()=+ и пробел
 
-std::string Request::find_header(std::string header)
-{
-    std::string empty_head = "NULL"; 
+std::string* Request::find_header(std::string header) {
+    std::string* empty_head = NULL;
     std::map<std::string, std::string>::iterator it = _headers.begin();
     std::map<std::string, std::string>::iterator ite = _headers.end();
 
     for (; it != ite; it++)
         if ((*it).first == header)
-            return (*it).second;
-    return empty_head;
+            return (&(*it).second);
+    return (empty_head);
 }
 
-void Request::set_cgi_meta_vars(const int i) {
-	t_location*	loc = get_location(g_servers[i], _location);
+void Request::set_cgi_meta_vars() {
+	t_location*	loc = get_location(g_servers[_i], _location);
 	bool		php = ((tail(_uri, 4) == ".php") && (loc->php_path.length())) ? true : false;
-    std::string	header_found;
+    std::string*	header_found;
 
 	/*
 	** The "basic" authentication scheme is based on the model that the
 	** client must authenticate itself with a user-ID and a password
 	*/
-    if (!php && ((header_found = find_header("Authorization")) != "NULL"))
-        _env["AUTH_TYPE"] = header_found;
+    if (!php && (!_autorize.empty()))
+        _env["AUTH_TYPE"] = "Basic";
     _env["CONTENT_LENGTH"] = std::to_string(_body.size());
-    if ((header_found = find_header("Content-Type")) != "NULL")
-        _env["CONTENT_TYPE"] = header_found;
+    if ((header_found = find_header("Content-Type")))
+        _env["CONTENT_TYPE"] = (*header_found);
 	if (!php)
     	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 
@@ -359,9 +384,9 @@ void Request::set_cgi_meta_vars(const int i) {
     
     // REMOTE_IDENT - location authentification
     // REMOTE_USER
-	if (!loc->auth.begin()->first.empty()) {
-		_env["REMOTE_IDENT"] = loc->auth.begin()->first;
-		_env["REMOTE_USER"] = loc->auth.begin()->first;
+	if (!_autorize.empty()) {
+		_env["REMOTE_IDENT"] = _autorize.begin()->first;
+		_env["REMOTE_USER"] = _autorize.begin()->first;
 	}
 
 	//Method was verified against possible methods upon location
@@ -376,12 +401,12 @@ void Request::set_cgi_meta_vars(const int i) {
 	if (!php) {
 		_env["SCRIPT_NAME"] = _script_name ? _script_name : _uri;
 		// SERVER_NAME - get name from server[i]->get_name
-		_env["SERVER_NAME"] = g_servers[i]->name;
+		_env["SERVER_NAME"] = g_servers[_i]->name;
     	//Just name of our program
-    	_env["SERVER_SOFTWARE"] = g_servers[i]->name;
+    	_env["SERVER_SOFTWARE"] = g_servers[_i]->name;
 	}
     // SERVER_PORT - get port from server[i]->get_port
-    _env["SERVER_PORT"] = std::to_string(ntohs(g_servers[i]->port.front()));
+    _env["SERVER_PORT"] = std::to_string(ntohs(g_servers[_i]->port.front()));
     _env["SERVER_PROTOCOL"] = _version;
 }
 
@@ -397,8 +422,8 @@ std::vector<const char*>	Request::convert_cgi_meta_vars() {
 
 // _uri = /<location>/<arg>
 // Subject: Your program should call the cgi with the file requested as first argument
-void Request::parse_script_file_name(const int i) {
-	t_location*	loc = get_location(g_servers[i], _location);
+void Request::parse_script_file_name() {
+	t_location*	loc = get_location(g_servers[_i], _location);
 	size_t		pos = _uri.rfind("/");
 
 	if ((tail(_uri, 4) == ".php") && (loc->php_path.length())) {

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/23 02:19:15 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/04/27 19:56:36 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -376,13 +376,14 @@ int		Config::parse_directory(std::string &dir, std::string &s) {
 ** ascii 58 :
 */
 int		Config::parse_auth(t_location &location, std::string &s) {
+	std::map<std::string, std::string>::iterator	it;
 	std::vector<std::string>	tmp;
 
 	tmp = split(s, ":");
 	if ((std::count(s.begin(), s.end(), 58) == 1) 
-		&& (tmp[0].length()) && (tmp[1].length())) {
+		&& (tmp[0].length()) && (tmp[1].length())
+		&& ((it = location.auth.find(tmp[0])) == location.auth.end()))
 		location.auth.insert(std::pair<std::string, std::string>(tmp[0], tmp[1]));
-	}
 	else {
 		error_message("Directive auth is invalid");
 		return (EXIT_FAILURE);	
@@ -436,7 +437,8 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 	else if ((to_parse[0] == MAX_BODY) && (location.max_body == -1)
 		&& (is_all_numbers(to_parse[1])))
 		location.max_body = std::stoi(to_parse[1]);
-	else if ((to_parse[0] == AUTH) && (!location.auth.size())) {
+	//There could be defined several location users
+	else if (to_parse[0] == AUTH) {
 		if (parse_auth(location, to_parse[1]))
 			return (EXIT_FAILURE);
 	}

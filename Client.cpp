@@ -59,12 +59,11 @@ void		Client::accept_connection()
     _status = Client::ALIVE;
 }
 
-void Client::read_run_request(const int i)
-{
+void Client::read_run_request(const int i) {
 	int	buf_size = BUFFER_SIZE;
     
     if (!_request)
-        _request = new Request(this);
+        _request = new Request(this, i);
     /*
 	** In case of chunk request we changing BUFFER_SIZE to chunk_size
 	** if remain len < buffer size -> change buffer size
@@ -80,13 +79,13 @@ void Client::read_run_request(const int i)
         if (!to_recieve)
             _status = Client::EMPTY;
         else if (to_recieve == -1)
-            _request->parse_request(_to_parse, i);
+            _request->parse_request(_to_parse);
         else {
             buffer[to_recieve] = '\0';
             _to_parse += buffer;
             if (_request->get_status() == Request::BODY_PARSE)
                 _request->cut_remain_len(to_recieve);
-            _request->parse_request(_to_parse, i);
+            _request->parse_request(_to_parse);
         }
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {
@@ -95,8 +94,8 @@ void Client::read_run_request(const int i)
         }
     }
     if (_request->get_status() != Request::BAD_REQ) {
-		_request->parse_script_file_name(i);
-	    _request->set_cgi_meta_vars(i);
+		_request->parse_script_file_name();
+	    _request->set_cgi_meta_vars();
 		_request->run_cgi_request();
 	}
     send(_fd, get_request()->get_response().c_str(), get_request()
