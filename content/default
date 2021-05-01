@@ -16,7 +16,7 @@ server {
 	}
 
     location /	{
-		methods	    GET;
+		methods	    GET,POST,HEAD,PUT;
         root	    ./content;
 		index	    index.html;
 		cgi			.bla;
