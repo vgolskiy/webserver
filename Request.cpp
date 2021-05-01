@@ -528,6 +528,18 @@ void Request::createResponse() {
 	}
 	else if (_method == "PUT")
 	{
+		//PUT /new.html HTTP/1.1
+		//Host: example.com
+		//Content-type: text/html
+		//Content-length: 16
+		//
+		//<p>Новый файл</p>
+		//создать
+		//HTTP/1.1 201 Created
+		//Content-Location: /new.html
+		//обновить
+		//HTTP/1.1 204 No Content //или 200 OK
+		//Content-Location: /existing.html
 
 	}
 	else if (_method == "GET")
@@ -549,7 +561,6 @@ void Request::createResponse() {
 	}
 	else if (_method == "POST")
 	{
-
 	}
 	//else if (/*без метода*/)
 	//{
