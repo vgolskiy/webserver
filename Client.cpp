@@ -98,6 +98,6 @@ void Client::read_run_request(const int i) {
 	    _request->set_cgi_meta_vars();
 		_request->run_cgi_request();
 	}
-    send(_fd, get_request()->get_response().c_str(), get_request()
+    send(_listen_sock->get_fd(), get_request()->get_response().c_str(), get_request()
     ->get_response().length(), 0);
 }
