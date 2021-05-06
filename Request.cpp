@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/01 11:41:35 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/02 15:01:21 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ Request::Request(Client *client, const int i) : _i(i) {
 	_location = "";
     _client = client;
     _remain_len = 0;
-    _status = INIT;
+    _status = Request::INIT;
     _content_len = -1;
     _chunk = false;
 	_script_path = NULL;
@@ -177,8 +177,10 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	if ((loc = get_location(g_servers[_i], _location))) {
     	/* check the validity of the method from the location methods list */
     	for (size_t i = 0; i < loc->methods.size(); i++) {
-        	if (start_line[0] == loc->methods[i])
+        	if (start_line[0] == loc->methods[i]) {
             	_method = loc->methods[i];
+				break ;
+			}
 		}
 	}
 	if (!loc || (!_method.length()))
@@ -194,11 +196,11 @@ void Request::parse_init(std::vector<std::string> &split_lines, std::string &ori
         if (split_lines[i].empty())
         {
             split_lines.erase(split_lines.begin());
-            orig_lines.erase(0, orig_lines.find("\r\n") + 2);
+            orig_lines.erase(0, orig_lines.find(CRLF) + 2);
         }
         else
         {
-            _status = Request::MTH;
+            _status = Request::REQUEST_METHOD;
             break ;
         }
     }
@@ -211,12 +213,12 @@ bool Request::parse_chunk_size(std::string &lines)
     size_t      pos;
     std::string str;
 
-    if ((pos = lines.find("\r\n")) == std::string::npos) // If there is nothing
+    if ((pos = lines.find(CRLF)) == std::string::npos) // If there is nothing
         return false;
     str = lines.substr(0, pos);
     _content_len = std::strtol(lines.c_str(), 0, 16); // TODO: change base
     _remain_len = _content_len;
-    lines.erase(0, lines.find("\r\n") + 2);
+    lines.erase(0, lines.find(CRLF) + 2);
     _status = Request::CHUNK_DATA;
 
     return true;
@@ -224,7 +226,7 @@ bool Request::parse_chunk_size(std::string &lines)
 
 bool Request::parse_chunk_data(std::string &lines)
 {
-    if ((!_content_len) && (lines == "\r\n"))
+    if ((!_content_len) && (lines == CRLF))
     {
         _status = Request::DONE;
         return false;
@@ -233,7 +235,7 @@ bool Request::parse_chunk_data(std::string &lines)
     {
         _body += lines.substr(0, _content_len);
         lines.erase(0, _content_len); // +2 - to erase "\r\n"
-        if (lines.find("\r\n") != 0) // so there is no \r\n
+        if (lines.find(CRLF) != 0) // so there is no \r\n
         {
             std::cout << "Bad request chunk data!\n";
             _status = Request::BAD_REQ;
@@ -267,39 +269,38 @@ void Request::print_parsed_request()
 	}
 }
 
-void Request::parse_request(std::string &lines)
-{
+void Request::parse_request(std::string &lines, bool &first_line, bool &body_lines) {
     std::vector<std::string>    split_lines;
     
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
-    if (_status == Request::INIT || _status == Request::MTH || _status == Request::HEADERS)
-    {
-        split_lines = split(lines, "\r\n");
+    if (_status == Request::INIT || _status == Request::REQUEST_METHOD
+		|| _status == Request::HEADERS) {
+        split_lines = split(lines, CRLF);
         if (_status == Request::INIT && !split_lines.empty())
             parse_init(split_lines, lines);
-        if (_status == Request::MTH && !split_lines.empty())
-        {
+        if (first_line && (_status == Request::REQUEST_METHOD)
+			&& (!split_lines.empty())) {
             std::vector<std::string>    start_line;
+
+			first_line = false;
             start_line = split(split_lines[0], " ");
-            if (!check_start_line(start_line))
-            {
-                error_message("Bad request sent by client!");
+            if (!check_start_line(start_line)) {
+                error_message("Bad request sent by client");
                 _status = Request::BAD_REQ;
             }
         }
-        if (_status == Request::HEADERS && !split_lines.empty())
-        {
-            if (lines.find("\r\n\r\n", 0) != std::string::npos)
-            {
-                split_lines = split(lines, "\r\n\r\n");
-                split_lines = split(split_lines[0], "\r\n");
+        if (body_lines && (_status == Request::HEADERS)
+			&& (!split_lines.empty())) {
+            if (lines.find(CRLF_2X, 0) != std::string::npos) {
+                split_lines = split(lines, CRLF_2X);
+                split_lines = split(split_lines[0], CRLF);
             }
-            if ((set_up_headers(split_lines)) == false)
-                _status = BAD_REQ;
-            if (lines.find("\r\n\r\n", 0) != std::string::npos && _status != BAD_REQ)
+            if (!(set_up_headers(split_lines)))
+                _status = Request::BAD_REQ;
+            if (lines.find(CRLF_2X, 0) != std::string::npos && _status != BAD_REQ)
             {
-                lines.erase(0, lines.find("\r\n\r\n") + 4);
+                lines.erase(0, lines.find(CRLF_2X) + 4);
                 if (_content_len > 0)
                 {
                     _status = Request::BODY_PARSE;
@@ -322,7 +323,7 @@ void Request::parse_request(std::string &lines)
             return ;
     if (_status == Request::CHUNK_DATA)
         if (parse_chunk_data(lines))
-            return(parse_request(lines));
+            return(parse_request(lines, first_line, body_lines));
     /* check-print request - delete later */
     if (_status == Request::BAD_REQ)
     {
@@ -334,6 +335,9 @@ void Request::parse_request(std::string &lines)
         print_parsed_request();
         std::cout << "Body: " << _body << std::endl;
     }
+	//parse first line / body switch
+	if ((!first_line) && (!body_lines))
+		body_lines = true;
 }
 
 // TODO: coding special signs from URL: !#%^&()=+ и пробел

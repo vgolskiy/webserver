@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 19:10:21 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/01 12:33:16 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int nfds:
 
 # include "Client.hpp"
 # include "Config.hpp"
+# include "Request.hpp"
 
 /*
 ** Starting servers services
@@ -178,8 +179,8 @@ void	deal_request(std::vector<t_server*> &servers,
 				(*it)->read_run_request(i);
 		//	}
 		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
-		//	servers[i]->time_start = current_time();
-		// (*it)->writeResponse();
+				servers[i]->time_start = current_time();
+				(*it)->get_request()->createResponse();
 		//}
 		}
 	}

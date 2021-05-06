@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/27 20:12:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/02 14:58:00 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,8 @@ POST:
 # define CONTENT_LEN	"Content-Length"
 # define TRANSF_ENCODE	"Transfer-Encoding"
 # define CHUNKED		"chunked"
+# define CRLF			"\r\n"
+# define CRLF_2X		"\r\n\r\n"
 
 #define TMP "tmp_file"
 
@@ -141,7 +143,7 @@ public:
 	~Request(void);
 
 	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
-	void		parse_request(std::string &lines);
+	void		parse_request(std::string &lines, bool &first_line, bool &body_lines);
 	bool		parse_chunk_size(std::string &lines);
 	bool		parse_chunk_data(std::string &lines);
 	bool		check_start_line(const std::vector<std::string> &lines);
@@ -168,7 +170,7 @@ public:
 		BODY_PARSE,
 		HEADERS,
 		C_G_I,
-		MTH,
+		REQUEST_METHOD,
 		CHUNK,
 		CHUNK_DATA,
 		BAD_REQ,
