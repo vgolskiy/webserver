@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/11 17:09:49 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/11 17:13:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,7 +274,7 @@ void Request::print_parsed_request()
 	}
 }
 
-void Request::parse_request(std::string &lines, bool &first_line) {
+void Request::parse_request(std::string &lines) {
     std::vector<std::string>    split_lines;
 	std::size_t 				pos;
     
@@ -287,7 +287,6 @@ void Request::parse_request(std::string &lines, bool &first_line) {
         if ((_status == Request::REQUEST_METHOD) && pos) {
             std::vector<std::string>    start_line;
 
-			first_line = false;
             start_line = split(lines.substr(0, pos), " ");
             if (!check_start_line(start_line)) {
                 error_message("Bad request sent by client: wrong request first line");
@@ -328,7 +327,7 @@ void Request::parse_request(std::string &lines, bool &first_line) {
             return ;
     if (_status == Request::CHUNK_DATA)
         if (parse_chunk_data(lines))
-            return(parse_request(lines, first_line));
+            return(parse_request(lines));
     /* check-print request - delete later */
     if (_status == Request::BAD_REQ)
     {

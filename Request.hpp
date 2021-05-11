@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/11 17:02:35 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/11 17:13:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ public:
 	~Request(void);
 
 	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
-	void		parse_request(std::string &lines, bool &first_line);
+	void		parse_request(std::string &lines);
 	bool		parse_chunk_size(std::string &lines);
 	bool		parse_chunk_data(std::string &lines);
 	bool		check_start_line(const std::vector<std::string> &lines);
