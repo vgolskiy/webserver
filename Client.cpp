@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/02 14:58:00 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/11 16:56:24 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ void Client::read_run_request(const int i) {
 	int		buf_size = BUFFER_SIZE;
 	//needed to separate first line verification and prevent it repeat in case of terminal input
 	bool	first_line = true;
-	bool	body_lines = false;
 
     if (!_request)
         _request = new Request(this, i);
@@ -82,13 +81,13 @@ void Client::read_run_request(const int i) {
         if (!to_recieve)
             _status = Client::EMPTY;
         else if ((to_recieve == -1) && (_to_parse.length())) //prevention of parse circle with empty lines
-            _request->parse_request(_to_parse, first_line, body_lines);
+            _request->parse_request(_to_parse, first_line);
         else if (to_recieve != -1) { //prevention of parse circle with empty lines
             buffer[to_recieve] = '\0';
             _to_parse += buffer;
             if (_request->get_status() == Request::BODY_PARSE)
                 _request->cut_remain_len(to_recieve);
-            _request->parse_request(_to_parse, first_line, body_lines);
+            _request->parse_request(_to_parse, first_line);
         }
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {
