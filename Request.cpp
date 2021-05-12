@@ -525,7 +525,7 @@ void Request::createResponse() {
 		while (beg != end)
 		{
 			if ((beg)->second != "" && (beg)->first != "Body")
-				_response += (beg)->first + ": " + (beg)->second + "\r\n";
+				_response += (beg)->first + ": " + (beg)->second + CRLF;
 			beg++;
 		}
 //		_response += "\r\n";
@@ -581,7 +581,7 @@ void Request::createResponse() {
 		while (beg != end)
 		{
 			if ((beg)->second != "")
-				_response += (beg)->first + ": " + (beg)->second + "\r\n";
+				_response += (beg)->first + ": " + (beg)->second + CRLF;
 			beg++;
 		}
 //		_headers["Date"] = server_date();
