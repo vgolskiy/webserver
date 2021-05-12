@@ -48,10 +48,13 @@ CMakeLists.txt
 webserv
 #Text
 text
+test*
 
 *.DS_Store
 webserv
 tmp_file
+client_test
+Config
 
 #CLion
 .idea/
