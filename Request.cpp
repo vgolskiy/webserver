@@ -544,40 +544,74 @@ std::string Request::last_modified(std::string file) {
 
 void Request::createResponse() {
 	_response = "";
+	//
+	_headers["Date"] = server_date();
 	if (_method == "HEAD")
 	{
-		_headers["Date"] = server_date();
-		_response += "HTTP/1.1 200 OK"; //OK - status
-		_response += "\r\n";
-		_response += "Date" + _headers["Date"];
-		_response += "\r\n";
-		_response += "Server" + _headers["Server"];
-		_response += "\r\n";
-		_response += "Connection" + _headers["Connection"];
-		_response += "\r\n";
-		_response += "Content-Type" + _headers["Content-Type"];
-		_response += "\r\n";
+		std::map<std::string, std::string>::iterator beg = _headers.begin();
+		std::map<std::string, std::string>::iterator end = _headers.end();
+		while (beg != end)
+		{
+			if ((beg)->second != "" && (beg)->first != "Body")
+				_response += (beg)->first + ": " + (beg)->second + "\r\n";
+			beg++;
+		}
+//		_response += "\r\n";
+//		_response += "HTTP/1.1 200 OK"; //OK - status
+//		_response += "\r\n";
+//		_response += "Date" + _headers["Date"];
+//		_response += "\r\n";
+//		_response += "Server" + _headers["Server"];
+//		_response += "\r\n";
+//		_response += "Connection" + _headers["Connection"];
+//		_response += "\r\n";
+//		_response += "Content-Type" + _headers["Content-Type"];
+//		_response += "\r\n";
 	}
 	else if (_method == "PUT")
 	{
-
+		// PUT /user/1234567890 HTTP/1.1
+		//Host: localhost
+		// {
+		//	"name": "Kevin Sookocheff",
+		//	"website": "http://kevinsookocheff.com"
+		//}
+		//ответы:
+		//HTTP/1.1 201 Created 200 OK 204 No Content
+		//Location: /user/1234567890
+		// или например заменить
+		//PUT /user/1234567890 HTTP/1.1
+		//Host: http://sookocheff.com
+		//
+		//{
+		//	"name": "Kevin Sookocheff",
+		//	"website": "http://sookocheff.com"
+		//}
 	}
 	else if (_method == "GET")
 	{
 		_response = "";
-		_headers["Date"] = server_date();
-		_response += "HTTP/1.1 200 OK"; //OK - status
-		_response += "\r\n";
-		_response += "Date" + _headers["Date"];
-		_response += "\r\n";
-		_response += "Server" + _headers["Server"];
-		_response += "\r\n";
-		_response += "Connection" + _headers["Connection"];
-		_response += "\r\n";
-		_response += "Content-Type" + _headers["Content-Type"];
-		_response += "\r\n";
-		_response += _body;
-		_response += "\r\n";
+		std::map<std::string, std::string>::iterator beg = _headers.begin();
+		std::map<std::string, std::string>::iterator end = _headers.end();
+		while (beg != end)
+		{
+			if ((beg)->second != "")
+				_response += (beg)->first + ": " + (beg)->second + "\r\n";
+			beg++;
+		}
+//		_headers["Date"] = server_date();
+//		_response += "HTTP/1.1 200 OK"; //OK - status
+//		_response += "\r\n";
+//		_response += "Date" + _headers["Date"];
+//		_response += "\r\n";
+//		_response += "Server" + _headers["Server"];
+//		_response += "\r\n";
+//		_response += "Connection" + _headers["Connection"];
+//		_response += "\r\n";
+//		_response += "Content-Type" + _headers["Content-Type"];
+//		_response += "\r\n";
+//		_response += _body;
+//		_response += "\r\n";
 	}
 	else if (_method == "POST")
 	{
