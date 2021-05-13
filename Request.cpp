@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/11 17:13:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/13 14:13:55 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,16 @@ std::string const Request::headers[] = {
 	"WWW-Authenticate", //
 };
 
-int Request::get_remain_len() {
-	return _remain_len;
+int Request::get_remain_len() const {
+	return (_remain_len);
 }
 
-int Request::get_status() {
-	return _status;
+int Request::get_status() const {
+	return (_status);
+}
+
+std::string	Request::get_body(void) const {
+	return (_body);
 }
 
 void Request::cut_remain_len(int to_cut) {
@@ -215,43 +219,47 @@ void Request::parse_init(std::vector<std::string> &split_lines, std::string &ori
 // <длина блока в HEX><\r\n><содержание блока><\r\n>
 bool Request::parse_chunk_size(std::string &lines)
 {
-    size_t      pos;
-    std::string str;
+    std::size_t	pos;
+    std::string	tmp;
 
-    if ((pos = lines.find(CRLF)) == std::string::npos) // If there is nothing
-        return false;
-    str = lines.substr(0, pos);
-    _content_len = std::strtol(lines.c_str(), 0, 16); // TODO: change base
+	//If there is no content / length is not hexadecimal value
+    if (((pos = lines.find(CRLF)) == std::string::npos)
+		|| (!is_hex(tmp = lines.substr(0, pos))))
+        return (false);
+    _content_len = std::strtol(tmp.c_str(), 0, 16);
     _remain_len = _content_len;
     lines.erase(0, lines.find(CRLF) + 2);
     _status = Request::CHUNK_DATA;
-
-    return true;
+    return (true);
 }
 
-bool Request::parse_chunk_data(std::string &lines)
-{
-    if ((!_content_len) && (lines == CRLF))
-    {
+void Request::parse_chunk_data(std::string &lines) {
+	std::size_t	pos;
+	std::string	tmp;
+
+    if ((!_remain_len) && (lines == CRLF)) {
         _status = Request::DONE;
-        return false;
+        return ;
     }
-    if (_content_len + 2 <= (int)lines.length()) // +2 - erased "\r\n"
-    {
-        _body += lines.substr(0, _content_len);
-        lines.erase(0, _content_len); // +2 - to erase "\r\n"
-        if (lines.find(CRLF)) // so there is no \r\n
-        {
-            error_message("Bad request: chunk data");
-            _status = Request::BAD_REQ;
-            return false;
-        }
-        lines.erase(0, 2);
-        _status = Request::CHUNK;
-        return true;
-    }
-    error_message("Bad request: chunk length");
-    return false;
+	//string was not fully readed from the first time
+	if ((pos = lines.find(CRLF)) == std::string::npos)
+		return ;
+	tmp = lines.substr(0, pos);
+    if (_remain_len < (int)tmp.length())
+		tmp = lines.substr(0, _remain_len);
+	lines.erase(0, pos + 2);
+	//write to body string by string
+	if (_remain_len) {
+		if (_body.length()) {
+			_body += "\n";
+			_body += tmp;
+		}
+		else
+        	_body += tmp;
+		_remain_len -= tmp.length();
+	}
+    _status = Request::CHUNK;
+    return ;
 }
 
 void Request::print_parsed_request()
@@ -274,16 +282,26 @@ void Request::print_parsed_request()
 	}
 }
 
+//Verifying that remain length is zero, changing status accordingly
+void Request::verify_body() {
+	if (!_remain_len)
+		_status = Request::DONE;
+	else {
+		//in case of less body data only
+		error_message("Bad request sent by client: wrong content length");
+		_status = Request::BAD_REQ;
+	}
+}
+
 void Request::parse_request(std::string &lines) {
-    std::vector<std::string>    split_lines;
-	std::size_t 				pos;
+	std::string	tmp;
+	std::size_t pos;
     
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
+	if ((pos = lines.find(CRLF)) == std::string::npos)
+		return ;
     if (_status == Request::REQUEST_METHOD || _status == Request::HEADERS) {
-		if ((pos = lines.find(CRLF)) == std::string::npos)
-			return ;
-        //split_lines = split(lines, CRLF);
         if ((_status == Request::REQUEST_METHOD) && pos) {
             std::vector<std::string>    start_line;
 
@@ -291,8 +309,9 @@ void Request::parse_request(std::string &lines) {
             if (!check_start_line(start_line)) {
                 error_message("Bad request sent by client: wrong request first line");
                 _status = Request::BAD_REQ;
+				return ;
             }
-			lines.erase(0, lines.find(CRLF) + 2);
+			lines.erase(0, pos + 2);
 			return ;
         }
         if ((_status == Request::HEADERS) && pos) {
@@ -316,34 +335,41 @@ void Request::parse_request(std::string &lines) {
 			return ;
 		}
     }
-    if (_status == Request::BODY_PARSE) {
-		_remain_len -= lines.length();
-        //_body = (_content_len <= (int)lines.length()) ? lines : "";
-		_body = lines;
-        _status = _body.length() > 0 ? Request::DONE : Request::BODY_PARSE;
+	//adding tmp strings to body until remain length is above zero
+    if ((_status == Request::BODY_PARSE) && pos) {
+		tmp = lines.substr(0, pos);
+		if (_remain_len < (int)tmp.length())
+			tmp =  lines.substr(0, _remain_len);//cut data in case of no remain characters length left
+		lines.erase(0, pos + 2);
+		if (_remain_len) {
+        	_body += tmp;
+			_remain_len -= tmp.length();
+		}
+		return ;
     }
-    if (_status == Request::CHUNK)
-        if (!(parse_chunk_size(lines)))
-            return ;
+	//Quit in case double CLRF
+	if ((_status == Request::BODY_PARSE) && !pos) {
+		verify_body();
+		return ;
+	}
+    if ((_status == Request::CHUNK) && pos) {
+        if (!(parse_chunk_size(lines))) {
+			error_message("Bad request sent by client: wrong chunk size");
+			_status = Request::BAD_REQ;
+			return ;
+		}
+	}
+	//Quit in case double CLRF
+	else if ((_status == Request::CHUNK) && !pos) {
+		verify_body();
+		return ;
+	}
     if (_status == Request::CHUNK_DATA)
-        if (parse_chunk_data(lines))
-            return(parse_request(lines));
-    /* check-print request - delete later */
-    if (_status == Request::BAD_REQ)
-    {
-        std::cout << "BAD REQUEST CLIENT: " << std::endl;
-        print_parsed_request();
-    }
-    if (_status == Request::DONE)
-    {
-        print_parsed_request();
-        std::cout << "Body: " << _body << std::endl;
-    }
+        parse_chunk_data(lines);
 	return ;
 }
 
 // TODO: coding special signs from URL: !#%^&()=+ и пробел
-
 std::string* Request::find_header(std::string header) {
     std::string* empty_head = NULL;
     std::map<std::string, std::string>::iterator it = _headers.begin();

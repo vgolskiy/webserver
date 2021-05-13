@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/27 20:21:35 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/12 18:22:44 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,5 +213,6 @@ std::string					tail(const std::string &s, const size_t length);
 std::string					inet_ntoaddr(int n);
 std::string					base64_encode(const std::string &s);
 std::string					base64_decode(const std::string &s);
+bool						is_hex(const std::string &hex);
 
 #endif

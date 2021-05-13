@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/11 17:13:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/13 14:13:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ public:
 	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
 	void		parse_request(std::string &lines);
 	bool		parse_chunk_size(std::string &lines);
-	bool		parse_chunk_data(std::string &lines);
+	void		parse_chunk_data(std::string &lines);
 	bool		check_start_line(const std::vector<std::string> &lines);
 	bool		set_up_headers(std::string &lines);
 	void		set_cgi_meta_vars(void);
@@ -156,9 +156,11 @@ public:
 	void		createResponse(void);
 	std::string get_response(void);
 	std::string	createHeader(void);
+	void		verify_body(void);
 
-	int			get_remain_len(void);
-	int 		get_status(void);
+	int			get_remain_len(void) const;
+	int 		get_status(void) const;
+	std::string	get_body(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
 	void		parse_script_file_name(void);

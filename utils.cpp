@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:28:29 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/26 23:24:32 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/12 18:22:29 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,4 +118,22 @@ std::string	base64_decode(const std::string &s) {
 			throw (std::string("Input is not a valid base64-encoded data"));
     }
     return (res);
+}
+
+bool is_hex(const std::string &hex) {
+	const char	hexs[] = "0123456789abcdefABCDEF";
+	int			hex_len = hex.length();
+
+	if (!hex_len)
+		return (false);
+	for (int i = 0; i < hex_len; ++i) {
+		//compare with each hex
+		for (int j = 0; j < 22; ++j) {
+			if (hex[i] == hexs[j])
+				break;
+			if (j == 21)
+				return (false);
+		}
+	}
+	return (true);
 }
