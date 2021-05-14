@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/15 00:48:31 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/15 01:17:30 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -573,8 +573,8 @@ void Request::createResponse() {
 		_response += _body + CRLF;
 		std::string path = _location; //
 		DIR *dir;
-		struct dirent *d;
-		if (dir = opendir(path.c_str()))
+		//struct dirent *d;
+		if ((dir = opendir(path.c_str())))
 		{
 			_response += "<!DOCTYPE html>\n"
 						 "\n"
