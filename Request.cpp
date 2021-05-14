@@ -6,7 +6,7 @@
 /*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/14 16:26:50 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/14 21:14:28 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -546,7 +546,8 @@ void Request::createResponse() {
 	_response = "";
 	//
 	_headers["Date"] = server_date();
-	if (_method == "HEAD" || _method == "GET")
+	//_headers["Last-Modified"] = last_modified();
+	if (_method == "HEAD")
 	{
 		std::map<std::string, std::string>::iterator beg = _headers.begin();
 		std::map<std::string, std::string>::iterator end = _headers.end();
@@ -556,9 +557,99 @@ void Request::createResponse() {
 				_response += (beg)->first + ": " + (beg)->second + CRLF;
 			beg++;
 		}
-		if (_method == "HEAD")
-			_body = "";
+		_body = "";
 		_response += _body + CRLF;
+	}
+	else if (_method == "GET")
+	{
+		std::map<std::string, std::string>::iterator beg = _headers.begin();
+		std::map<std::string, std::string>::iterator end = _headers.end();
+		while (beg != end)
+		{
+			if ((beg)->second != "")
+				_response += (beg)->first + ": " + (beg)->second + CRLF;
+			beg++;
+		}
+		_response += _body + CRLF;
+		std::string path = _location; //
+		DIR *dir;
+		struct dirent *d;
+		if (dir = opendir(path.c_str()))
+		{
+			_response += "<!DOCTYPE html>\n"
+						 "\n"
+						 "<html>\n"
+						 "    <head>\n"
+						 "        <title>Webserv</title>\n"
+						 "\t\t<style>\n"
+						 "\t\t\tbody {\n"
+						 "  \t\t\t\ttext-align: center;\n"
+						 "  \t\t\t\tmargin: 0;\n"
+						 "\t\t\t}\n"
+						 "\t\t\t.rainbow-text {\n"
+						 "\t\t\t\tbackground-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);\n"
+						 "\t\t\t\t-webkit-background-clip: text;\n"
+						 "\t\t\t\tcolor: transparent;\n"
+						 "\t\t\t\tanimation: rainbow_animation 6s ease-in-out infinite;\n"
+						 "\t\t\t\tbackground-size: 400% 100%;\n"
+						 "\t\t\t}\n"
+						 "\t\t\t@keyframes rainbow_animation { \n"
+						 "\t\t\t\t0%,100% { background-position: 0 0; }\n"
+						 "\t\t\t\t50% { background-position: 100% 0; }\n"
+						 "\t\t\t}\n"
+						 "\t\t\t@font-face {\n"
+						 "\t\t\t\tfont-family: 'harry_pregular';\n"
+						 "\t\t\t\tsrc: url('harryp__-webfont.woff2') format('woff2'),\n"
+						 "\t\t\t\turl('harryp__-webfont.woff') format('woff');\n"
+						 "\t\t\t\tfont-weight: normal;\n"
+						 "\t\t\t\tfont-style: normal;\n"
+						 "\t\t\t}\n"
+						 "\t\t\th1 {\n"
+						 "\t\t\t\tfont-family: 'harry_pregular', Arial, sans-serif;\n"
+						 "\t\t\t\tfont-weight:normal;\n"
+						 "\t\t\t\tfont-style:normal;\n"
+						 "\t\t\t}\n"
+						 "\t\t\ttext {\n"
+						 "\t\t\t\tfont-family: 'harry_pregular', Arial, sans-serif;\n"
+						 "\t\t\t\tfont-weight:normal;\n"
+						 "\t\t\t\tfont-style:normal;\n"
+						 "\t\t\t\tfont-size: 45px;\t\t\t\n"
+						 "\t\t\t}\n"
+						 "\t\t\t#gallery li {\n"
+						 "\t\t\t\twidth:225px;\n"
+						 "\t\t\t\tdisplay:inline-block;\n"
+						 "\t\t\t}\n"
+						 "\t\t\t#gallery li p {\n"
+						 "\t\t\t\tfont-family: 'harry_pregular', Arial, sans-serif;\n"
+						 "\t\t\t\tfont-weight:normal;\n"
+						 "\t\t\t\tfont-style:normal;\n"
+						 "\t\t\t\tmargin:10px 0 20px 0;\n"
+						 "\t\t\t}\n"
+						 "\t\t</style>\n"
+						 "    </head>\n"
+						 "\n"
+						 "    <body>\n"
+						 "        <h1 class=\"rainbow-text\" style=\"font-size: 70px;\">Error404 team presents</h1>\n"
+						 "\t\t<h1 class=\"rainbow-text\" style=\"font-size: 90px;\">Webserv</h1>\n"
+						 "\t\t<text>Our team members are pleased to meet you today:</text>\n"
+						 "\n"
+						 "\t\t<ul id=\"gallery\">\n"
+						 "\t\t\t<li>\n"
+						 "\t\t\t\t<a href=\"./photo/\"><img src=\"./photo/rmanfred.jpeg\" width=\"200\" height=\"200\" title=\"RMANFRED\" /></a>\n"
+						 "\t\t\t\t<p>RMANFRED</p>\n"
+						 "\t\t\t</li>\n"
+						 "\t\t\t<li>\n"
+						 "\t\t\t\t<a href=\"./photo/\"><img src=\"./photo/cwindom.jpeg\" width=\"200\" height=\"200\" title=\"CWINDOM\" /></a>\n"
+						 "\t\t\t\t<p>CWINDOM</p>\n"
+						 "\t\t\t</li>\n"
+						 "\t\t\t<li>\n"
+						 "\t\t\t\t<a href=\"./photo/\"><img src=\"./photo/mskinner.jpeg\" width=\"200\" height=\"200\" title=\"MSKINNER\" /></a>\n"
+						 "\t\t\t\t<p>MSKINNER</p>\n"
+						 "\t\t\t</li>\n"
+						 "\t\t</ul>\n"
+						 "\t</body>\n"
+						 "</html>";
+		}
 	}
 	else if (_method == "PUT" || _method == "POST")
 	{

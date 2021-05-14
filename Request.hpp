@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/13 14:13:20 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/14 18:21:03 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ POST:
 
 # include "Config.hpp"
 
+#include <dirent.h>
+
 # define HTTP		"HTTP/1.1"
 # define PIPE_IN	1
 # define PIPE_OUT	0
@@ -155,7 +157,6 @@ public:
 	std::string last_modified(std::string file);
 	void		createResponse(void);
 	std::string get_response(void);
-	std::string	createHeader(void);
 	void		verify_body(void);
 
 	int			get_remain_len(void) const;
