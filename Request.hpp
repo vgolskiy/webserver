@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/14 18:21:03 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/15 00:48:31 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,6 @@ public:
 	bool		check_start_line(const std::vector<std::string> &lines);
 	bool		set_up_headers(std::string &lines);
 	void		set_cgi_meta_vars(void);
-	void		cut_remain_len(int to_cut);
 	std::string*	find_header(std::string header);
 	std::string server_date(void);
 	std::string last_modified(std::string file);
@@ -161,6 +160,7 @@ public:
 
 	int			get_remain_len(void) const;
 	int 		get_status(void) const;
+	const char*	get_script_name(void) const;
 	std::string	get_body(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);

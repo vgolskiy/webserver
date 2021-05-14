@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/14 21:14:28 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/15 00:48:31 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ std::string	Request::get_body(void) const {
 	return (_body);
 }
 
-void Request::cut_remain_len(int to_cut) {
-	_remain_len -= to_cut;
+const char*	Request::get_script_name(void) const {
+	return (_script_name);
 }
 
 void remove_spaces(std::string &str) 
