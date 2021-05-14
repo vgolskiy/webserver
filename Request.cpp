@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/13 14:13:55 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/14 16:26:50 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -546,29 +546,21 @@ void Request::createResponse() {
 	_response = "";
 	//
 	_headers["Date"] = server_date();
-	if (_method == "HEAD")
+	if (_method == "HEAD" || _method == "GET")
 	{
 		std::map<std::string, std::string>::iterator beg = _headers.begin();
 		std::map<std::string, std::string>::iterator end = _headers.end();
 		while (beg != end)
 		{
-			if ((beg)->second != "" && (beg)->first != "Body")
+			if ((beg)->second != "")
 				_response += (beg)->first + ": " + (beg)->second + CRLF;
 			beg++;
 		}
-//		_response += "\r\n";
-//		_response += "HTTP/1.1 200 OK"; //OK - status
-//		_response += "\r\n";
-//		_response += "Date" + _headers["Date"];
-//		_response += "\r\n";
-//		_response += "Server" + _headers["Server"];
-//		_response += "\r\n";
-//		_response += "Connection" + _headers["Connection"];
-//		_response += "\r\n";
-//		_response += "Content-Type" + _headers["Content-Type"];
-//		_response += "\r\n";
+		if (_method == "HEAD")
+			_body = "";
+		_response += _body + CRLF;
 	}
-	else if (_method == "PUT")
+	else if (_method == "PUT" || _method == "POST")
 	{
 		//PUT /new.html HTTP/1.1
 		//Host: example.com
@@ -601,38 +593,9 @@ void Request::createResponse() {
 		//	"website": "http://sookocheff.com"
 		//}
 	}
-	else if (_method == "GET")
-	{
-		_response = "";
-		std::map<std::string, std::string>::iterator beg = _headers.begin();
-		std::map<std::string, std::string>::iterator end = _headers.end();
-		while (beg != end)
-		{
-			if ((beg)->second != "")
-				_response += (beg)->first + ": " + (beg)->second + CRLF;
-			beg++;
-		}
-//		_headers["Date"] = server_date();
-//		_response += "HTTP/1.1 200 OK"; //OK - status
-//		_response += "\r\n";
-//		_response += "Date" + _headers["Date"];
-//		_response += "\r\n";
-//		_response += "Server" + _headers["Server"];
-//		_response += "\r\n";
-//		_response += "Connection" + _headers["Connection"];
-//		_response += "\r\n";
-//		_response += "Content-Type" + _headers["Content-Type"];
-//		_response += "\r\n";
-//		_response += _body;
-//		_response += "\r\n";
-	}
 	else if (_method == "POST")
 	{
 	}
-	//else if (/*без метода*/)
-	//{
-	//
-	//}
 }
 
 std::string Request::get_response() {
