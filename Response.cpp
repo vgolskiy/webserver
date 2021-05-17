@@ -1,6 +1,10 @@
 #include "Response.hpp"
 
-Response::Response(Client *client) : _client(client) {}
+Response::Response(Client *client) : _client(client) {
+	_response = "";
+	_method = "";
+	_body = "";
+}
 
 Response::~Response() {}
 
@@ -50,26 +54,19 @@ void Response::create_response(void) {
 		_response += HTTP;
 		//_response += _status.
 		_response += CRLF;
-		std::map<std::string, std::string>::iterator beg = _headers.begin();
-		std::map<std::string, std::string>::iterator end = _headers.end();
-		while (beg != end)
-		{
-			if ((beg)->second != "")
-				_response += (beg)->first + ": " + (beg)->second + CRLF;
-			beg++;
+		std::map<std::string, std::string>::iterator it;
+		for (it = _headers.begin(); it != _headers.end(); ++it) {
+			if ((*it).second != "")
+				_response += (*it).first + ": " + (*it).second + CRLF;
 		}
-		_body = "";
 		_response += _body + CRLF;
 	}
 	else if (_method == "GET")
 	{
-		std::map<std::string, std::string>::iterator beg = _headers.begin();
-		std::map<std::string, std::string>::iterator end = _headers.end();
-		while (beg != end)
-		{
-			if ((beg)->second != "")
-				_response += (beg)->first + ": " + (beg)->second + CRLF;
-			beg++;
+		std::map<std::string, std::string>::iterator it;
+		for (it = _headers.begin(); it != _headers.end(); ++it) {
+			if ((*it).second != "")
+				_response += (*it).first + ": " + (*it).second + CRLF;
 		}
 		_response += _client->get_request()->get_body() + CRLF;
 		//std::string path = _location; //
