@@ -10,7 +10,7 @@ Response::~Response() {}
 
 std::string Response::get_response_body(void) { return (_response); }
 
-std::string Response::server_date(void)	{
+std::string Response::get_server_date(void)	{
 	struct tm		info;
 	struct timeval	time;
 	char			buf[29];
@@ -25,7 +25,7 @@ std::string Response::server_date(void)	{
 	return (s);
 }
 
-std::string Response::last_modified(std::string file) {
+std::string Response::get_last_modified_date(std::string file) {
 	struct tm	info;
 	char		buf[29];
 	struct stat	st;
@@ -54,9 +54,9 @@ void Response::create_response(void) {
 	//_headers["Location"] =
 	_headers["Retry-After"] = 1;
 	_headers["Server"] = "webserv";
-	_headers["Date"] = server_date();
+	_headers["Date"] = get_server_date();
 	//_headers["WWW-Authenticate"] =
-	//_headers["Last-Modified"] = last_modified();
+	//_headers["Last-Modified"] = get_last_modified_date();
 	if (_method == "HEAD")
 	{
 		_response += HTTP;

@@ -34,8 +34,8 @@ public:
 	~Response();
 
 	void set_status();
-	std::string server_date(void);
-	std::string last_modified(std::string file);
+	std::string get_server_date(void);
+	std::string get_last_modified_date(std::string file);
 	void		create_response(void);
 	void		fill_response_body(void);
 	std::string get_response_body(void);
