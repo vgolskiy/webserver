@@ -520,3 +520,8 @@ std::map<std::string, std::string> Request::get_headers(void)
 {
 	return _headers;
 }
+
+std::string Request::get_method() const
+{
+	return _method;
+}

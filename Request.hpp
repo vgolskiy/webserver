@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 13:47:02 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/17 16:06:59 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,8 @@ public:
 	std::vector<const char*>	convert_cgi_meta_vars(void);
 
 	const char*	get_script_name(void) const;
+
+	std::string get_method() const;
 
 	std::map<std::string, std::string> get_headers(void);
 

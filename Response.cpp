@@ -2,7 +2,7 @@
 
 Response::Response(Client *client) : _client(client) {
 	_response = "";
-	_method = "";
+	_method = client->get_request()->get_method();
 	_body = "";
 }
 
@@ -46,13 +46,14 @@ void Response::fill_response_body(void) {
 		if ((*it).second != "")
 			_response += (*it).first + ": " + (*it).second + CRLF;
 	}
+	return;
 }
 
 void Response::create_response(void) {
-	_response = "";
+	//_response = "";
 	//_headers["Allow"] =
 	//_headers["Location"] =
-	_headers["Retry-After"] = 1;
+	_headers["Retry-After"] = "1";
 	_headers["Server"] = "webserv";
 	_headers["Date"] = get_server_date();
 	//_headers["WWW-Authenticate"] =
@@ -90,7 +91,6 @@ void Response::create_response(void) {
 		//обновить
 		//HTTP/1.1 204 No Content //или 200 OK
 		//Content-Location: /existing.html
-
 		// PUT /user/1234567890 HTTP/1.1
 		//Host: localhost
 		// {
