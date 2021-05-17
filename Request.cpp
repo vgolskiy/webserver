@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 17:31:15 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 17:33:59 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,14 @@ int Request::get_status() const {
 
 std::string	Request::get_body(void) const {
 	return (_body);
+}
+
+std::map<std::string, std::string> Request::get_headers(void) const {
+	return (_headers);
+}
+
+std::string Request::get_method() const {
+	return (_method);
 }
 
 const char*	Request::get_script_name(void) const {
@@ -515,14 +523,4 @@ void Request::run_cgi_request() {
         close(pipe_fds[PIPE_IN]);
         close(tmp_fd);
     }
-}
-
-std::map<std::string, std::string> Request::get_headers(void)
-{
-	return _headers;
-}
-
-std::string Request::get_method() const
-{
-	return _method;
 }

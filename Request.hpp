@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 16:06:59 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/17 17:33:59 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,16 +155,13 @@ public:
 	int			get_remain_len(void) const;
 	int 		get_status(void) const;
 	std::string	get_body(void) const;
+	const char*	get_script_name(void) const;
+	std::string get_method() const;
+	std::map<std::string, std::string> get_headers(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
 	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
-
-	const char*	get_script_name(void) const;
-
-	std::string get_method() const;
-
-	std::map<std::string, std::string> get_headers(void);
 
 	enum status
 	{
