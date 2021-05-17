@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 13:11:09 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/17 14:52:15 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ public:
 	int		get_s_addr(void);
 	Request	*get_request(void);
 	Response *get_response(void);
+	void	set_response(Response* r);
 	void	clear_request(void);
 	int		get_status(void) const;
 	long	get_start_time(void) const;

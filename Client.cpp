@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 14:19:58 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/17 15:16:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,10 @@ int         Client::get_fd(){return _fd;}
 int         Client::get_s_addr(){return _address.sin_addr.s_addr;}
 
 Request*    Client::get_request(){return _request;}
+
+Response*	Client::get_response(void) {return _response;}
+
+void		Client::set_response(Response* r) {_response = r;};
 
 int			Client::get_status() const {return _status;}
 
@@ -105,11 +109,5 @@ void Client::read_run_request(const int i) {
 		_request->set_cgi_meta_vars();
 		if (_request->get_script_name())
 			_request->run_cgi_request();
-		send(_fd, get_response()->response_body().c_str(), get_response()->response_body().length(), 0);
 	}
-}
-
-Response *Client::get_response(void)
-{
-	return _response;
 }

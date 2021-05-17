@@ -1,44 +1,42 @@
 #include "Response.hpp"
 
-Response::Response(/*Client *client*/)
-{
+Response::Response(Client *client) : _client(client) {}
 
-}
+Response::~Response() {}
 
-Response::~Response()
-{
-}
+std::string Response::get_response_body(void) { return (_response); }
 
-std::string Response::server_date(void)
-{
-	struct tm info;
-	struct timeval time;
-	char buf[29];
+std::string Response::server_date(void)	{
+	struct tm		info;
+	struct timeval	time;
+	char			buf[29];
+	std::string		s;
+
 	gettimeofday(&time, NULL);
-	std::string s = std::to_string(time.tv_sec);
+	s = std::to_string(time.tv_sec);
 	strptime(s.c_str(), " %s ", &info);
 	strftime(buf, sizeof(buf), "%a, %d %b %Y %X", &info);
-	std::string str = buf;
-	str += " GMT";
-	return str;
+	s = buf;
+	s += " GMT";
+	return (s);
 }
 
-std::string Response::last_modified(std::string file)
-{
-	struct tm info;
-	char buf[29];
-	struct stat st;
+std::string Response::last_modified(std::string file) {
+	struct tm	info;
+	char		buf[29];
+	struct stat	st;
+	std::string	s;
+
 	stat(file.c_str(), &st);
-	std::string s = std::to_string(st.st_mtimespec.tv_sec);
+	s = std::to_string(st.st_mtimespec.tv_sec);
 	strptime(s.c_str(), " %s ", &info);
 	strftime (buf, sizeof(buf), "%a, %d %b %Y %X", &info);
-	std::string str = buf;
-	str += " GMT";
-	return str;
+	s = buf;
+	s += " GMT";
+	return (s);
 }
 
-void Response::createResponse(void)
-{
+void Response::create_response(void) {
 	_response = "";
 	//_headers["Allow"] =
 	//_headers["Location"] =
@@ -73,10 +71,10 @@ void Response::createResponse(void)
 				_response += (beg)->first + ": " + (beg)->second + CRLF;
 			beg++;
 		}
-		_response += _body + CRLF;
+		_response += _client->get_request()->get_body() + CRLF;
 		//std::string path = _location; //
-		DIR *dir;
-		struct dirent *d;
+		//DIR *dir;
+		//struct dirent *d;
 		//if (dir = opendir(path.c_str()))
 		//{
 			//_response += ;
@@ -118,11 +116,6 @@ void Response::createResponse(void)
 	else if (_method == "POST")
 	{
 	}
-}
-
-std::string Response::response_body(void)
-{
-	return _response;
 }
 
 void Response::set_status()

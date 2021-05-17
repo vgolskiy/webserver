@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 14:33:30 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/17 15:17:11 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,6 @@ void	delete_clients(std::vector<t_server*> &servers)
 void	deal_request(std::vector<t_server*> &servers,
 					const fd_set &read_fd_sets, const fd_set &write_fd_sets) // doesnt work appropriately
 {
-	Response *tmp = new Response(); // = new Response();
 	(void)read_fd_sets;
 	(void)write_fd_sets;
 	for (size_t i = 0; i != servers.size(); i++) {
@@ -181,11 +180,10 @@ void	deal_request(std::vector<t_server*> &servers,
 		//	}
 		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
 				servers[i]->time_start = current_time();
-				(*it)->get_request();
-				tmp->createResponse();
-
-				//(*it)->get_response()
-		//}
+				Response r(*it);
+				r.create_response();
+				send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
+		//	}
 		}
 	}
 }
