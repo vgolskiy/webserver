@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 14:20:23 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 13:11:09 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "Config.hpp"
 # include "Request.hpp"
+# include "Response.hpp"
 
 class Config;
 class Socket;
@@ -31,6 +32,7 @@ private:
 	Socket				*_listen_sock;
 	std::string			_to_parse;
 	Request				*_request;
+	Response			*_response;
 	long				_time_start;
 
 

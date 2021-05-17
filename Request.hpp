@@ -6,7 +6,7 @@
 /*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/14 18:21:03 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/17 13:47:02 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,6 @@ POST:
 
 # include "Config.hpp"
 
-#include <dirent.h>
-
 # define HTTP		"HTTP/1.1"
 # define PIPE_IN	1
 # define PIPE_OUT	0
@@ -112,7 +110,7 @@ POST:
 # define CRLF_2X		"\r\n\r\n"
 
 #define TMP "tmp_file"
-
+class Response;
 class Client;
 class Request
 {
@@ -153,12 +151,7 @@ public:
 	void		set_cgi_meta_vars(void);
 	void		cut_remain_len(int to_cut);
 	std::string*	find_header(std::string header);
-	std::string server_date(void);
-	std::string last_modified(std::string file);
-	void		createResponse(void);
-	std::string get_response(void);
 	void		verify_body(void);
-
 	int			get_remain_len(void) const;
 	int 		get_status(void) const;
 	std::string	get_body(void) const;
@@ -166,6 +159,8 @@ public:
 	void		run_cgi_request(void);
 	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
+
+	std::map<std::string, std::string> get_headers(void);
 
 	enum status
 	{
@@ -179,5 +174,3 @@ public:
 		DONE
 	};
 };
-
-#endif

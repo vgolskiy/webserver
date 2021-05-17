@@ -11,3 +11,33 @@
 Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 
 */
+
+# ifndef RESPONSE_HPP
+#define RESPONSE_HPP
+
+#include "Config.hpp"
+#include "Request.hpp"
+#include <dirent.h>
+
+class Response
+{
+private:
+	std::string							_response;
+	std::map<std::string, std::string>	_headers;
+	Client*								_client;
+	std::string							_method;
+	std::string 						_body;
+	std::map<int, std::string>			_status;
+public:
+	Response(Client *client);
+	~Response();
+
+	void set_status();
+	std::string server_date(void);
+	std::string last_modified(std::string file);
+	void		createResponse(void);
+	std::string get_response(void);
+};
+
+
+#endif //WEBSERVER_RESPONSE_HPP
