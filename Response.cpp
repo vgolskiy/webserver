@@ -40,6 +40,14 @@ std::string Response::last_modified(std::string file) {
 	return (s);
 }
 
+void Response::fill_response_body(void) {
+	std::map<std::string, std::string>::iterator it;
+	for (it = _headers.begin(); it != _headers.end(); ++it) {
+		if ((*it).second != "")
+			_response += (*it).first + ": " + (*it).second + CRLF;
+	}
+}
+
 void Response::create_response(void) {
 	_response = "";
 	//_headers["Allow"] =
@@ -54,20 +62,11 @@ void Response::create_response(void) {
 		_response += HTTP;
 		//_response += _status.
 		_response += CRLF;
-		std::map<std::string, std::string>::iterator it;
-		for (it = _headers.begin(); it != _headers.end(); ++it) {
-			if ((*it).second != "")
-				_response += (*it).first + ": " + (*it).second + CRLF;
-		}
+		fill_response_body();
 		_response += _body + CRLF;
 	}
-	else if (_method == "GET")
-	{
-		std::map<std::string, std::string>::iterator it;
-		for (it = _headers.begin(); it != _headers.end(); ++it) {
-			if ((*it).second != "")
-				_response += (*it).first + ": " + (*it).second + CRLF;
-		}
+	else if (_method == "GET") {
+		fill_response_body();
 		_response += _client->get_request()->get_body() + CRLF;
 		//std::string path = _location; //
 		//DIR *dir;

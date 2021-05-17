@@ -37,6 +37,7 @@ public:
 	std::string server_date(void);
 	std::string last_modified(std::string file);
 	void		create_response(void);
+	void		fill_response_body(void);
 	std::string get_response_body(void);
 };
 
