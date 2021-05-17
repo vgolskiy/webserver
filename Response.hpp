@@ -19,8 +19,10 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 #include "Request.hpp"
 #include <dirent.h>
 
-class Client;
-class Response
+struct	t_location;
+struct	t_server;
+class	Client;
+class	Response
 {
 private:
 	std::string							_response;
@@ -29,8 +31,9 @@ private:
 	std::string							_method;
 	std::string 						_body;
 	std::map<int, std::string>			_status;
+	t_location*							_loc;
 public:
-	Response(Client *client);
+	Response(Client *client, t_server *server, std::string loc);
 	~Response();
 
 	void set_status();

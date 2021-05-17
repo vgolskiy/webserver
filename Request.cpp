@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 17:42:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 17:54:58 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,10 @@ std::string Request::get_method() const {
 
 const char*	Request::get_script_name(void) const {
 	return (_script_name);
+}
+
+std::string Request::get_location_name(void) const {
+	return (_location);
 }
 
 void remove_spaces(std::string &str) 

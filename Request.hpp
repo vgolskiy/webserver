@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 17:33:59 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 17:54:58 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,8 @@ public:
 	int 		get_status(void) const;
 	std::string	get_body(void) const;
 	const char*	get_script_name(void) const;
-	std::string get_method() const;
+	std::string get_method(void) const;
+	std::string get_location_name(void) const;
 	std::map<std::string, std::string> get_headers(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);

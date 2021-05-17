@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/12 18:22:44 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 18:03:18 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void    printContainer(T &cont) {
 	std::cout << "]";
 }
 
-typedef struct							s_location
+struct									t_location
 {		
 	std::string							index;
 	std::string							root;
@@ -127,13 +127,13 @@ typedef struct							s_location
 	std::map<std::string, std::string>	auth;
 	int									auto_index;
 	int									max_body;
-	s_location() : auto_index(-1), max_body(-1) {}
-}								t_location;
+	t_location() : auto_index(-1), max_body(-1) {}
+};
 
 class Socket;
 class Client;
 //Default config parsing is used instead of initiation function
-typedef struct						s_server
+struct									t_server
 {
 	std::string							name;
 	std::map<std::string, std::string>	error_page;
@@ -143,7 +143,7 @@ typedef struct						s_server
 	long								time_start;
 	Socket								*socket;
 	std::list<Client*> 					clients;
-}									t_server;
+};
 
 //Global server configuration parameters structure
 extern std::vector<t_server*>		g_servers;

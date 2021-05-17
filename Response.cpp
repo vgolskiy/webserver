@@ -1,9 +1,10 @@
 #include "Response.hpp"
 
-Response::Response(Client *client) : _client(client) {
+Response::Response(Client *client, t_server *server, std::string loc) : _client(client) {
 	_response = "";
 	_method = client->get_request()->get_method();
 	_body = "";
+	_loc = get_location(server, loc);
 }
 
 Response::~Response() {}
