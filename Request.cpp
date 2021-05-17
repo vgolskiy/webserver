@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 17:54:58 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 18:44:21 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -359,7 +359,7 @@ void Request::parse_request(std::string &lines) {
         	_body += tmp;
 			_remain_len -= tmp.length();
 		}
-		else if ((_method != "POST") || (_method != "PUT"))
+		else if ((_method == "POST") || (_method == "PUT"))
 			_body += tmp;
 		return ;
     }
