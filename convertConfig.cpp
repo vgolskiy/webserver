@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 18:31:30 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 22:42:03 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ bool	ft_isdigit(int c) {
 	return (false);
 }
 
-static char	*ft_rewind(const char *str)
-{
+static char	*ft_rewind(const char *str) {
 	int i;
 
 	i = 0;
@@ -36,8 +35,7 @@ static char	*ft_rewind(const char *str)
 	return ((char *)str + i);
 }
 
-static int	ft_get_num(const char *str, int sign)
-{
+static int	ft_get_num(const char *str, int sign) {
 	int			i;
 	long int	tmp;
 

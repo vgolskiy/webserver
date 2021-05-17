@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/27 19:56:36 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 23:44:00 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,11 +144,12 @@ std::string const	Config::_methods[] = {
 	"HEAD",
 	"POST",
 	"PUT",
-	"DELETE",
+/*	"DELETE",
 	"CONNECT",
 	"OPTIONS",
 	"TRACE",
 	"PATCH"
+*/
 };
 
 std::string const	Config::_protocols[] = {
@@ -353,17 +354,13 @@ bool	verify_file(std::string &file_path) {
 		close(fd);
 		return (false);
 	}
-	if (!file_statistics.st_size) {
-		close(fd);
-		return (false);
-	}
 	return (true);
 }
 
 // Directory should be accessible
 int		Config::parse_directory(std::string &dir, std::string &s) {
 	if (verify_directory(s))
-		dir = s;
+		dir = (tail(s, 1) != "/") ? s + "/" : s;
 	else {
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
@@ -409,11 +406,14 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		error_message("Directive " + to_parse[0] + " is not terminated by ;");
 		return (EXIT_FAILURE);
 	}
-	to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);//removing the closing symbol ;
+	//removing the closing symbol ;
+	to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
 	if ((to_parse[0] == METHOD) && (!location.root.length())) {
-		to_parse[0].clear(); //this value is no longer needed, so using it as a temporary value holder
+		//this value is no longer needed, so using it as a temporary value holder
+		to_parse[0].clear();
 		for (size_t i = 1; i < to_parse.size(); ++i)
-			to_parse[0]+=to_parse[i]; //concatenating parts to one line for futher parsing
+			//concatenating parts to one line for futher parsing
+			to_parse[0]+=to_parse[i];
 		if (parse_method(location, to_parse[0]))
 			return (EXIT_FAILURE);
 	}
@@ -477,9 +477,9 @@ bool		Config::verify_brackets(std::vector<std::string> &lines)
 	return (true);
 };
 
-/* TODO!!!
+/*
 ** Verifies:
-** check all provided files accessibility
+** - check all provided files accessibility
 ** - uri starts with '/' only
 ** - localhost is filled
 ** - ports are defined
@@ -490,7 +490,8 @@ bool		Config::verify_brackets(std::vector<std::string> &lines)
 
 bool	Config::verify_config() {
 	std::list<unsigned short>::iterator it;
-	size_t	qty = 0;
+	size_t		qty = 0;
+	std::string	tmp;
 
 	for (size_t i = 0; i != _servers.size(); i++)
 	{
@@ -512,6 +513,20 @@ bool	Config::verify_config() {
 				error_message("Location name should start from /");
 				return (false);
 			}
+			if (_servers[i].location[j].index.length()) {
+				tmp = _servers[i].location[j].root + _servers[i].location[j].index;
+				if (!verify_file(tmp)) {
+					error_message("File is not accessible: " + tmp);
+					return (false);
+				}
+			}
+			if (_servers[i].location[j].cgi_path.length()) {
+				tmp = _servers[i].location[j].cgi_path;
+				if (!verify_file(tmp)) {
+					error_message("File is not accessible: " + tmp);
+					return (false);
+				}
+			}
 			std::map<std::string, std::string>::iterator	it_err = _servers[i].error_page.begin();
 
 			for (; it_err != _servers[i].error_page.end(); ++it_err) {
@@ -522,12 +537,16 @@ bool	Config::verify_config() {
 					else
 						(*it_err).second = _servers[i].location[j].root + (*it_err).first 
 							+ (*it_err).second.substr((*it_err).second.find("."), (*it_err).second.length());
+					if (!verify_file((*it_err).second)) {
+						error_message("File is not accessible: " + (*it_err).first + " error page");
+						return (false);
+					}
 					qty++;
 				}
 			}
 		}
 		if (qty != _servers[i].error_page.size()) {
-			error_message("Errors location was not set in configuration file");
+			error_message("Error pages location was not set in configuration file");
 			return (false);
 		}
 		qty = 0;
