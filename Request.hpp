@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
 /*   Updated: 2021/05/17 13:47:02 by maria            ###   ########.fr       */
@@ -174,3 +174,5 @@ public:
 		DONE
 	};
 };
+
+#endif

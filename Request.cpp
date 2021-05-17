@@ -70,8 +70,8 @@ std::string	Request::get_body(void) const {
 	return (_body);
 }
 
-void Request::cut_remain_len(int to_cut) {
-	_remain_len -= to_cut;
+const char*	Request::get_script_name(void) const {
+	return (_script_name);
 }
 
 void remove_spaces(std::string &str) 
