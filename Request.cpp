@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 17:33:59 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 17:42:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,13 +347,16 @@ void Request::parse_request(std::string &lines) {
 	//adding tmp strings to body until remain length is above zero
     if ((_status == Request::BODY_PARSE) && pos) {
 		tmp = lines.substr(0, pos);
-		if (_remain_len < (int)tmp.length())
+		if ((_method != "POST") && (_method != "PUT")
+			&& (_remain_len < (int)tmp.length()))
 			tmp =  lines.substr(0, _remain_len);//cut data in case of no remain characters length left
 		lines.erase(0, pos + 2);
 		if (_remain_len) {
         	_body += tmp;
 			_remain_len -= tmp.length();
 		}
+		else if ((_method != "POST") || (_method != "PUT"))
+			_body += tmp;
 		return ;
     }
 	//Quit in case double CLRF
