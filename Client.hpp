@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/20 14:20:23 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 14:52:15 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "Config.hpp"
 # include "Request.hpp"
+# include "Response.hpp"
 
 class Config;
 class Socket;
@@ -31,6 +32,7 @@ private:
 	Socket				*_listen_sock;
 	std::string			_to_parse;
 	Request				*_request;
+	Response			*_response;
 	long				_time_start;
 
 
@@ -60,6 +62,8 @@ public:
 	int		get_fd(void);
 	int		get_s_addr(void);
 	Request	*get_request(void);
+	Response *get_response(void);
+	void	set_response(Response* r);
 	void	clear_request(void);
 	int		get_status(void) const;
 	long	get_start_time(void) const;

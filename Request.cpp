@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/13 14:13:55 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 08:22:13 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ std::string	Request::get_body(void) const {
 	return (_body);
 }
 
-void Request::cut_remain_len(int to_cut) {
-	_remain_len -= to_cut;
+const char*	Request::get_script_name(void) const {
+	return (_script_name);
 }
 
 void remove_spaces(std::string &str) 
@@ -516,115 +516,12 @@ void Request::run_cgi_request() {
     }
 }
 
-std::string Request::server_date() {
-	struct tm info;
-	struct timeval time;
-	char buf[29];
-	gettimeofday(&time, NULL);
-	std::string s = std::to_string(time.tv_sec);
-	strptime(s.c_str(), " %s ", &info);
-	strftime(buf, sizeof(buf), "%a, %d %b %Y %X", &info);
-	std::string str = buf;
-	str += " GMT";
-	return str;
+std::map<std::string, std::string> Request::get_headers(void)
+{
+	return _headers;
 }
 
-std::string Request::last_modified(std::string file) {
-	struct tm info;
-	char buf[29];
-	struct stat st;
-	stat(file.c_str(), &st);
-	std::string s = std::to_string(st.st_mtimespec.tv_sec);
-	strptime(s.c_str(), " %s ", &info);
-	strftime (buf, sizeof(buf), "%a, %d %b %Y %X", &info);
-	std::string str = buf;
-	str += " GMT";
-	return str;
+std::string Request::get_method() const
+{
+	return _method;
 }
-
-void Request::createResponse() {
-	_response = "";
-	//
-	_headers["Date"] = server_date();
-	if (_method == "HEAD")
-	{
-		std::map<std::string, std::string>::iterator beg = _headers.begin();
-		std::map<std::string, std::string>::iterator end = _headers.end();
-		while (beg != end)
-		{
-			if ((beg)->second != "" && (beg)->first != "Body")
-				_response += (beg)->first + ": " + (beg)->second + "\r\n";
-			beg++;
-		}
-//		_response += "\r\n";
-//		_response += "HTTP/1.1 200 OK"; //OK - status
-//		_response += "\r\n";
-//		_response += "Date" + _headers["Date"];
-//		_response += "\r\n";
-//		_response += "Server" + _headers["Server"];
-//		_response += "\r\n";
-//		_response += "Connection" + _headers["Connection"];
-//		_response += "\r\n";
-//		_response += "Content-Type" + _headers["Content-Type"];
-//		_response += "\r\n";
-	}
-	else if (_method == "PUT")
-	{
-		// PUT /user/1234567890 HTTP/1.1
-		//Host: localhost
-		// {
-		//	"name": "Kevin Sookocheff",
-		//	"website": "http://kevinsookocheff.com"
-		//}
-		//ответы:
-		//HTTP/1.1 201 Created 200 OK 204 No Content
-		//Location: /user/1234567890
-		// или например заменить
-		//PUT /user/1234567890 HTTP/1.1
-		//Host: http://sookocheff.com
-		//
-		//{
-		//	"name": "Kevin Sookocheff",
-		//	"website": "http://sookocheff.com"
-		//}
-	}
-	else if (_method == "GET")
-	{
-		_response = "";
-		std::map<std::string, std::string>::iterator beg = _headers.begin();
-		std::map<std::string, std::string>::iterator end = _headers.end();
-		while (beg != end)
-		{
-			if ((beg)->second != "")
-				_response += (beg)->first + ": " + (beg)->second + "\r\n";
-			beg++;
-		}
-//		_headers["Date"] = server_date();
-//		_response += "HTTP/1.1 200 OK"; //OK - status
-//		_response += "\r\n";
-//		_response += "Date" + _headers["Date"];
-//		_response += "\r\n";
-//		_response += "Server" + _headers["Server"];
-//		_response += "\r\n";
-//		_response += "Connection" + _headers["Connection"];
-//		_response += "\r\n";
-//		_response += "Content-Type" + _headers["Content-Type"];
-//		_response += "\r\n";
-//		_response += _body;
-//		_response += "\r\n";
-	}
-	else if (_method == "POST")
-	{
-
-	}
-	//else if (/*без метода*/)
-	//{
-	//
-	//}
-}
-
-std::string Request::get_response() {
-	return _response;
-}
-
-
