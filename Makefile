@@ -6,6 +6,7 @@ HEADERS = 	Client.hpp \
 			Server.hpp \
 			Socket.hpp \
 			Request.hpp \
+			Response.hpp \
 #HEADERS = $(addprefix $(INCLUDE), $(HEADERS))
 
 SRC_DIR = ./srcs/
@@ -17,6 +18,7 @@ SRCS = 	main.cpp \
 		Server.cpp \
 		convertConfig.cpp \
 		Request.cpp \
+		Response.cpp \
 		
 #SRC = $(addprefix $(SRC_DIR), $(SRC))
 

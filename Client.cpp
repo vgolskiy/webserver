@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/13 14:27:37 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/17 14:19:58 by maria            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,11 @@ void Client::read_run_request(const int i) {
 		_request->set_cgi_meta_vars();
 		if (_request->get_script_name())
 			_request->run_cgi_request();
-		send(_fd, get_request()->get_response().c_str(), get_request()->get_response().length(), 0);
+		send(_fd, get_response()->response_body().c_str(), get_response()->response_body().length(), 0);
 	}
+}
+
+Response *Client::get_response(void)
+{
+	return _response;
 }

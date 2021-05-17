@@ -62,6 +62,7 @@ public:
 	int		get_fd(void);
 	int		get_s_addr(void);
 	Request	*get_request(void);
+	Response *get_response(void);
 	void	clear_request(void);
 	int		get_status(void) const;
 	long	get_start_time(void) const;

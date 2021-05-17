@@ -160,6 +160,8 @@ public:
 	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
 
+	const char*	get_script_name(void) const;
+
 	std::map<std::string, std::string> get_headers(void);
 
 	enum status

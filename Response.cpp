@@ -1,7 +1,8 @@
 #include "Response.hpp"
 
-Response::Response(Client *client)
+Response::Response(/*Client *client*/)
 {
+
 }
 
 Response::~Response()
@@ -119,7 +120,7 @@ void Response::createResponse(void)
 	}
 }
 
-std::string Response::get_response(void)
+std::string Response::response_body(void)
 {
 	return _response;
 }
