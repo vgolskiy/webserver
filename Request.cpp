@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maria <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 08:22:13 by maria            ###   ########.fr       */
+/*   Updated: 2021/05/17 17:31:15 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,7 +326,8 @@ void Request::parse_request(std::string &lines) {
 				return ;
 			}
 			lines.erase(0, 2); //second CRLF remove
-            if (_content_len > 0)
+            if ((_content_len > 0) || (_method == "POST")
+				|| (_method == "PUT"))
                 _status = Request::BODY_PARSE;
             else if (_chunk == true)
                 _status = Request::CHUNK;
