@@ -50,6 +50,20 @@ void Response::fill_response_body(void) {
 	return;
 }
 
+std::string	Response::get_page_body(void) {
+	std::string		res = "";
+	std::ifstream	inf(_loc->root + _loc->index);
+	std::stringstream ss;
+
+	if (!inf){
+		throw std::runtime_error(_loc->root + _loc->index);
+	}
+	ss << inf.rdbuf();
+	res += ss.str();
+	res += CRLF_2X;
+	return (res);
+}
+
 void Response::create_response(void) {
 	//_response = "";
 	//_headers["Allow"] =
@@ -69,17 +83,11 @@ void Response::create_response(void) {
 	}
 	else if (_method == "GET") {
 		fill_response_body();
-		_response += _client->get_request()->get_body() + CRLF;
-		//std::string path = _location; //
-		//DIR *dir;
-		//struct dirent *d;
-		//if (dir = opendir(path.c_str()))
-		//{
-			//_response += ;
-		//}
+		_response += get_page_body();
 	}
 	else if (_method == "PUT" || _method == "POST")
 	{
+		_response += _client->get_request()->get_body();
 		//PUT /new.html HTTP/1.1
 		//Host: example.com
 		//Content-type: text/html

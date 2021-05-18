@@ -42,6 +42,7 @@ public:
 	void		create_response(void);
 	void		fill_response_body(void);
 	std::string get_response_body(void);
+	std::string	get_page_body(void);
 };
 
 

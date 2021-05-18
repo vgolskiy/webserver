@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 23:44:00 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/18 12:18:59 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -395,7 +395,7 @@ int		Config::parse_auth(t_location &location, std::string &s) {
 ** =: If an equal sign is used, this block will be considered a match 
 ** if the request URI exactly matches the location given
 */
-//ascii 123 { 46 .
+//ascii 123 { 46 . 35 #
 int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
 		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD))) {

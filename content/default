@@ -18,7 +18,7 @@ server {
     location /	{
 		methods	    GET,POST,HEAD,PUT;
         root	    ./content;
-		index	    index.html;
+		index	    1sttry.html;
 		cgi			.bla;
 		cgi_path    ./content/cgi_tester;
     }

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 18:03:18 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/18 12:02:14 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@
 # include <netinet/in.h>
 # include "Client.hpp"
 # include "Socket.hpp"
+
+//Response
+# include <fstream>
+# include <sstream>
 
 //GET NEXT LINE
 # define	BUFFER_SIZE	1024
