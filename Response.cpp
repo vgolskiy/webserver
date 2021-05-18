@@ -82,6 +82,7 @@ void Response::create_response(void) {
 		_response += _body + CRLF;
 	}
 	else if (_method == "GET") {
+		_response += "HTTP/1.1\r\n";
 		fill_response_body();
 		_response += get_page_body();
 	}
