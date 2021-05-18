@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 18:44:21 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/18 18:57:17 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ Request::Request(Client *client, const int i) : _i(i) {
     _chunk = false;
 	_script_path = NULL;
 	_script_name = NULL;
+	_requested_index = "";
 }
 
 Request::~Request() {}
@@ -90,6 +91,10 @@ std::string Request::get_location_name(void) const {
 	return (_location);
 }
 
+std::string	Request::get_requested_index(void) const {
+	return (_requested_index);
+}
+
 void remove_spaces(std::string &str) 
 {
     char* chr = const_cast<char*>(str.c_str());
@@ -111,7 +116,7 @@ bool Request::set_up_headers(std::string &lines) {
     while (pos) {
         tmp = split(lines.substr(0, lines.find(CRLF)), ":");
         if(tmp.size() < 2) {
-            std::cout << "Invalid number of arguments for the header: " << tmp[0] << std::endl;
+            error_message("Invalid number of arguments for the header: " + tmp[0]);
             return (false);
         }
         for (size_t i = 0; i < tmp.size(); ++i)
@@ -179,18 +184,18 @@ bool Request::set_up_headers(std::string &lines) {
 
 bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	t_location	*loc;
+	std::string	tmp;
 
     /* check number of arguments */
     if (start_line.size() != 3)
-        return false;
+        return (false);
     /* check version of protocol: */
     _version = start_line[2];
     if (_version != HTTP)
-        return false;
+        return (false);
     /* check _uri: if contains "?" -> fill_in query_string() */
     _uri = start_line[1];
-    if (_uri.find("?") != std::string::npos)
-    {
+    if (_uri.find("?") != std::string::npos) {
         _query_str = _uri.substr(_uri.find("?") + 1, std::string::npos);
         _uri.erase(_uri.find("?"), std::string::npos);
     }
@@ -198,30 +203,30 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	** Verification that location is among available in server config
 	** Method is available in found location
 	*/
-	if (_uri == CWN || _uri == RMN || _uri == MSK || _uri == HHP || _uri == HHP2)
-	{
-		_method = "GET"; // to remove once the location is fixed
-		_status = Request::PNG;
-	}
 	_location = _uri.rfind("/") ? _uri.substr(0, _uri.rfind("/")) : _uri;
 	if ((loc = get_location(g_servers[_i], _location))) {
     	/* check the validity of the method from the location methods list */
-    	for (size_t i = 0; i < loc->methods.size(); i++) {
+    	for (std::size_t i = 0; i < loc->methods.size(); ++i) {
         	if (start_line[0] == loc->methods[i]) {
             	_method = loc->methods[i];
 				break ;
 			}
 		}
+		if (_uri.find(".") != std::string::npos) {
+			//cut the file name without CLRF
+			tmp = _uri.substr(_uri.rfind("/") + 1, _uri.length() - 4);
+			for (std::size_t i = 0; i < loc->index.size(); ++i) {
+				if (loc->index[i] == tmp)
+					_requested_index = tmp;
+			}
+		}
 	}
-	// if (!loc)
-		// return false;
-	if ( (!_method.length()))
-	{
-		return false;
-	}
-	if (_status != Request::PNG)	
-    	_status = Request::HEADERS;
-    return true;
+	//If there is no needed location / method or uri contains file that not in index 
+	if ((!loc) || (!_method.length()) 
+		|| (tmp.length() && (!_requested_index.length())))
+		return (false);
+	_status = Request::HEADERS;
+    return (true);
 }
 
 void Request::parse_init(std::vector<std::string> &split_lines, std::string &orig_lines)
@@ -296,7 +301,7 @@ void Request::print_parsed_request()
     std::cout << BROWN"URI: " << _uri << "\n" RESET;
     std::cout << RED"VERSION: "<< _version << "\n" RESET;
 
-	if (_status != Request::BAD_REQ && _status != Request::PNG) {
+	if (_status != Request::BAD_REQ) {
     	std::map<std::string, std::string>::iterator  it = _headers.begin();
     	std::map<std::string, std::string>::iterator  ite = _headers.end();
     	std::cout << BLACK"\nHEADERS:\n" RESET;

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/18 12:18:59 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/18 18:02:07 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void		Config::clear_location(t_location &location) {
 	location.auto_index = -1;
 	location.cgi = "";
 	location.cgi_path = "";
-	location.index = "";
+	location.index.clear();
 	location.max_body = -1;
 	location.methods.clear();
 	location.php_path = "";
@@ -143,13 +143,7 @@ std::string const	Config::_methods[] = {
 	"GET",
 	"HEAD",
 	"POST",
-	"PUT",
-/*	"DELETE",
-	"CONNECT",
-	"OPTIONS",
-	"TRACE",
-	"PATCH"
-*/
+	"PUT"
 };
 
 std::string const	Config::_protocols[] = {
@@ -388,6 +382,21 @@ int		Config::parse_auth(t_location &location, std::string &s) {
 	return (EXIT_SUCCESS);
 }
 
+int		Config::parse_location_index(t_location &location, std::string &s) {
+	std::vector<std::string>	tmp;
+
+	tmp = split(s, ",");
+	for (size_t i = 0; i < tmp.size(); ++i) {
+		if (tmp[i].length())
+			location.index.push_back(tmp[i]);
+		else {
+			error_message("Index parameter is invalid");
+			return (EXIT_FAILURE);
+		}
+	}
+	return (EXIT_SUCCESS);	
+}
+
 /*
 ** (none) If no modifiers are present, the location is interpreted as a prefix match.
 ** This means that the location given will be matched against the beginning 
@@ -398,7 +407,8 @@ int		Config::parse_auth(t_location &location, std::string &s) {
 //ascii 123 { 46 . 35 #
 int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_location &location) {
 	if ((to_parse.size() == 1)
-		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35) && (to_parse[0] != METHOD))) {
+		|| ((to_parse.size() > 2) && (to_parse[2][0] != 35)
+		&& (to_parse[0] != METHOD) && (to_parse[0] != INDEX))) {
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
 	}
@@ -413,7 +423,7 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		to_parse[0].clear();
 		for (size_t i = 1; i < to_parse.size(); ++i)
 			//concatenating parts to one line for futher parsing
-			to_parse[0]+=to_parse[i];
+			to_parse[0] += to_parse[i];
 		if (parse_method(location, to_parse[0]))
 			return (EXIT_FAILURE);
 	}
@@ -421,8 +431,13 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 		if (parse_directory(location.root, to_parse[1]))
 			return (EXIT_FAILURE);
 	}
-	else if ((to_parse[0] == INDEX) && (!location.index.length()))
-		location.index = to_parse[1];
+	else if ((to_parse[0] == INDEX) && (!location.index.size())) {
+		to_parse[0].clear();
+		for (size_t i = 1; i < to_parse.size(); ++i)
+			to_parse[0] += to_parse[i];
+		if (parse_location_index(location, to_parse[0]))
+			return (EXIT_FAILURE);
+	}
 	else if ((to_parse[0] == CGI_PATH) && (!location.cgi_path.length()))
 		location.cgi_path = to_parse[1];
 	else if ((to_parse[0] == PHP_PATH) && (!location.php_path.length()))
@@ -513,11 +528,13 @@ bool	Config::verify_config() {
 				error_message("Location name should start from /");
 				return (false);
 			}
-			if (_servers[i].location[j].index.length()) {
-				tmp = _servers[i].location[j].root + _servers[i].location[j].index;
-				if (!verify_file(tmp)) {
-					error_message("File is not accessible: " + tmp);
-					return (false);
+			if (_servers[i].location[j].index.size()) {
+				for (std::size_t j = 0; j != _servers[i].location[j].index.size(); ++j) {
+					tmp = _servers[i].location[j].root + _servers[i].location[j].index[j];
+					if (!verify_file(tmp)) {
+						error_message("File is not accessible: " + tmp);
+						return (false);
+					}
 				}
 			}
 			if (_servers[i].location[j].cgi_path.length()) {

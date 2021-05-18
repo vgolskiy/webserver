@@ -1,10 +1,10 @@
 #include "Response.hpp"
 
-Response::Response(Client *client, t_server *server, std::string loc) : _client(client) {
+Response::Response(Client *client, t_server *server, std::string loc, std::string requested_index) : _client(client), _requested_index(requested_index) {
 	_response = "";
 	_method = client->get_request()->get_method();
 	_body = "";
-	_loc = get_location(server, loc);
+	_loc = get_location(server, loc); 
 }
 
 Response::~Response() {}
@@ -53,21 +53,9 @@ void Response::fill_response_body(void) {
 std::string	Response::get_page_body(void) {
 	std::string		res = "";
 	std::string		file;
-	// std::ifstream	inf(_loc->root + _loc->index);
 	std::stringstream ss;
 
-	if (_client->get_request()->get_uri() == CWN)
-		file = CWN_l;
-	else if (_client->get_request()->get_uri() == RMN)
-		file = RMN_l;
-	else if (_client->get_request()->get_uri() == MSK)
-		file = MSK_l;
-	else if (_client->get_request()->get_uri() == HHP)
-		file = HHP_1;
-	else if (_client->get_request()->get_uri() == HHP2)
-		file = HHP_2;
-	else
-		file = _loc->root + _loc->index;
+	file = _requested_index.length() ? _loc->root + _requested_index : _loc->root + _loc->index[0];
 
 	std::ifstream	inf(file);
 

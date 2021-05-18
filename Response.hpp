@@ -32,8 +32,10 @@ private:
 	std::string 						_body;
 	std::map<int, std::string>			_status;
 	t_location*							_loc;
+	std::string							_requested_index;
+
 public:
-	Response(Client *client, t_server *server, std::string loc);
+	Response(Client *client, t_server *server, std::string loc, std::string requested_index);
 	~Response();
 
 	void set_status();

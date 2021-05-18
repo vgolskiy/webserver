@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 17:54:58 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/18 18:43:00 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,11 +119,11 @@ POST:
 #define CWN_l "content/photo/cwindom.jpeg"
 #define MSK_l "content/photo/mskinner.jpeg"
 
-#define HHP_1 "content/harryp__-webfont.woff"
-#define HHP_2 "content/harryp__-webfont.woff2"
+#define HHP_1 "content/harryp_webfont.woff"
+#define HHP_2 "content/harryp_webfont.woff2"
 
-#define HHP "/harryp__-webfont.woff"
-#define HHP2 "/harryp__-webfont.woff2"
+#define HHP "/font/harryp_webfont.woff"
+#define HHP2 "/font/harryp_webfont.woff2"
 
 class Response;
 class Client;
@@ -142,6 +142,7 @@ private:
 	std::string							_location;
 	const char*							_script_name;
 	const char*							_script_path;
+	std::string							_requested_index;
 
 	static std::string const			methods[];
 	static std::string const			headers[];
@@ -173,6 +174,7 @@ public:
 	const char*	get_script_name(void) const;
 	std::string get_method(void) const;
 	std::string get_location_name(void) const;
+	std::string	get_requested_index(void) const;
 	std::map<std::string, std::string> get_headers(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
@@ -190,9 +192,7 @@ public:
 		CHUNK,
 		CHUNK_DATA,
 		BAD_REQ,
-		DONE,
-		PNG,
-		FAV
+		DONE
 	};
 };
 

@@ -18,7 +18,7 @@ server {
     location /	{
 		methods	    GET,POST,HEAD,PUT;
         root	    ./content;
-		index	    1sttry.html;
+		index	    index.html;
 		cgi			.bla;
 		cgi_path    ./content/cgi_tester;
     }
@@ -41,6 +41,18 @@ server {
 		cgi			.bla;
 		index 		youpi.bad_extension;
 		cgi_path    ./content/cgi_tester;
+	}
+
+	location /content/photo {
+		methods		GET;
+		root		./content/photo;
+		index		cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg;
+	}
+
+	location /fonts {
+		methods		GET;
+		root		./content/fonts;
+		index		harryp_webfont.woff, harryp_webfont.woff2;
 	}
 }
 
@@ -90,5 +102,17 @@ server {
 		root 		./content/auth;
 		auth 		user:pass;
 		auth		new:game;
+	}
+
+	location /content/photo {
+		methods		GET;
+		root		./content/photo;
+		index		cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg;
+	}
+
+	location /content/fonts {
+		methods		GET;
+		root		./content/fonts;
+		index		harryp_webfont.woff, harryp_webfont.woff2;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/18 12:02:14 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/18 17:26:07 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void    printContainer(T &cont) {
 
 struct									t_location
 {		
-	std::string							index;
+	std::vector<std::string>			index;
 	std::string							root;
 	std::vector<std::string>			methods;
 	std::string							uri;
@@ -187,6 +187,7 @@ private:
 	int							parse_directory(std::string &dir, std::string &s);
 	int							parse_auth(t_location &location, std::string &s);
 	int							parse_error_pages(t_server &server, std::string err, std::string err_page);
+	int							parse_location_index(t_location &location, std::string &s);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
