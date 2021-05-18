@@ -66,6 +66,10 @@ int Request::get_status() const {
 	return (_status);
 }
 
+std::string Request::get_uri() const {
+	return (_uri);
+}
+
 std::string	Request::get_body(void) const {
 	return (_body);
 }
@@ -194,6 +198,11 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	** Verification that location is among available in server config
 	** Method is available in found location
 	*/
+	if (_uri == CWN || _uri == RMN || _uri == MSK || _uri == HHP || _uri == HHP2)
+	{
+		_method = "GET"; // to remove once the location is fixed
+		_status = Request::PNG;
+	}
 	_location = _uri.rfind("/") ? _uri.substr(0, _uri.rfind("/")) : _uri;
 	if ((loc = get_location(g_servers[_i], _location))) {
     	/* check the validity of the method from the location methods list */
@@ -204,9 +213,14 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 			}
 		}
 	}
-	if (!loc || (!_method.length()))
+	// if (!loc)
+		// return false;
+	if ( (!_method.length()))
+	{
 		return false;
-    _status = Request::HEADERS;
+	}
+	if (_status != Request::PNG)	
+    	_status = Request::HEADERS;
     return true;
 }
 
@@ -282,7 +296,7 @@ void Request::print_parsed_request()
     std::cout << BROWN"URI: " << _uri << "\n" RESET;
     std::cout << RED"VERSION: "<< _version << "\n" RESET;
 
-	if (!(_status == Request::BAD_REQ)) {
+	if (_status != Request::BAD_REQ && _status != Request::PNG) {
     	std::map<std::string, std::string>::iterator  it = _headers.begin();
     	std::map<std::string, std::string>::iterator  ite = _headers.end();
     	std::cout << BLACK"\nHEADERS:\n" RESET;

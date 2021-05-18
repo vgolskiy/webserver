@@ -79,7 +79,8 @@ void Client::read_run_request(const int i) {
             _to_parse += buffer;
             _request->parse_request(_to_parse);
         }
-        if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
+        if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ
+                || _request->get_status() == Request::PNG)
         {
             std::cout << "Status: " << _request->get_status() << std::endl;
 			// check-print request - delete later,  turn bach return after BAD REQ
@@ -91,10 +92,13 @@ void Client::read_run_request(const int i) {
    			    _request->print_parsed_request();
    			    std::cout << "Body: " << _request->get_body() << std::endl;
    			}
+            if (_request->get_status() == Request::PNG) { // not necessary
+                _request->print_parsed_request();
+   			}
             break ;
         }
     }
-    if (_request->get_status() != Request::BAD_REQ) {
+    if (_request->get_status() != Request::BAD_REQ && _request->get_status() != Request::PNG) {
 		_request->parse_script_file_name();
 		_request->set_cgi_meta_vars();
 		if (_request->get_script_name())

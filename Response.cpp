@@ -52,15 +52,32 @@ void Response::fill_response_body(void) {
 
 std::string	Response::get_page_body(void) {
 	std::string		res = "";
-	std::ifstream	inf(_loc->root + _loc->index);
+	std::string		file;
+	// std::ifstream	inf(_loc->root + _loc->index);
 	std::stringstream ss;
 
+	if (_client->get_request()->get_uri() == CWN)
+		file = CWN_l;
+	else if (_client->get_request()->get_uri() == RMN)
+		file = RMN_l;
+	else if (_client->get_request()->get_uri() == MSK)
+		file = MSK_l;
+	else if (_client->get_request()->get_uri() == HHP)
+		file = HHP_1;
+	else if (_client->get_request()->get_uri() == HHP2)
+		file = HHP_2;
+	else
+		file = _loc->root + _loc->index;
+
+	std::ifstream	inf(file);
+
 	if (!inf){
-		throw std::runtime_error(_loc->root + _loc->index);
+		throw std::runtime_error(file);
 	}
 	ss << inf.rdbuf();
 	res += ss.str();
 	res += CRLF_2X;
+	inf.clear();
 	return (res);
 }
 
@@ -83,7 +100,12 @@ void Response::create_response(void) {
 	}
 	else if (_method == "GET") {
 		_response += "HTTP/1.1\r\n";
-		fill_response_body();
+		if (_client->get_request()->get_uri() == CWN || _client->get_request()->get_uri() == RMN 
+			|| _client->get_request()->get_uri() == MSK || _client->get_request()->get_uri() == HHP2
+			|| _client->get_request()->get_uri() == HHP)
+			_response += "HTTP/1.1 200 OK\r\nDate: Sun, 18 Oct 2012 10:36:20 GMT\r\nServer: Webserver\r\nContent-Type: image/*\r\n\r\n";
+		else
+			fill_response_body();
 		_response += get_page_body();
 	}
 	else if (_method == "PUT" || _method == "POST")

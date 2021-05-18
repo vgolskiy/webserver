@@ -115,6 +115,16 @@ POST:
 #define CWN "/content/photo/cwindom.jpeg"
 #define MSK "/content/photo/mskinner.jpeg"
 
+#define RMN_l "content/photo/rmanfred.jpeg"
+#define CWN_l "content/photo/cwindom.jpeg"
+#define MSK_l "content/photo/mskinner.jpeg"
+
+#define HHP_1 "content/harryp__-webfont.woff"
+#define HHP_2 "content/harryp__-webfont.woff2"
+
+#define HHP "/harryp__-webfont.woff"
+#define HHP2 "/harryp__-webfont.woff2"
+
 class Response;
 class Client;
 class Request
@@ -168,6 +178,8 @@ public:
 	void		run_cgi_request(void);
 	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
+
+	std::string 		get_uri(void) const;
 
 	enum status
 	{
