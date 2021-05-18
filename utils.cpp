@@ -137,3 +137,24 @@ bool is_hex(const std::string &hex) {
 	}
 	return (true);
 }
+
+void to_insert(std::string str)
+{
+	std::string 		file; // define file
+    std::string			res = "";
+	std::stringstream 	ss;
+	
+    std::ifstream		inf(file);
+	if (!inf)
+		throw std::runtime_error(file); // add try
+    ss << inf.rdbuf();
+    res += ss.str();
+    res += "\n";
+    res += str;
+
+    std::ofstream 		outf(file);
+	if (!outf)
+		throw std::runtime_error(file); // add try
+    outf << res;
+
+}
