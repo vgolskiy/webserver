@@ -110,6 +110,11 @@ POST:
 # define CRLF_2X		"\r\n\r\n"
 
 #define TMP "tmp_file"
+
+#define RMN "/content/photo/rmanfred.jpeg"
+#define CWN "/content/photo/cwindom.jpeg"
+#define MSK "/content/photo/mskinner.jpeg"
+
 class Response;
 class Client;
 class Request
@@ -173,7 +178,9 @@ public:
 		CHUNK,
 		CHUNK_DATA,
 		BAD_REQ,
-		DONE
+		DONE,
+		PNG,
+		FAV
 	};
 };
 
