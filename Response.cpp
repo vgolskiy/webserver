@@ -99,11 +99,11 @@ void Response::create_response(void) {
 		_response += _body + CRLF;
 	}
 	else if (_method == "GET") {
-		_response += "HTTP/1.1\r\n";
+		_response += "HTTP/1.1 200 OK\r\n";
 		if (_client->get_request()->get_uri() == CWN || _client->get_request()->get_uri() == RMN 
 			|| _client->get_request()->get_uri() == MSK || _client->get_request()->get_uri() == HHP2
 			|| _client->get_request()->get_uri() == HHP)
-			_response += "HTTP/1.1 200 OK\r\nDate: Sun, 18 Oct 2012 10:36:20 GMT\r\nServer: Webserver\r\nContent-Type: image/*\r\n\r\n";
+			_response += "Date: Sun, 18 Oct 2012 10:36:20 GMT\r\nServer: Webserver\r\nContent-Type: image/*\r\n\r\n";
 		else
 			fill_response_body();
 		_response += get_page_body();
