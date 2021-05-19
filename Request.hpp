@@ -119,11 +119,11 @@ POST:
 #define CWN_l "content/photo/cwindom.jpeg"
 #define MSK_l "content/photo/mskinner.jpeg"
 
-#define HHP_1 "content/harryp_webfont.woff"
-#define HHP_2 "content/harryp_webfont.woff2"
+#define HHP_1 "content/fonts/harryp_webfont.woff"
+#define HHP_2 "content/fonts/harryp_webfont.woff2"
 
-#define HHP "/font/harryp_webfont.woff"
-#define HHP2 "/font/harryp_webfont.woff2"
+#define HHP "/content/fonts/harryp_webfont.woff"
+#define HHP2 "/content/fonts/harryp_webfont.woff2"
 
 class Response;
 class Client;

@@ -71,7 +71,7 @@ server {
 		index		cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg;
 	}
 
-	location /fonts {
+	location /content/fonts {
 		methods		GET;
 		root		./content/fonts;
 		index		harryp_webfont.woff, harryp_webfont.woff2;
