@@ -33,6 +33,8 @@ private:
 	std::map<int, std::string>			_status;
 	t_location*							_loc;
 	std::string							_requested_index;
+	std::map<std::string, std::vector<std::string> >	_content_types;
+	std::list<std::string>				_headers_sequence;
 
 public:
 	Response(Client *client, t_server *server, std::string loc, std::string requested_index);
@@ -45,6 +47,7 @@ public:
 	void		fill_response_body(void);
 	std::string get_response_body(void);
 	std::string	get_page_body(void);
+	std::string	get_content_type(void);
 };
 
 

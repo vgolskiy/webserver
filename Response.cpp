@@ -4,7 +4,35 @@ Response::Response(Client *client, t_server *server, std::string loc, std::strin
 	_response = "";
 	_method = client->get_request()->get_method();
 	_body = "";
-	_loc = get_location(server, loc); 
+	_loc = get_location(server, loc);
+	
+	std::vector<std::string> v;
+	const char* ss[4] = {".gif", ".jpeg", ".jpg", ".png"};
+	for (int i = 0; i < 4; ++i)
+		v.push_back(ss[i]);
+	_content_types["image/gif"] = v;
+	v.clear();
+	v.push_back(".mp4");
+	_content_types["video/mpeg"] = v;
+	v.clear();
+	v.push_back(".woff");
+	_content_types["font/woff"] = v;
+	v.clear();
+	v.push_back(".woff2");
+	_content_types["font/woff2"] = v;
+
+	std::string tmp[] = {
+		"Allow",
+		"Content-Language",
+		"Content-Length",
+		"Content-Location",
+		"Content-Type",
+		"Host",
+		"Last-Modified",
+		"Server",
+		"WWW-Authenticate"};
+	for (int i = 0; i < 9; ++i)
+		_headers_sequence.push_back(tmp[i]);
 }
 
 Response::~Response() {}
@@ -69,13 +97,33 @@ std::string	Response::get_page_body(void) {
 	return (res);
 }
 
+std::string	Response::get_content_type() {
+	std::string	tmp;
+	if (_requested_index.length()) {
+		tmp = _requested_index.substr(_requested_index.rfind("."));
+
+		std::map<std::string, std::vector<std::string> >::iterator	itm;
+		for (itm = _content_types.begin(); itm != _content_types.end(); ++itm) {
+			std::vector<std::string>::iterator	itv;
+
+			for (itv = (*itm).second.begin(); itv != (*itm).second.end(); ++itv) {
+				if (tmp == (*itv))
+					return ((*itm).first);
+			}
+		}
+	}
+	return ("text/html");
+}
+
 void Response::create_response(void) {
+	std::string tmp;
 	//_response = "";
 	//_headers["Allow"] =
 	//_headers["Location"] =
 	_headers["Retry-After"] = "1";
 	_headers["Server"] = "webserv";
 	_headers["Date"] = get_server_date();
+	_headers["Content-Type"] = get_content_type();
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
 	if (_method == "HEAD")
@@ -88,12 +136,7 @@ void Response::create_response(void) {
 	}
 	else if (_method == "GET") {
 		_response += "HTTP/1.1 200 OK\r\n";
-		if (_client->get_request()->get_uri() == CWN || _client->get_request()->get_uri() == RMN 
-			|| _client->get_request()->get_uri() == MSK || _client->get_request()->get_uri() == HHP2
-			|| _client->get_request()->get_uri() == HHP)
-			_response += "Date: Sun, 18 Oct 2012 10:36:20 GMT\r\nServer: Webserver\r\nContent-Type: image/*\r\n\r\n";
-		else
-			fill_response_body();
+		fill_response_body();
 		_response += get_page_body();
 	}
 	else if (_method == "PUT" || _method == "POST")
