@@ -130,6 +130,20 @@ std::string	Response::get_content_type() {
 void Response::create_response(void) {
 	std::string tmp;
 
+	if (_client->get_request()->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
+	{
+		_status_code = 400;
+		get_status_line();
+		fill_response_body();
+		_response += CRLF;
+		//send html => _response += get_page_body() + CRLF;
+	}
+
+	//set status according to the request's method:
+	// HEAD - always OK?
+	// GET - if Request::BADREQ -> _status_code = NOT_FOUND
+	// GET - else if loc.auth != empty -> 
+
 	//_headers["Allow"] =
 	//_headers["Location"] =
 	_headers["Retry-After"] = "1";
@@ -139,49 +153,34 @@ void Response::create_response(void) {
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
 	if (_method == "HEAD") {
+		// _status_code = OK;
 		get_status_line();
 		fill_response_body();
 	}
 	else if (_method == "GET") {
+		// if (_client->get_request()->get_status() == UNATHOURIZED) // depends on when you check
+			// _status_code = 401
+		// else if (_client->get_request()->get_status() == Not_found)
+			// _status_code = 404;
+		// else (_client->get_request()->get_status() == AUTHORIZED)
+			// check_authorization
+			// if (not valid authorization)
+				// _status_code = 401;
+				// fill in _headers[WWW-Authenticate] appropriately
 		get_status_line();
 		fill_response_body();
 		_response += get_page_body() + CRLF;
 	}
-	else if (_method == "PUT" || _method == "POST")
+	else if (_method == "PUT")
 	{
+		// know the file to change
+		// check everything about file (lstat, opendir, etc)
+		// ...
 		_response += _client->get_request()->get_body();
-		//PUT /new.html HTTP/1.1
-		//Host: example.com
-		//Content-type: text/html
-		//Content-length: 16
-		//
-		//<p>Новый файл</p>
-		//создать
-		//HTTP/1.1 201 Created
-		//Content-Location: /new.html
-		//обновить
-		//HTTP/1.1 204 No Content //или 200 OK
-		//Content-Location: /existing.html
-		// PUT /user/1234567890 HTTP/1.1
-		//Host: localhost
-		// {
-		//	"name": "Kevin Sookocheff",
-		//	"website": "http://kevinsookocheff.com"
-		//}
-		//ответы:
-		//HTTP/1.1 201 Created 200 OK 204 No Content
-		//Location: /user/1234567890
-		// или например заменить
-		//PUT /user/1234567890 HTTP/1.1
-		//Host: http://sookocheff.com
-		//
-		//{
-		//	"name": "Kevin Sookocheff",
-		//	"website": "http://sookocheff.com"
-		//}
 	}
 	else if (_method == "POST")
 	{
+		// check location 
 	}
 }
 
@@ -253,3 +252,32 @@ void Response::set_status()
 	_status[599] =  "Network Connect Timeout Error";
 }
 
+		//PUT /new.html HTTP/1.1
+		//Host: example.com
+		//Content-type: text/html
+		//Content-length: 16
+		//
+		//<p>Новый файл</p>
+		//создать
+		//HTTP/1.1 201 Created
+		//Content-Location: /new.html
+		//обновить
+		//HTTP/1.1 204 No Content //или 200 OK
+		//Content-Location: /existing.html
+		// PUT /user/1234567890 HTTP/1.1
+		//Host: localhost
+		// {
+		//	"name": "Kevin Sookocheff",
+		//	"website": "http://kevinsookocheff.com"
+		//}
+		//ответы:
+		//HTTP/1.1 201 Created 200 OK 204 No Content
+		//Location: /user/1234567890
+		// или например заменить
+		//PUT /user/1234567890 HTTP/1.1
+		//Host: http://sookocheff.com
+		//
+		//{
+		//	"name": "Kevin Sookocheff",
+		//	"website": "http://sookocheff.com"
+		//}
