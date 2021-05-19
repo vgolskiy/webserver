@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/18 18:41:38 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/19 16:21:39 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,11 @@ void Client::read_run_request(const int i) {
         memset(buffer, 0, buf_size);
         int		to_recieve = 0;
         to_recieve = recv(_fd, &buffer, buf_size, 0);
-        if (!to_recieve)
-        {
+        if (!to_recieve && (_to_parse.length())) {
             _status = Client::EMPTY;
             return ;
         }
-        else if ((to_recieve == -1) && (_to_parse.length())) //prevention of parse circle with empty lines
+        else if (((to_recieve == -1) || (!to_recieve)) && (_to_parse.length())) //prevention of parse circle with empty lines
             _request->parse_request(_to_parse);
         else if (to_recieve != -1) { //prevention of parse circle with empty lines
             buffer[to_recieve] = '\0';
