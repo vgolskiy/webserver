@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/19 16:21:39 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/19 22:03:09 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void		Client::accept_connection()
 
 void Client::read_run_request(const int i) {
 	int		buf_size = BUFFER_SIZE;
+	int		to_recieve;
 
     if (!_request)
         _request = new Request(this, i);
@@ -68,18 +69,21 @@ void Client::read_run_request(const int i) {
             buf_size = _request->get_remain_len() < BUFFER_SIZE ? _request->get_remain_len() : BUFFER_SIZE;
         char	buffer[buf_size + 1];
         memset(buffer, 0, buf_size);
-        int		to_recieve = 0;
+        to_recieve = 0;
         to_recieve = recv(_fd, &buffer, buf_size, 0);
-        if (!to_recieve && (_to_parse.length())) {
+        if (!to_recieve)
             _status = Client::EMPTY;
-            return ;
-        }
-        else if (((to_recieve == -1) || (!to_recieve)) && (_to_parse.length())) //prevention of parse circle with empty lines
+        if ((to_recieve == -1) && (_to_parse.length())) //prevention of parse circle with empty lines
             _request->parse_request(_to_parse);
         else if (to_recieve != -1) { //prevention of parse circle with empty lines
-            buffer[to_recieve] = '\0';
-            _to_parse += buffer;
-            _request->parse_request(_to_parse);
+			if (to_recieve) {
+            	buffer[to_recieve] = '\0';
+            	_to_parse += buffer;
+			}
+			if (_to_parse.length())
+            	_request->parse_request(_to_parse);
+			else
+				_request->set_request_status(Request::BAD_REQ);
         }
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {

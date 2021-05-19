@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/18 18:57:17 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/19 20:55:38 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,10 @@ std::string Request::get_location_name(void) const {
 
 std::string	Request::get_requested_index(void) const {
 	return (_requested_index);
+}
+
+void		Request::set_request_status(int status) {
+	_status = status;
 }
 
 void remove_spaces(std::string &str) 

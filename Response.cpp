@@ -91,6 +91,7 @@ void Response::fill_response_body(void) {
 }
 
 std::string	Response::get_page_body(void) {
+
 	std::string		res = "";
 	std::string		file;
 	std::stringstream ss;
@@ -105,7 +106,7 @@ std::string	Response::get_page_body(void) {
 	ss << inf.rdbuf();
 	res += ss.str();
 	res += CRLF_2X;
-	inf.clear();
+	inf.close();
 	return (res);
 }
 
