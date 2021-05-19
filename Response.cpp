@@ -70,10 +70,11 @@ std::string Response::get_last_modified_date(std::string file) {
 }
 
 void Response::fill_response_body(void) {
-	std::map<std::string, std::string>::iterator it;
-	for (it = _headers.begin(); it != _headers.end(); ++it) {
-		if ((*it).second != "")
-			_response += (*it).first + ": " + (*it).second + CRLF;
+	std::list<std::string>::iterator it;
+
+	for (it = _headers_sequence.begin(); it != _headers_sequence.end(); ++it) {
+		if (_headers[*it] != "")
+			_response += *it + ": " + _headers[*it] + CRLF;
 	}
 	return;
 }
