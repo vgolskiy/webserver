@@ -12,12 +12,12 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 
 */
 
-# ifndef RESPONSE_HPP
-#define RESPONSE_HPP
+#ifndef RESPONSE_HPP
+# define RESPONSE_HPP
 
-#include "Config.hpp"
-#include "Request.hpp"
-#include <dirent.h>
+# include "Config.hpp"
+# include "Request.hpp"
+# include <dirent.h>
 
 struct	t_location;
 struct	t_server;
@@ -30,6 +30,7 @@ private:
 	Client*								_client;
 	std::string							_method;
 	std::string 						_body;
+	int									_status_code;
 	std::map<int, std::string>			_status;
 	t_location*							_loc;
 	std::string							_requested_index;
@@ -48,6 +49,7 @@ public:
 	std::string get_response_body(void);
 	std::string	get_page_body(void);
 	std::string	get_content_type(void);
+	void		get_status_line(void);
 };
 
 

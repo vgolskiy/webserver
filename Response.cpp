@@ -1,6 +1,10 @@
 #include "Response.hpp"
 
 Response::Response(Client *client, t_server *server, std::string loc, std::string requested_index) : _client(client), _requested_index(requested_index) {
+	//TODO: fix status codes
+	_status_code = 200;
+	set_status();
+
 	_response = "";
 	_method = client->get_request()->get_method();
 	_body = "";
@@ -69,6 +73,12 @@ std::string Response::get_last_modified_date(std::string file) {
 	return (s);
 }
 
+void Response::get_status_line(void) {
+	_response = HTTP + std::string(" ") + std::to_string(_status_code)
+		+ std::string(" ") + _status[_status_code];
+	_response += CRLF;
+}
+
 void Response::fill_response_body(void) {
 	std::list<std::string>::iterator it;
 
@@ -76,7 +86,8 @@ void Response::fill_response_body(void) {
 		if (_headers[*it] != "")
 			_response += *it + ": " + _headers[*it] + CRLF;
 	}
-	return;
+	_response += CRLF;
+	return ;
 }
 
 std::string	Response::get_page_body(void) {
@@ -118,7 +129,7 @@ std::string	Response::get_content_type() {
 
 void Response::create_response(void) {
 	std::string tmp;
-	//_response = "";
+
 	//_headers["Allow"] =
 	//_headers["Location"] =
 	_headers["Retry-After"] = "1";
@@ -127,18 +138,14 @@ void Response::create_response(void) {
 	_headers["Content-Type"] = get_content_type();
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
-	if (_method == "HEAD")
-	{
-		_response += HTTP;
-		//_response += _status.
-		_response += CRLF;
+	if (_method == "HEAD") {
+		get_status_line();
 		fill_response_body();
-		_response += _body + CRLF;
 	}
 	else if (_method == "GET") {
-		_response += "HTTP/1.1 200 OK\r\n";
+		get_status_line();
 		fill_response_body();
-		_response += get_page_body();
+		_response += get_page_body() + CRLF;
 	}
 	else if (_method == "PUT" || _method == "POST")
 	{
