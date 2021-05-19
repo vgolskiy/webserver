@@ -71,7 +71,10 @@ void Client::read_run_request(const int i) {
         int		to_recieve = 0;
         to_recieve = recv(_fd, &buffer, buf_size, 0);
         if (!to_recieve)
+        {
             _status = Client::EMPTY;
+            return ;
+        }
         else if ((to_recieve == -1) && (_to_parse.length())) //prevention of parse circle with empty lines
             _request->parse_request(_to_parse);
         else if (to_recieve != -1) { //prevention of parse circle with empty lines

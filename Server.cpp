@@ -177,6 +177,8 @@ void	deal_request(std::vector<t_server*> &servers,
 		//	if (FD_ISSET((*it)->get_fd(), &read_fd_sets) {
 				servers[i]->time_start = current_time();
 				(*it)->read_run_request(i);
+				if ((*it)->get_status() == Client::EMPTY)
+					return ;
 		//	}
 		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
 				servers[i]->time_start = current_time();
