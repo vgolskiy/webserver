@@ -558,7 +558,6 @@ void Request::read_cgi()
 	std::string			res = "";
 	std::string 		status_line = "Status: ";
 	std::string			header = "";
-	std::string			status_code = "";
 	std::stringstream 	ss;
 
     std::ifstream		inf(TMP);
@@ -572,12 +571,8 @@ void Request::read_cgi()
 	// CGI programs can send status information as part of a virtual document (example below)
 	if (header.find(status_line) != std::string::npos)
 	{
-		header.erase(0, header.find(status_line));
-		if (header.find(CRLF) != std::string::npos)
-			status_code = header.substr(0, header.find(CRLF));
-		else
-			status_code = header;
-		status_code.erase(0, status_line.length());
+		header.erase(0, header.find(status_line) + status_line.length());
+		_status_code = ft_atoi(header.c_str());
 	}
 	res.erase(0, res.find(CRLF_2X) + 4);
 	_body = res;
