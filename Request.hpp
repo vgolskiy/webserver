@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 16:42:25 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 17:42:34 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ POST:
 # define AUTHORIZATION	"Authorization"
 # define CONTENT_LEN	"Content-Length"
 # define TRANSF_ENCODE	"Transfer-Encoding"
+# define USER_AGENT		"User-Agent"
 # define CHUNKED		"chunked"
 # define CRLF			"\r\n"
 # define CRLF_2X		"\r\n\r\n"
@@ -130,7 +131,7 @@ private:
 	const char*							_script_path;
 	std::string							_requested_index;
 	int									_max_body_size;
-
+	bool								_curl;
 	static std::string const			methods[];
 	static std::string const			headers[];
 
@@ -173,6 +174,8 @@ public:
 	int			get_content_length(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
+	void		standard_body_parse(std::string &lines, std::size_t &pos);
+	void		curl_body_parse(std::string &lines, std::size_t &pos);
 	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
 	void		read_cgi();
