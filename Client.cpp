@@ -100,10 +100,4 @@ void Client::read_run_request(const int i) {
             break ;
         }
     }
-    if (_request->get_status() != Request::BAD_REQ) {
-		_request->parse_script_file_name();
-		_request->set_cgi_meta_vars();
-		if (_request->get_script_name())
-			_request->run_cgi_request();
-	}
 }

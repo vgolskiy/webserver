@@ -532,6 +532,8 @@ void Request::run_cgi_request() {
 	//In case of any problems during fork: exit with errno code
     //Opening file to write in
 	// TODO: change all exit_errors to throw error -> write appropriate response
+
+	// TODO: the cgi should be run in the correct directory for relativ path file access (subject)
     if (((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
 		|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);
