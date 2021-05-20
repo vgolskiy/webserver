@@ -1,5 +1,11 @@
 #include "Response.hpp"
 
+#define HTML_TITLE "<html>\n<head>\n<title>Listing of directories</title>\n</head>"
+#define HTML_HEADER "<body>\n<h1>Autoindex: </h1>\n"
+#define HYPER_REF "<a href=\""
+#define HYPER_END "</a><br>\""
+#define HTML_CLOSE "</body>\n</html>\n"
+
 Response::Response(Client *client, t_server *server, std::string loc, std::string requested_index) : _client(client), _requested_index(requested_index) {
 	_status_code = client->get_request()->get_status_code() ? client->get_request()->get_status_code() : 200;
 	set_status();
@@ -114,6 +120,30 @@ std::string	Response::get_page_body(void) {
 	return (res);
 }
 
+void	Response::create_autoindex(){
+	DIR *directory = opendir(_loc->root.c_str()); // full path?
+	if (directory == NULL)
+		return ;
+	
+	struct dirent *curr;
+
+	_body += HTML_TITLE;
+	_body += HTML_HEADER;
+	while ((curr = readdir(directory)) != NULL)
+	{
+		if (curr->d_name[0] != '.')
+		{
+			_body += HYPER_REF;
+			_body += _requested_index.length() ? _loc->root + _requested_index : _loc->root + _loc->index[0]; // full name of file?
+			_body += "\">";
+			_body += curr->d_name;
+			_body += HYPER_END;
+		}
+	}
+	_body += HTML_CLOSE;
+	closedir(directory);
+}
+
 std::string	Response::get_content_type() {
 	std::string	tmp;
 	if (_requested_index.length()) {
@@ -207,6 +237,8 @@ void Response::create_response(void) {
 			if ((!auth_by_header()) && (!auth_by_uri_param()))
 				_status_code = 401;
 		}
+		if (_status_code != 401 && _loc->auto_index)
+			create_autoindex();
 		get_status_line();
 		fill_response_body();
 		_response += get_page_body() + CRLF;
@@ -235,6 +267,8 @@ void Response::create_response(void) {
 			// turn on or off directory listing - autoindex (subject)
 			// need to check if the request is a directory (subject)
 			// make the route able to accept uploaded files and configure where it should be saved (subject)
+			if (_loc->auto_index)
+				create_autoindex();
 			get_status_line();
 			fill_response_body();
 			_response += get_page_body() + CRLF;
