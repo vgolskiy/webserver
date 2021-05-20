@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 12:44:22 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 13:20:58 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Request::Request(Client *client, const int i) : _i(i) {
     _client = client;
     _remain_len = 0;
     _status = Request::REQUEST_METHOD;
-    _content_len = -1;
+    _content_len = 0;
     _chunk = false;
 	_script_path = NULL;
 	_script_name = NULL;
@@ -181,11 +181,17 @@ bool Request::set_up_headers(std::string &lines) {
             }
             catch(const std::exception& e) {
                 error_message(e.what());
+				_status = Request::BAD_REQ;
+				return (false);
             }
+			if (_content_len < 0) {
+				_status = Request::BAD_REQ;
+				return (false);			
+			}
         }
         if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED)) {
             _chunk = true;
-            _content_len = -1;
+            _content_len = 0;
         }
         tmp.clear();
 		lines.erase(0, lines.find(CRLF) + 2);
