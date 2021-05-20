@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 14:27:26 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 14:41:42 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,13 +258,13 @@ bool Request::parse_chunk_size(std::string &lines)
     if (((pos = lines.find(CRLF)) == std::string::npos)
 		|| (!is_hex(tmp = lines.substr(0, pos))))
         return (false);
-    _content_len = std::strtol(tmp.c_str(), 0, 16);
-	if ((errno == ERANGE) || (_content_len < 0)) {
+    _remain_len = std::strtol(tmp.c_str(), 0, 16);
+	//in case of overflow
+	if ((errno == ERANGE) || (_remain_len < 0)) {
 		_status = Request::BAD_REQ;
 		_status_code = 400;
 		return (false);
 	}
-    _remain_len = _content_len;
     lines.erase(0, lines.find(CRLF) + 2);
     _status = Request::CHUNK_DATA;
     return (true);
@@ -275,6 +275,7 @@ void Request::parse_chunk_data(std::string &lines) {
 	std::string	tmp;
 
     if ((!_remain_len) && (lines == CRLF)) {
+		_content_len = _body.length();
         _status = Request::DONE;
         return ;
     }
