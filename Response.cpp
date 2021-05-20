@@ -200,15 +200,6 @@ void Response::create_response(void) {
 		fill_response_body();
 	}
 	else if (_method == "GET") {
-		// if (_client->get_request()->get_status() == UNATHOURIZED) // depends on when you check
-			// _status_code = 401
-		// else if (_client->get_request()->get_status() == Not_found)
-			// _status_code = 404;
-		// else (_client->get_request()->get_status() == AUTHORIZED)
-			// check_authorization
-			// if (not valid authorization)
-				// _status_code = 401;
-				// fill in _headers[WWW-Authenticate] appropriately
 		if (_loc->auth.size()) {
 			if ((!auth_by_header()) && (!auth_by_uri_param()))
 				_status_code = 401;
@@ -226,12 +217,38 @@ void Response::create_response(void) {
 	}
 	else if (_method == "POST")
 	{
-		// check location 
+		_client->get_request()->parse_script_file_name();
+		_client->get_request()->set_cgi_meta_vars();
+		if (_client->get_request()->get_script_name())
+		{
+			_client->get_request()->run_cgi_request(); // TODO: add if-condition in case of error
+			_client->get_request()->read_cgi();
+			get_status_line();
+			fill_response_body();
+			_response += _client->get_request()->get_body();
+		}
+		else
+		{
+			// turn on or off directory listing - autoindex (subject)
+			// need to check if the request is a directory (subject)
+			// make the route able to accept uploaded files and configure where it should be saved (subject)
+			get_status_line();
+			fill_response_body();
+			_response += get_page_body() + CRLF;
+		}
+	}
+	else
+	{
+		_status_code = 1; // not implemented;
+		get_status_line();
+		fill_response_body();
+		_response += _client->get_request()->get_body(); // ?
 	}
 }
 
 void Response::set_status()
 {
+	_status[1] = "Not Implemented";
 	_status[100] = "Continue";
 	_status[101] = "Switching Protocols";
 	_status[102] = "Processing";
