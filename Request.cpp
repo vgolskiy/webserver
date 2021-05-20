@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 16:28:20 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 16:42:25 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,10 @@ void		Request::set_status_code(int code){
 
 int			Request::get_status_code(void) const {
 	return (_status_code);
+}
+
+int			Request::get_content_length(void) const {
+	return (_content_len);
 }
 
 void remove_spaces(std::string &str) 

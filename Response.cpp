@@ -10,6 +10,7 @@ Response::Response(Client *client, t_server *server, std::string loc, std::strin
 	_param = client->get_request()->get_uri_parameters();
 	_authorize = client->get_request()->get_authorization();
 	_error_page = server->error_page;
+	_content_len = client->get_request()->get_content_length();
 	
 	std::vector<std::string> v;
 	const char* ss[4] = {".gif", ".jpeg", ".jpg", ".png"};
@@ -191,6 +192,8 @@ void Response::create_response(void) {
 	_headers["Server"] = "webserv";
 	_headers["Date"] = get_server_date();
 	_headers["Content-Type"] = get_content_type();
+	if (_content_len)
+		_headers["Content-Length"] = std::to_string(_content_len);
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
 	if (_method == "HEAD") {
