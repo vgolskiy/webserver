@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 16:42:25 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 17:47:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ Request::Request(Client *client, const int i) : _i(i) {
 	_script_name = NULL;
 	_requested_index = "";
 	_status_code = 0;
+	_curl = false;
 }
 
 Request::~Request() {}
@@ -198,6 +199,8 @@ bool Request::set_up_headers(std::string &lines) {
         }
         if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED))
             _chunk = true;
+		if ((tmp[0] == USER_AGENT) && (tmp[1].find("curl") != std::string::npos))
+			_curl = true;
         tmp.clear();
 		lines.erase(0, lines.find(CRLF) + 2);
 		pos = lines.find(CRLF) == std::string::npos ? 0 : lines.find(CRLF);
@@ -341,14 +344,59 @@ void Request::verify_body() {
 	}
 }
 
-void Request::parse_request(std::string &lines) {
-	std::string	tmp;
-	std::size_t pos;
+//adding tmp strings to body until remain length is above zero
+//in case of max_body > content_length or content_length < body length -> bad request
+void Request::standard_body_parse(std::string &lines, std::size_t &pos) {
 	t_location*	loc = get_location(g_servers[_i], _location);
+	std::string	tmp;
+
+	tmp = lines.substr(0, pos);
+	if ((_method != "POST") && (_method != "PUT")
+		&& (_remain_len < (int)tmp.length())) {
+		_status = Request::BAD_REQ;
+		_status_code = 400;
+		return ;
+	}
+	lines.erase(0, pos + 2);
+	if (_remain_len) {
+    	_body += tmp;
+		_remain_len -= tmp.length();
+	}
+	else if ((_method == "POST") || (_method == "PUT"))
+		_body += tmp;
+	if ((_content_len > 0) && (((int)_body.length() > _content_len)
+		|| ((loc->max_body > 0) && (_content_len > loc->max_body)))) {
+		_status = Request::BAD_REQ;
+		_status_code = 400;
+		return ;	
+	}
+}
+
+void Request::curl_body_parse(std::string &lines, std::size_t &pos) {
+	t_location*	loc = get_location(g_servers[_i], _location);
+	std::string	tmp;
+
+	tmp = lines.substr(0, pos);
+	lines.erase(0, pos);
+	if (_remain_len) {
+    	_body += tmp;
+		_remain_len -= tmp.length();
+	}
+	if ((loc->max_body > 0) && (_content_len > loc->max_body)) {
+		_status = Request::BAD_REQ;
+		_status_code = 400;
+		return ;	
+	}
+	verify_body();
+	return ;
+}
+
+void Request::parse_request(std::string &lines) {
+	std::size_t pos;
     
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
-	if ((pos = lines.find(CRLF)) == std::string::npos)
+	if (((pos = lines.find(CRLF)) == std::string::npos) && !_curl)
 		return ;
     if (_status == Request::REQUEST_METHOD || _status == Request::HEADERS) {
         if ((_status == Request::REQUEST_METHOD) && pos) {
@@ -389,30 +437,11 @@ void Request::parse_request(std::string &lines) {
 			return ;
 		}
     }
-	//adding tmp strings to body until remain length is above zero
-	//in case of max_body > content_length or content_length < body length -> bad request
     if ((_status == Request::BODY_PARSE) && pos) {
-		tmp = lines.substr(0, pos);
-		if ((_method != "POST") && (_method != "PUT")
-			&& (_remain_len < (int)tmp.length())) {
-			_status = Request::BAD_REQ;
-			_status_code = 400;
-			return ;
-		}
-		lines.erase(0, pos + 2);
-		if (_remain_len) {
-        	_body += tmp;
-			_remain_len -= tmp.length();
-		}
-		else if ((_method == "POST") || (_method == "PUT"))
-			_body += tmp;
-		if ((_content_len > 0) && (((int)_body.length() > _content_len)
-			|| ((loc->max_body > 0) && (_content_len > loc->max_body)))) {
-			_status = Request::BAD_REQ;
-			_status_code = 400;
-			return ;	
-		}
-		return ;
+		if (!_curl)
+			return (standard_body_parse(lines, pos));
+		else
+			return (curl_body_parse(lines, pos));
     }
 	//Quit in case double CLRF
 	if ((_status == Request::BODY_PARSE) && !pos) {

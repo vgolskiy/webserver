@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 12:50:58 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 20:49:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,32 +69,6 @@ int		start_servers(std::vector<t_server*> &servers)
 	return (EXIT_SUCCESS);
 }
 
-void	delete_upon_timeout(std::vector<t_server*> &servers, long timeout_server, long timeout_client) {
-	std::vector<t_server*>::const_iterator it;
-
-	for (it = servers.begin(); it != servers.end(); ++it) {
-		std::list<Client*>::iterator it_cli;
-
-		for (it_cli = (*it)->clients.begin(); it_cli != (*it)->clients.end(); ++it_cli) {
-			if (((*it_cli)->get_status() == Client::ALIVE)
-				&& ((current_time() - (*it_cli)->get_start_time() > timeout_client * 1000))) {
-				std::cout << "Server " << (*it)->name << " client waiting time is out" << std::endl;
-				delete *it_cli;
-				it_cli = (*it)->clients.erase(it_cli);
-			}
-		}
-		if (current_time() - (*it)->time_start > timeout_server * 1000) {
-			std::cout << "Server " << (*it)->name << " waiting time is out" << std::endl;
-			delete *it;
-			it = servers.erase(it);
-		}
-	}
-	if (servers.empty() == true) {
-		clear_servers_configuration();
-		exit(EXIT_SUCCESS);
-	}
-}
-
 void	add_new_client(std::vector<t_server*> &servers, const fd_set &read_fd_sets) {
     for (size_t i = 0; i < servers.size(); i++) {
         if (FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets)) {
@@ -147,10 +121,8 @@ void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
 	}
 }
 
-void	delete_clients(std::vector<t_server*> &servers)
-{
-	for (size_t j = 0; j < servers.size(); j++)
-	{
+void	delete_clients(std::vector<t_server*> &servers) {
+	for (size_t j = 0; j < servers.size(); ++j) {
 		std::list<Client*>::iterator it = servers[j]->clients.begin();
 		std::list<Client*>::iterator ite = servers[j]->clients.end();
 		for (; it != ite; it++)
@@ -175,13 +147,11 @@ void	deal_request(std::vector<t_server*> &servers,
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
 		for (; it != servers[i]->clients.end(); ++it) {
 		//	if (FD_ISSET((*it)->get_fd(), &read_fd_sets) {
-				servers[i]->time_start = current_time();
 				(*it)->read_run_request(i);
 				if ((*it)->get_status() == Client::EMPTY)
 					return ;
 		//	}
 		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
-				servers[i]->time_start = current_time();
 				Response r(*it, servers[i], (*it)->get_request()->get_location_name(), (*it)->get_request()->get_requested_index());
 				r.create_response();
 				send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
@@ -226,7 +196,6 @@ int		select_loop(std::vector<t_server*> &servers) {
 			continue ;
 		}
         else {
-			delete_upon_timeout(servers, 200, 100);
 			add_new_client(servers, read_fd_sets);
 			deal_request(servers, read_fd_sets, write_fd_sets); // ad conditions;
 			delete_clients(servers);

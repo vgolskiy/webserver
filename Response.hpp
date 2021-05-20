@@ -56,6 +56,7 @@ public:
 	void		get_status_line(void);
 	bool		auth_by_uri_param(void);
 	bool		auth_by_header(void);
+	void		create_autoindex();
 };
 
 

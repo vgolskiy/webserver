@@ -59,16 +59,16 @@ server {
 
 	location /auth	{
 		methods	    GET;
-		index		auth.html, harryp_webfont.woff, harryp_webfont.woff2, hp.mp4;
+		index		auth.html, harryp_webfont.woff, harryp_webfont.woff2, hp_chamber.jpeg;
 		root 		./content/auth;
 		auth 		user:cGFzcw==;
 		auth		new:Z2FtZQ==;
 	}
 
-	location /content/photo {
+	location /photo {
 		methods		GET;
 		root		./content/photo;
-		index		cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg;
+		index		cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg, telegram01.jpeg;
 	}
 
 	location /content {
@@ -77,13 +77,13 @@ server {
 		index		harryp_webfont.woff, harryp_webfont.woff2;
 	}
 
-	location /content/error/50x/error_images {
+	location /50x/error_images {
 		methods		GET;
 		root		./content/error/50x/error_images;
 		index		error_500.jpeg, error_image.jpeg;
 	}
 
-	location /content/error/4xx/error_images {
+	location /4xx/error_images {
 		methods		GET;
 		root		./content/error/4xx/error_images;
 		index		error_400.png, error_401.png, error_404.jpeg, error_image.jpeg;
