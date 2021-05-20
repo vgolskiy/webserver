@@ -29,6 +29,8 @@ private:
 	std::map<std::string, std::string>	_headers;
 	Client*								_client;
 	std::string							_method;
+	std::string							_param;
+	std::string							_authorize;
 	std::string 						_body;
 	int									_status_code;
 	std::map<int, std::string>			_status;
@@ -36,6 +38,7 @@ private:
 	std::string							_requested_index;
 	std::map<std::string, std::vector<std::string> >	_content_types;
 	std::list<std::string>				_headers_sequence;
+	std::map<std::string, std::string>	_error_page;
 
 public:
 	Response(Client *client, t_server *server, std::string loc, std::string requested_index);
@@ -50,6 +53,8 @@ public:
 	std::string	get_page_body(void);
 	std::string	get_content_type(void);
 	void		get_status_line(void);
+	bool		auth_by_uri_param(void);
+	bool		auth_by_header(void);
 };
 
 

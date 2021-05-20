@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/19 20:55:38 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 12:44:22 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Request::Request(Client *client, const int i) : _i(i) {
     _method = "";
-    _query_str = "";
+    _param = "";
     _version = "";
     _uri = "";
     _body = "";
@@ -95,6 +95,14 @@ std::string	Request::get_requested_index(void) const {
 	return (_requested_index);
 }
 
+std::string	Request::get_uri_parameters(void) const {
+	return (_param);
+}
+
+std::string	Request::get_authorization(void) const {
+	return (_authorize);
+}
+
 void		Request::set_request_status(int status) {
 	_status = status;
 }
@@ -110,7 +118,6 @@ void remove_spaces(std::string &str)
 }
 
 bool Request::set_up_headers(std::string &lines) {
-	std::map<std::string, std::string>::iterator	it;
 	t_location*	loc = get_location(g_servers[_i], _location);
     std::vector<std::string>	tmp;
 	std::size_t					pos = lines.find(CRLF) == std::string::npos ? 0 : lines.find(CRLF);
@@ -145,15 +152,8 @@ bool Request::set_up_headers(std::string &lines) {
                         error_message("Autorization error: unsupported authorization type");
                         return (false);
 					}
-					tmp = split(base64_decode(tmp[1]), ":");
-					if ((tmp.size() == 2)
-						&& ((it = loc->auth.find(tmp[0])) != loc->auth.end())
-						&& ((*it).second == tmp[1]))
-						_autorize.insert(*it);
-					else {
-                        error_message("Autorization error: wrong credentials");
-                        return (false);
-					}
+					//encrypted pair <user>:<password>
+					_authorize = tmp[1];
                 }
                 else if ((tmp[0] == HOST) && (tmp.size() == 3)) {
                     std::string to_ret;
@@ -200,7 +200,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
     /* check _uri: if contains "?" -> fill_in query_string() */
     _uri = start_line[1];
     if (_uri.find("?") != std::string::npos) {
-        _query_str = _uri.substr(_uri.find("?") + 1, std::string::npos);
+        _param = _uri.substr(_uri.find("?") + 1, std::string::npos);
         _uri.erase(_uri.find("?"), std::string::npos);
     }
 	/*
@@ -232,24 +232,6 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	_status = Request::HEADERS;
     return (true);
 }
-
-void Request::parse_init(std::vector<std::string> &split_lines, std::string &orig_lines)
-{
-    for (size_t i = 0; i < split_lines.size(); i++)
-    {
-        if (split_lines[i].empty())
-        {
-            split_lines.erase(split_lines.begin());
-            orig_lines.erase(0, orig_lines.find(CRLF) + 2);
-        }
-        else
-        {
-            _status = Request::REQUEST_METHOD;
-            break ;
-        }
-    }
-}
-
 
 // <длина блока в HEX><\r\n><содержание блока><\r\n>
 bool Request::parse_chunk_size(std::string &lines)
@@ -312,7 +294,7 @@ void Request::print_parsed_request()
     	for (; it != ite; it++)
         	std::cout << "" MAGENTA << (*it).first << RESET": " CYAN << (*it).second << "\n" RESET;
 
-    	std::cout << "" MAGENTA << "Authorization" << RESET": " CYAN << _autorize.begin()->first << ":" << _autorize.begin()->second << "\n" RESET;
+    	std::cout << "" MAGENTA << "Authorization" << RESET": " CYAN << _authorize << "\n" RESET;
     	std::cout << std::endl;
 	}
 }
@@ -429,7 +411,7 @@ void Request::set_cgi_meta_vars() {
 	** The "basic" authentication scheme is based on the model that the
 	** client must authenticate itself with a user-ID and a password
 	*/
-    if (!php && (!_autorize.empty()))
+    if (!php && (!_authorize.length()))
         _env["AUTH_TYPE"] = "Basic";
     _env["CONTENT_LENGTH"] = std::to_string(_body.size());
     if ((header_found = find_header("Content-Type")))
@@ -445,8 +427,8 @@ void Request::set_cgi_meta_vars() {
     _env["PATH_TRANSLATED"] = _script_path;
 
 	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
-    if (!_query_str.empty())
-        _env["QUERY_STRING"] = _query_str;
+    if (!_param.empty())
+        _env["QUERY_STRING"] = _param;
     else
         _env["QUERY_STRING"];
     
@@ -455,9 +437,9 @@ void Request::set_cgi_meta_vars() {
     
     // REMOTE_IDENT - location authentification
     // REMOTE_USER
-	if (!_autorize.empty()) {
-		_env["REMOTE_IDENT"] = _autorize.begin()->first;
-		_env["REMOTE_USER"] = _autorize.begin()->first;
+	if (!_authorize.length()) {
+		_env["REMOTE_IDENT"] = _authorize.substr(0, _authorize.find(":"));
+		_env["REMOTE_USER"] = _authorize.substr(0, _authorize.find(":"));
 	}
 
 	//Method was verified against possible methods upon location

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/19 22:03:09 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/19 22:11:12 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void Client::read_run_request(const int i) {
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {
             std::cout << "Status: " << _request->get_status() << std::endl;
-			// check-print request - delete later,  turn bach return after BAD REQ
+			// TESTING check-print request - delete later,  turn bach return after BAD REQ
    			if (_request->get_status() == Request::BAD_REQ) {
    			    std::cout << "BAD REQUEST CLIENT: " << std::endl;
    			    _request->print_parsed_request();

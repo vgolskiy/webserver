@@ -61,8 +61,8 @@ server {
 		methods	    GET;
 		index		auth.html, harryp_webfont.woff, harryp_webfont.woff2, hp.mp4;
 		root 		./content/auth;
-		auth 		user:pass;
-		auth		new:game;
+		auth 		user:cGFzcw==;
+		auth		new:Z2FtZQ==;
 	}
 
 	location /content/photo {

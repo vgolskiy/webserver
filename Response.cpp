@@ -1,14 +1,16 @@
 #include "Response.hpp"
 
-Response::Response(Client *client, t_server *server, std::string loc, std::string requested_index) : _client(client), _requested_index(requested_index) {
-	//TODO: fix status codes
+Response::Response(Client *client, t_server *server, std::string loc, std::string requested_index) : _client(client), _requested_index(requested_index) {	
+	//TESTING
 	_status_code = 200;
 	set_status();
-
 	_response = "";
 	_method = client->get_request()->get_method();
 	_body = "";
 	_loc = get_location(server, loc);
+	_param = client->get_request()->get_uri_parameters();
+	_authorize = client->get_request()->get_authorization();
+	_error_page = server->error_page;
 	
 	std::vector<std::string> v;
 	const char* ss[4] = {".gif", ".jpeg", ".jpg", ".png"};
@@ -91,12 +93,14 @@ void Response::fill_response_body(void) {
 }
 
 std::string	Response::get_page_body(void) {
-
 	std::string		res = "";
 	std::string		file;
 	std::stringstream ss;
 
-	file = _requested_index.length() ? _loc->root + _requested_index : _loc->root + _loc->index[0];
+	if (_status_code == 200)
+		file = _requested_index.length() ? _loc->root + _requested_index : _loc->root + _loc->index[0];
+	else
+		file = _error_page[std::to_string(_status_code)];
 
 	std::ifstream	inf(file);
 
@@ -128,6 +132,44 @@ std::string	Response::get_content_type() {
 	return ("text/html");
 }
 
+//Verification of opened credentials vs opened user and encrypted password in location
+bool Response::auth_by_uri_param(void) {
+	std::map<std::string, std::string>::iterator	it;
+	std::string					usr, psw;
+
+	if (_param.length()) {
+		if (_param.find("user=") != std::string::npos) {
+			usr = _param.substr(_param.find("user=") + 5);
+			psw = usr.substr(usr.find("&") + 1);
+			if (!psw.find("password=")) {
+				usr = usr.substr(0, usr.find("&"));
+				psw = split(psw.substr(9, std::string::npos), "&")[0];
+				psw = base64_encode(psw);
+				if (((it = _loc->auth.find(usr)) != _loc->auth.end())
+					&& ((*it).second == psw))
+					return (true);
+			}
+		}
+	}
+	return (false);
+}
+
+//Verification of closed credentials vs opened user and encrypted password in location
+bool Response::auth_by_header(void) {
+	std::map<std::string, std::string>::iterator	it;
+	std::vector<std::string>	pair;
+	std::string					tmp;
+
+	if (_authorize.length()) {
+		tmp = base64_decode(_authorize);
+		pair = split(tmp, ":");
+		if (((it = _loc->auth.find(pair[0])) != _loc->auth.end())
+					&& ((*it).second == base64_encode(pair[1])))
+			return (true);
+	}
+    return (false);
+}
+
 void Response::create_response(void) {
 	std::string tmp;
 
@@ -141,7 +183,6 @@ void Response::create_response(void) {
 	}
 
 	//set status according to the request's method:
-	// HEAD - always OK?
 	// GET - if Request::BADREQ -> _status_code = NOT_FOUND
 	// GET - else if loc.auth != empty -> 
 
@@ -154,7 +195,8 @@ void Response::create_response(void) {
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
 	if (_method == "HEAD") {
-		// _status_code = OK;
+		//Status code always OK beac
+		_status_code = 200;
 		get_status_line();
 		fill_response_body();
 	}
@@ -168,6 +210,10 @@ void Response::create_response(void) {
 			// if (not valid authorization)
 				// _status_code = 401;
 				// fill in _headers[WWW-Authenticate] appropriately
+		if (_loc->auth.size()) {
+			if ((!auth_by_header()) && (!auth_by_uri_param()))
+				_status_code = 401;
+		}
 		get_status_line();
 		fill_response_body();
 		_response += get_page_body() + CRLF;

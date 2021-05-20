@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/19 20:55:38 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 12:35:23 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,12 +131,12 @@ class Request
 {
 private:
 	const int							_i;
-	std::string							_query_str;
+	std::string							_param;
 	std::string							_method;
 	std::string							_uri;
 	std::string							_version;
 	std::map<std::string, std::string>	_headers;
-	std::map<std::string, std::string>	_autorize;
+	std::string							_authorize;
 	std::string 						_body;
 	std::map<std::string, std::string>	_env;
 	std::string							_location;
@@ -158,7 +158,6 @@ public:
 	Request(Client *client, const int i);
 	~Request(void);
 
-	void		parse_init(std::vector<std::string> &split_lines, std::string &orig_lines);
 	void		parse_request(std::string &lines);
 	bool		parse_chunk_size(std::string &lines);
 	void		parse_chunk_data(std::string &lines);
@@ -176,7 +175,9 @@ public:
 	std::string get_method(void) const;
 	std::string get_location_name(void) const;
 	std::string	get_requested_index(void) const;
-	std::map<std::string, std::string> get_headers(void) const;
+	std::string	get_uri_parameters(void) const;
+	std::string	get_authorization(void) const;
+	std::map<std::string, std::string>	get_headers(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
 	void		parse_script_file_name(void);
