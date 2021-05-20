@@ -68,7 +68,7 @@ server {
 	location /photo {
 		methods		GET;
 		root		./content/photo;
-		index		cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg;
+		index		cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg, telegram01.jpeg;
 	}
 
 	location /content {
