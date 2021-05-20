@@ -7,7 +7,8 @@
 #define HTML_CLOSE "</body>\n</html>\n"
 
 Response::Response(Client *client, t_server *server, std::string loc, std::string requested_index) : _client(client), _requested_index(requested_index) {
-	_status_code = client->get_request()->get_status_code() ? client->get_request()->get_status_code() : 200;
+	_status_code = client->get_request()->get_status_code() ?
+		client->get_request()->get_status_code() : 200;
 	set_status();
 	_response = "";
 	_method = client->get_request()->get_method();
