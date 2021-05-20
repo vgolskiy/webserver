@@ -122,18 +122,17 @@ std::string	Response::get_page_body(void) {
 }
 
 void	Response::create_autoindex(){
-	DIR *directory = opendir(_loc->root.c_str()); // full path?
-	if (directory == NULL)
+	//root - is a full path for a current location
+	DIR *directory = opendir(_loc->root.c_str());
+	if (!directory)
 		return ;
 	
 	struct dirent *curr;
 
 	_body += HTML_TITLE;
 	_body += HTML_HEADER;
-	while ((curr = readdir(directory)) != NULL)
-	{
-		if (curr->d_name[0] != '.')
-		{
+	while ((curr = readdir(directory))) {
+		if (curr->d_name[0] != '.') {
 			_body += HYPER_REF;
 			_body += _requested_index.length() ? _loc->root + _requested_index : _loc->root + _loc->index[0]; // full name of file?
 			_body += "\">";
