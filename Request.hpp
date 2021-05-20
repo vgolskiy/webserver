@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 13:48:04 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 16:42:25 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,20 +111,6 @@ POST:
 
 #define TMP "tmp_file"
 
-#define RMN "/content/photo/rmanfred.jpeg"
-#define CWN "/content/photo/cwindom.jpeg"
-#define MSK "/content/photo/mskinner.jpeg"
-
-#define RMN_l "content/photo/rmanfred.jpeg"
-#define CWN_l "content/photo/cwindom.jpeg"
-#define MSK_l "content/photo/mskinner.jpeg"
-
-#define HHP_1 "content/fonts/harryp_webfont.woff"
-#define HHP_2 "content/fonts/harryp_webfont.woff2"
-
-#define HHP "/content/fonts/harryp_webfont.woff"
-#define HHP2 "/content/fonts/harryp_webfont.woff2"
-
 class Response;
 class Client;
 class Request
@@ -143,6 +129,7 @@ private:
 	const char*							_script_name;
 	const char*							_script_path;
 	std::string							_requested_index;
+	int									_max_body_size;
 
 	static std::string const			methods[];
 	static std::string const			headers[];
@@ -183,6 +170,7 @@ public:
 	std::string get_uri(void) const;
 	int			get_status_code(void) const;
 	void		set_status_code(int code);
+	int			get_content_length(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
 	void		parse_script_file_name(void);

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 14:27:26 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 16:42:25 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,10 @@ void		Request::set_status_code(int code){
 
 int			Request::get_status_code(void) const {
 	return (_status_code);
+}
+
+int			Request::get_content_length(void) const {
+	return (_content_len);
 }
 
 void remove_spaces(std::string &str) 
@@ -249,8 +253,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 }
 
 // <длина блока в HEX><\r\n><содержание блока><\r\n>
-bool Request::parse_chunk_size(std::string &lines)
-{
+bool Request::parse_chunk_size(std::string &lines) {
     std::size_t	pos;
     std::string	tmp;
 
@@ -258,13 +261,13 @@ bool Request::parse_chunk_size(std::string &lines)
     if (((pos = lines.find(CRLF)) == std::string::npos)
 		|| (!is_hex(tmp = lines.substr(0, pos))))
         return (false);
-    _content_len = std::strtol(tmp.c_str(), 0, 16);
-	if ((errno == ERANGE) || (_content_len < 0)) {
+    _remain_len = std::strtol(tmp.c_str(), 0, 16);
+	//in case of overflow
+	if ((errno == ERANGE) || (_remain_len < 0)) {
 		_status = Request::BAD_REQ;
 		_status_code = 400;
 		return (false);
 	}
-    _remain_len = _content_len;
     lines.erase(0, lines.find(CRLF) + 2);
     _status = Request::CHUNK_DATA;
     return (true);
@@ -273,8 +276,10 @@ bool Request::parse_chunk_size(std::string &lines)
 void Request::parse_chunk_data(std::string &lines) {
 	std::size_t	pos;
 	std::string	tmp;
+	t_location*	loc = get_location(g_servers[_i], _location);
 
     if ((!_remain_len) && (lines == CRLF)) {
+		_content_len = _body.length();
         _status = Request::DONE;
         return ;
     }
@@ -293,6 +298,11 @@ void Request::parse_chunk_data(std::string &lines) {
 		}
 		else
         	_body += tmp;
+		if ((loc->max_body > 0) && ((int)_body.length() > loc->max_body)) {
+			_status = Request::BAD_REQ;
+			_status_code = 400;
+			return ;
+		}
 		_remain_len -= tmp.length();
 	}
     _status = Request::CHUNK;
@@ -333,6 +343,7 @@ void Request::verify_body() {
 void Request::parse_request(std::string &lines) {
 	std::string	tmp;
 	std::size_t pos;
+	t_location*	loc = get_location(g_servers[_i], _location);
     
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
@@ -374,11 +385,15 @@ void Request::parse_request(std::string &lines) {
 		}
     }
 	//adding tmp strings to body until remain length is above zero
+	//in case of max_body > content_length or content_length < body length -> bad request
     if ((_status == Request::BODY_PARSE) && pos) {
 		tmp = lines.substr(0, pos);
 		if ((_method != "POST") && (_method != "PUT")
-			&& (_remain_len < (int)tmp.length()))
-			tmp =  lines.substr(0, _remain_len);//cut data in case of no remain characters length left
+			&& (_remain_len < (int)tmp.length())) {
+			_status = Request::BAD_REQ;
+			_status_code = 400;
+			return ;
+		}
 		lines.erase(0, pos + 2);
 		if (_remain_len) {
         	_body += tmp;
@@ -386,6 +401,12 @@ void Request::parse_request(std::string &lines) {
 		}
 		else if ((_method == "POST") || (_method == "PUT"))
 			_body += tmp;
+		if ((_content_len > 0) && (((int)_body.length() > _content_len)
+			|| ((loc->max_body > 0) && (_content_len > loc->max_body)))) {
+			_status = Request::BAD_REQ;
+			_status_code = 400;
+			return ;	
+		}
 		return ;
     }
 	//Quit in case double CLRF
@@ -532,6 +553,8 @@ void Request::run_cgi_request() {
 	//In case of any problems during fork: exit with errno code
     //Opening file to write in
 	// TODO: change all exit_errors to throw error -> write appropriate response
+
+	// TODO: the cgi should be run in the correct directory for relativ path file access (subject)
     if (((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
 		|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);

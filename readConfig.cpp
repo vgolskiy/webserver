@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 11:34:32 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 16:10:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -450,8 +450,17 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 			return (EXIT_FAILURE);
 	}
 	else if ((to_parse[0] == MAX_BODY) && (location.max_body == -1)
-		&& (is_all_numbers(to_parse[1])))
-		location.max_body = std::stoi(to_parse[1]);
+		&& (is_all_numbers(to_parse[1]))) {
+		try {
+			location.max_body = std::stoi(to_parse[1]);
+		}
+		catch(const std::exception& e) {
+			error_message(e.what());
+			return (EXIT_FAILURE);
+		}
+		if (location.max_body < 0)
+			return (EXIT_FAILURE);
+	}
 	//There could be defined several location users
 	else if (to_parse[0] == AUTH) {
 		if (parse_auth(location, to_parse[1]))

@@ -10,6 +10,7 @@ Response::Response(Client *client, t_server *server, std::string loc, std::strin
 	_param = client->get_request()->get_uri_parameters();
 	_authorize = client->get_request()->get_authorization();
 	_error_page = server->error_page;
+	_content_len = client->get_request()->get_content_length();
 
 	std::vector<std::string> v;
 	const char* ss[4] = {".gif", ".jpeg", ".jpg", ".png"};
@@ -183,7 +184,7 @@ void Response::create_response(void) {
 
 	//set status according to the request's method:
 	// GET - if Request::BADREQ -> _status_code = NOT_FOUND
-	// GET - else if loc.auth != empty ->
+	// GET - else if loc.auth != empty -> 
 
 	//_headers["Allow"] =
 	//_headers["Location"] =
@@ -191,6 +192,8 @@ void Response::create_response(void) {
 	_headers["Server"] = "webserv";
 	_headers["Date"] = get_server_date();
 	_headers["Content-Type"] = get_content_type();
+	if (_content_len)
+		_headers["Content-Length"] = std::to_string(_content_len);
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
 	if (_method == "HEAD") {
@@ -200,15 +203,6 @@ void Response::create_response(void) {
 		fill_response_body();
 	}
 	else if (_method == "GET") {
-		// if (_client->get_request()->get_status() == UNATHOURIZED) // depends on when you check
-			// _status_code = 401
-		// else if (_client->get_request()->get_status() == Not_found)
-			// _status_code = 404;
-		// else (_client->get_request()->get_status() == AUTHORIZED)
-			// check_authorization
-			// if (not valid authorization)
-				// _status_code = 401;
-				// fill in _headers[WWW-Authenticate] appropriately
 		if (_loc->auth.size()) {
 			if ((!auth_by_header()) && (!auth_by_uri_param()))
 				_status_code = 401;
@@ -226,7 +220,32 @@ void Response::create_response(void) {
 	}
 	else if (_method == "POST")
 	{
-		// check location
+		_client->get_request()->parse_script_file_name();
+		_client->get_request()->set_cgi_meta_vars();
+		if (_client->get_request()->get_script_name())
+		{
+			_client->get_request()->run_cgi_request(); // TODO: add if-condition in case of error
+			_client->get_request()->read_cgi();
+			get_status_line();
+			fill_response_body();
+			_response += _client->get_request()->get_body();
+		}
+		else
+		{
+			// turn on or off directory listing - autoindex (subject)
+			// need to check if the request is a directory (subject)
+			// make the route able to accept uploaded files and configure where it should be saved (subject)
+			get_status_line();
+			fill_response_body();
+			_response += get_page_body() + CRLF;
+		}
+	}
+	else
+	{
+		_status_code = 1; // not implemented;
+		get_status_line();
+		fill_response_body();
+		_response += _client->get_request()->get_body(); // ?
 	}
 }
 

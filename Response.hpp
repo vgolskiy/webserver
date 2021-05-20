@@ -36,6 +36,7 @@ private:
 	std::map<int, std::string>			_status;
 	t_location*							_loc;
 	std::string							_requested_index;
+	int									_content_len;
 	std::map<std::string, std::vector<std::string> >	_content_types;
 	std::list<std::string>				_headers_sequence;
 	std::map<std::string, std::string>	_error_page;
