@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/18 18:57:17 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 14:27:26 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Request::Request(Client *client, const int i) : _i(i) {
     _method = "";
-    _query_str = "";
+    _param = "";
     _version = "";
     _uri = "";
     _body = "";
@@ -22,11 +22,12 @@ Request::Request(Client *client, const int i) : _i(i) {
     _client = client;
     _remain_len = 0;
     _status = Request::REQUEST_METHOD;
-    _content_len = -1;
+    _content_len = 0;
     _chunk = false;
 	_script_path = NULL;
 	_script_name = NULL;
 	_requested_index = "";
+	_status_code = 0;
 }
 
 Request::~Request() {}
@@ -95,6 +96,26 @@ std::string	Request::get_requested_index(void) const {
 	return (_requested_index);
 }
 
+std::string	Request::get_uri_parameters(void) const {
+	return (_param);
+}
+
+std::string	Request::get_authorization(void) const {
+	return (_authorize);
+}
+
+void		Request::set_request_status(int status) {
+	_status = status;
+}
+
+void		Request::set_status_code(int code){
+	_status_code = code;
+}
+
+int			Request::get_status_code(void) const {
+	return (_status_code);
+}
+
 void remove_spaces(std::string &str) 
 {
     char* chr = const_cast<char*>(str.c_str());
@@ -106,7 +127,6 @@ void remove_spaces(std::string &str)
 }
 
 bool Request::set_up_headers(std::string &lines) {
-	std::map<std::string, std::string>::iterator	it;
 	t_location*	loc = get_location(g_servers[_i], _location);
     std::vector<std::string>	tmp;
 	std::size_t					pos = lines.find(CRLF) == std::string::npos ? 0 : lines.find(CRLF);
@@ -141,15 +161,8 @@ bool Request::set_up_headers(std::string &lines) {
                         error_message("Autorization error: unsupported authorization type");
                         return (false);
 					}
-					tmp = split(base64_decode(tmp[1]), ":");
-					if ((tmp.size() == 2)
-						&& ((it = loc->auth.find(tmp[0])) != loc->auth.end())
-						&& ((*it).second == tmp[1]))
-						_autorize.insert(*it);
-					else {
-                        error_message("Autorization error: wrong credentials");
-                        return (false);
-					}
+					//encrypted pair <user>:<password>
+					_authorize = tmp[1];
                 }
                 else if ((tmp[0] == HOST) && (tmp.size() == 3)) {
                     std::string to_ret;
@@ -169,12 +182,18 @@ bool Request::set_up_headers(std::string &lines) {
             }
             catch(const std::exception& e) {
                 error_message(e.what());
+				_status = Request::BAD_REQ;
+				_status_code = 400;
+				return (false);
             }
+			if (_content_len < 0) {
+				_status = Request::BAD_REQ;
+				_status_code = 400;
+				return (false);			
+			}
         }
-        if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED)) {
+        if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED))
             _chunk = true;
-            _content_len = -1;
-        }
         tmp.clear();
 		lines.erase(0, lines.find(CRLF) + 2);
 		pos = lines.find(CRLF) == std::string::npos ? 0 : lines.find(CRLF);
@@ -196,7 +215,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
     /* check _uri: if contains "?" -> fill_in query_string() */
     _uri = start_line[1];
     if (_uri.find("?") != std::string::npos) {
-        _query_str = _uri.substr(_uri.find("?") + 1, std::string::npos);
+        _param = _uri.substr(_uri.find("?") + 1, std::string::npos);
         _uri.erase(_uri.find("?"), std::string::npos);
     }
 	/*
@@ -229,24 +248,6 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
     return (true);
 }
 
-void Request::parse_init(std::vector<std::string> &split_lines, std::string &orig_lines)
-{
-    for (size_t i = 0; i < split_lines.size(); i++)
-    {
-        if (split_lines[i].empty())
-        {
-            split_lines.erase(split_lines.begin());
-            orig_lines.erase(0, orig_lines.find(CRLF) + 2);
-        }
-        else
-        {
-            _status = Request::REQUEST_METHOD;
-            break ;
-        }
-    }
-}
-
-
 // <длина блока в HEX><\r\n><содержание блока><\r\n>
 bool Request::parse_chunk_size(std::string &lines)
 {
@@ -258,6 +259,11 @@ bool Request::parse_chunk_size(std::string &lines)
 		|| (!is_hex(tmp = lines.substr(0, pos))))
         return (false);
     _content_len = std::strtol(tmp.c_str(), 0, 16);
+	if ((errno == ERANGE) || (_content_len < 0)) {
+		_status = Request::BAD_REQ;
+		_status_code = 400;
+		return (false);
+	}
     _remain_len = _content_len;
     lines.erase(0, lines.find(CRLF) + 2);
     _status = Request::CHUNK_DATA;
@@ -308,7 +314,7 @@ void Request::print_parsed_request()
     	for (; it != ite; it++)
         	std::cout << "" MAGENTA << (*it).first << RESET": " CYAN << (*it).second << "\n" RESET;
 
-    	std::cout << "" MAGENTA << "Authorization" << RESET": " CYAN << _autorize.begin()->first << ":" << _autorize.begin()->second << "\n" RESET;
+    	std::cout << "" MAGENTA << "Authorization" << RESET": " CYAN << _authorize << "\n" RESET;
     	std::cout << std::endl;
 	}
 }
@@ -425,7 +431,7 @@ void Request::set_cgi_meta_vars() {
 	** The "basic" authentication scheme is based on the model that the
 	** client must authenticate itself with a user-ID and a password
 	*/
-    if (!php && (!_autorize.empty()))
+    if (!php && (!_authorize.length()))
         _env["AUTH_TYPE"] = "Basic";
     _env["CONTENT_LENGTH"] = std::to_string(_body.size());
     if ((header_found = find_header("Content-Type")))
@@ -441,8 +447,8 @@ void Request::set_cgi_meta_vars() {
     _env["PATH_TRANSLATED"] = _script_path;
 
 	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
-    if (!_query_str.empty())
-        _env["QUERY_STRING"] = _query_str;
+    if (!_param.empty())
+        _env["QUERY_STRING"] = _param;
     else
         _env["QUERY_STRING"];
     
@@ -451,9 +457,9 @@ void Request::set_cgi_meta_vars() {
     
     // REMOTE_IDENT - location authentification
     // REMOTE_USER
-	if (!_autorize.empty()) {
-		_env["REMOTE_IDENT"] = _autorize.begin()->first;
-		_env["REMOTE_USER"] = _autorize.begin()->first;
+	if (!_authorize.length()) {
+		_env["REMOTE_IDENT"] = _authorize.substr(0, _authorize.find(":"));
+		_env["REMOTE_USER"] = _authorize.substr(0, _authorize.find(":"));
 	}
 
 	//Method was verified against possible methods upon location
@@ -525,6 +531,7 @@ void Request::run_cgi_request() {
 
 	//In case of any problems during fork: exit with errno code
     //Opening file to write in
+	// TODO: change all exit_errors to throw error -> write appropriate response
     if (((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
 		|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);
@@ -550,3 +557,45 @@ void Request::run_cgi_request() {
         close(tmp_fd);
     }
 }
+
+void Request::read_cgi()
+{
+	std::string			res = "";
+	std::string 		status_line = "Status: ";
+	std::string			header = "";
+	std::stringstream 	ss;
+
+    std::ifstream		inf(TMP);
+	if (!inf)
+		throw std::runtime_error(TMP); // add try in upper level
+	ss << inf.rdbuf();
+	res += ss.str();
+	res += "\n";
+	unlink(TMP); // the same as rm
+	header = res.substr(0, res.find(CRLF_2X));
+	// CGI programs can send status information as part of a virtual document (example below)
+	if (header.find(status_line) != std::string::npos)
+	{
+		header.erase(0, header.find(status_line) + status_line.length());
+		_status_code = ft_atoi(header.c_str());
+	}
+	res.erase(0, res.find(CRLF_2X) + 4);
+	_body = res;
+}
+
+/* 
+Example of cgi virtual document.
+The Status header consists of a three-digit numerical status code,
+followed by a string representing the code.
+#!/usr/local/bin/perl
+$remote_host = $ENV{'REMOTE_HOST'};
+print "Content-type: text/plain", "\n";
+if ($remote_host eq "bu.edu") {
+        print "Status: 200 OK", "\n\n";
+        print "Great! You are from Boston University!", "\n";
+} else {
+        print "Status: 400 Bad Request", "\n\n";
+        print "Sorry! You need to access this from Boston University!", "\n";
+}
+exit (0);
+*/
