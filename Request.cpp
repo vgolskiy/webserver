@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 13:20:58 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 13:48:04 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ Request::Request(Client *client, const int i) : _i(i) {
 	_script_path = NULL;
 	_script_name = NULL;
 	_requested_index = "";
+	_status_code = 0;
 }
 
 Request::~Request() {}
@@ -111,8 +112,8 @@ void		Request::set_status_code(int code){
 	_status_code = code;
 }
 
-int			Request::get_status_code(){
-	return _status_code;
+int			Request::get_status_code(void) const {
+	return (_status_code);
 }
 
 void remove_spaces(std::string &str) 

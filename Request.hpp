@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 12:35:23 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 13:48:04 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,16 +180,14 @@ public:
 	std::string	get_uri_parameters(void) const;
 	std::string	get_authorization(void) const;
 	std::map<std::string, std::string>	get_headers(void) const;
+	std::string get_uri(void) const;
+	int			get_status_code(void) const;
+	void		set_status_code(int code);
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
 	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
-
-	std::string 		get_uri(void) const;
-	void				read_cgi();
-
-	void				set_status_code(int code);
-	int					get_status_code();
+	void		read_cgi();
 
 	enum status
 	{
