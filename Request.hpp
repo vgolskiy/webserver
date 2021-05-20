@@ -147,6 +147,8 @@ private:
 	static std::string const			methods[];
 	static std::string const			headers[];
 
+	int									_status_code;
+
 	Client*								_client;
 	int									_status;
 	int									_remain_len; // bytes left to read
@@ -184,6 +186,10 @@ public:
 	std::vector<const char*>	convert_cgi_meta_vars(void);
 
 	std::string 		get_uri(void) const;
+	void				read_cgi();
+
+	void				set_status_code(int code);
+	int					get_status_code();
 
 	enum status
 	{

@@ -107,6 +107,14 @@ void		Request::set_request_status(int status) {
 	_status = status;
 }
 
+void		Request::set_status_code(int code){
+	_status_code = code;
+}
+
+int			Request::get_status_code(){
+	return _status_code;
+}
+
 void remove_spaces(std::string &str) 
 {
     char* chr = const_cast<char*>(str.c_str());
@@ -511,6 +519,7 @@ void Request::run_cgi_request() {
 
 	//In case of any problems during fork: exit with errno code
     //Opening file to write in
+	// TODO: change all exit_errors to throw error -> write appropriate response
     if (((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
 		|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);
@@ -536,3 +545,50 @@ void Request::run_cgi_request() {
         close(tmp_fd);
     }
 }
+
+void Request::read_cgi()
+{
+	std::string			res = "";
+	std::string 		status_line = "Status: ";
+	std::string			header = "";
+	std::string			status_code = "";
+	std::stringstream 	ss;
+
+    std::ifstream		inf(TMP);
+	if (!inf)
+		throw std::runtime_error(TMP); // add try in upper level
+	ss << inf.rdbuf();
+	res += ss.str();
+	res += "\n";
+	unlink(TMP); // the same as rm
+	header = res.substr(0, res.find(CRLF_2X));
+	// CGI programs can send status information as part of a virtual document (example below)
+	if (header.find(status_line) != std::string::npos)
+	{
+		header.erase(0, header.find(status_line));
+		if (header.find(CRLF) != std::string::npos)
+			status_code = header.substr(0, header.find(CRLF));
+		else
+			status_code = header;
+		status_code.erase(0, status_line.length());
+	}
+	res.erase(0, res.find(CRLF_2X) + 4);
+	_body = res;
+}
+
+/* 
+Example of cgi virtual document.
+The Status header consists of a three-digit numerical status code,
+followed by a string representing the code.
+#!/usr/local/bin/perl
+$remote_host = $ENV{'REMOTE_HOST'};
+print "Content-type: text/plain", "\n";
+if ($remote_host eq "bu.edu") {
+        print "Status: 200 OK", "\n\n";
+        print "Great! You are from Boston University!", "\n";
+} else {
+        print "Status: 400 Bad Request", "\n\n";
+        print "Sorry! You need to access this from Boston University!", "\n";
+}
+exit (0);
+*/
