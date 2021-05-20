@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 13:48:04 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 14:27:26 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,17 +183,17 @@ bool Request::set_up_headers(std::string &lines) {
             catch(const std::exception& e) {
                 error_message(e.what());
 				_status = Request::BAD_REQ;
+				_status_code = 400;
 				return (false);
             }
 			if (_content_len < 0) {
 				_status = Request::BAD_REQ;
+				_status_code = 400;
 				return (false);			
 			}
         }
-        if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED)) {
+        if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED))
             _chunk = true;
-            _content_len = 0;
-        }
         tmp.clear();
 		lines.erase(0, lines.find(CRLF) + 2);
 		pos = lines.find(CRLF) == std::string::npos ? 0 : lines.find(CRLF);
@@ -259,6 +259,11 @@ bool Request::parse_chunk_size(std::string &lines)
 		|| (!is_hex(tmp = lines.substr(0, pos))))
         return (false);
     _content_len = std::strtol(tmp.c_str(), 0, 16);
+	if ((errno == ERANGE) || (_content_len < 0)) {
+		_status = Request::BAD_REQ;
+		_status_code = 400;
+		return (false);
+	}
     _remain_len = _content_len;
     lines.erase(0, lines.find(CRLF) + 2);
     _status = Request::CHUNK_DATA;
