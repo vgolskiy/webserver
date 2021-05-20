@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 13:48:04 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 16:10:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,7 @@ private:
 	const char*							_script_name;
 	const char*							_script_path;
 	std::string							_requested_index;
+	int									_max_body_size;
 
 	static std::string const			methods[];
 	static std::string const			headers[];

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 14:41:42 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 16:28:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,8 +249,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 }
 
 // <длина блока в HEX><\r\n><содержание блока><\r\n>
-bool Request::parse_chunk_size(std::string &lines)
-{
+bool Request::parse_chunk_size(std::string &lines) {
     std::size_t	pos;
     std::string	tmp;
 
@@ -273,6 +272,7 @@ bool Request::parse_chunk_size(std::string &lines)
 void Request::parse_chunk_data(std::string &lines) {
 	std::size_t	pos;
 	std::string	tmp;
+	t_location*	loc = get_location(g_servers[_i], _location);
 
     if ((!_remain_len) && (lines == CRLF)) {
 		_content_len = _body.length();
@@ -294,6 +294,11 @@ void Request::parse_chunk_data(std::string &lines) {
 		}
 		else
         	_body += tmp;
+		if ((loc->max_body > 0) && ((int)_body.length() > loc->max_body)) {
+			_status = Request::BAD_REQ;
+			_status_code = 400;
+			return ;
+		}
 		_remain_len -= tmp.length();
 	}
     _status = Request::CHUNK;
@@ -334,6 +339,7 @@ void Request::verify_body() {
 void Request::parse_request(std::string &lines) {
 	std::string	tmp;
 	std::size_t pos;
+	t_location*	loc = get_location(g_servers[_i], _location);
     
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
@@ -375,11 +381,15 @@ void Request::parse_request(std::string &lines) {
 		}
     }
 	//adding tmp strings to body until remain length is above zero
+	//in case of max_body > content_length or content_length < body length -> bad request
     if ((_status == Request::BODY_PARSE) && pos) {
 		tmp = lines.substr(0, pos);
 		if ((_method != "POST") && (_method != "PUT")
-			&& (_remain_len < (int)tmp.length()))
-			tmp =  lines.substr(0, _remain_len);//cut data in case of no remain characters length left
+			&& (_remain_len < (int)tmp.length())) {
+			_status = Request::BAD_REQ;
+			_status_code = 400;
+			return ;
+		}
 		lines.erase(0, pos + 2);
 		if (_remain_len) {
         	_body += tmp;
@@ -387,6 +397,12 @@ void Request::parse_request(std::string &lines) {
 		}
 		else if ((_method == "POST") || (_method == "PUT"))
 			_body += tmp;
+		if ((_content_len > 0) && (((int)_body.length() > _content_len)
+			|| ((loc->max_body > 0) && (_content_len > loc->max_body)))) {
+			_status = Request::BAD_REQ;
+			_status_code = 400;
+			return ;	
+		}
 		return ;
     }
 	//Quit in case double CLRF
