@@ -337,6 +337,7 @@ void Request::verify_body() {
 		//in case of less body data only
 		error_message("Bad request sent by client: wrong content length");
 		_status = Request::BAD_REQ;
+		_status_code = 400;
 	}
 }
 
@@ -357,20 +358,24 @@ void Request::parse_request(std::string &lines) {
             if (!check_start_line(start_line)) {
                 error_message("Bad request sent by client: wrong request first line");
                 _status = Request::BAD_REQ;
+				_status_code = 400;
 				return ;
             }
 			lines.erase(0, pos + 2);
 			return ;
         }
         if ((_status == Request::HEADERS) && pos) {
-            if (!(set_up_headers(lines)))
-                _status = Request::BAD_REQ;
+            if (!(set_up_headers(lines))) {
+            	_status = Request::BAD_REQ;
+				_status_code = 400;
+            }
 			return ;
         }
 		if (!pos) {
 			if (_status != Request::HEADERS) {
 				error_message("Bad request sent by client: empty line");
 				_status = Request::BAD_REQ;
+				_status_code = 400;
 				return ;
 			}
 			lines.erase(0, 2); //second CRLF remove
@@ -418,6 +423,7 @@ void Request::parse_request(std::string &lines) {
         if (!(parse_chunk_size(lines))) {
 			error_message("Bad request sent by client: wrong chunk size");
 			_status = Request::BAD_REQ;
+			_status_code = 400;
 			return ;
 		}
 	}

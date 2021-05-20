@@ -188,7 +188,7 @@ void Response::create_response(void) {
 
 	//_headers["Allow"] =
 	//_headers["Location"] =
-	_headers["Retry-After"] = "1";
+	//_headers["Retry-After"] = "1";
 	_headers["Server"] = "webserv";
 	_headers["Date"] = get_server_date();
 	_headers["Content-Type"] = get_content_type();
@@ -198,7 +198,7 @@ void Response::create_response(void) {
 	//_headers["Last-Modified"] = get_last_modified_date();
 	if (_method == "HEAD") {
 		//Status code always OK beac
-		_status_code = 200;
+		//_status_code = 200; //можно это не писать
 		get_status_line();
 		fill_response_body();
 	}
@@ -242,7 +242,7 @@ void Response::create_response(void) {
 	}
 	else
 	{
-		_status_code = 1; // not implemented;
+		_status_code = 400; // not implemented;
 		get_status_line();
 		fill_response_body();
 		_response += _client->get_request()->get_body(); // ?
