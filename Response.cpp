@@ -222,13 +222,11 @@ void Response::create_response(void) {
 	_headers["Server"] = "webserv";
 	_headers["Date"] = get_server_date();
 	_headers["Content-Type"] = get_content_type();
-	if (_content_len)
-		_headers["Content-Length"] = std::to_string(_content_len);
+	//if (_content_len)
+	//	_headers["Content-Length"] = std::to_string(_content_len);
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
 	if (_method == "HEAD") {
-		//Status code always OK beac
-		_status_code = 200;
 		get_status_line();
 		fill_response_body();
 	}
