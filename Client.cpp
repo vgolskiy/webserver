@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/21 09:51:26 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/21 10:12:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ void Client::read_run_request(const int i) {
 			else
 				_request->set_request_status(Request::BAD_REQ);
         }
-		verify_request_timeout(60);
+		//10 seconds for request parse
+		verify_request_timeout(10);
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {
             std::cout << "Status: " << _request->get_status() << std::endl;
