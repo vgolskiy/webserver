@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 20:49:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/20 22:47:59 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ int		select_loop(std::vector<t_server*> &servers) {
     	// call select
     	to_select = select(nfds + 1, &read_fd_sets, &write_fd_sets, 0, &timeout);
     	if (!to_select)
-			exit_error_msg("Timeout of session");
+			exit_error_msg("Timeout of webserver session");
 		// error occured -> errno is set to indicate an error
 		//https://stackoverflow.com/questions/41474299/checking-if-errno-eintr-what-does-it-mean
 		else if ((to_select == -1) && (errno != EINTR))
