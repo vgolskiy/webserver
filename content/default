@@ -3,7 +3,7 @@ server {
 	listen 		localhost:8080;
 	server_name	webserv;
 
-	error_page  400 401 404 405 413 /4xx.html;
+	error_page  400 401 404 405 408 413 /4xx.html;
 
 	location = /4xx.html {
 		root	./content/error/4xx;

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 14:52:15 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/21 09:51:02 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ public:
 	void	clear_request(void);
 	int		get_status(void) const;
 	long	get_start_time(void) const;
+	void	verify_request_timeout(int timeout_client);
 };
 
 #endif

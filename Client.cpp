@@ -6,13 +6,13 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/19 22:11:12 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/21 09:51:26 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-void	Client::clear_request() {
+void	Client::clear_request(void) {
 	delete _request;
 }
 
@@ -25,22 +25,21 @@ Client::~Client() {
 	clear_request();
 }
 
-int         Client::get_fd(){return _fd;}
+int         Client::get_fd(void) { return (_fd); }
 
-int         Client::get_s_addr(){return _address.sin_addr.s_addr;}
+int         Client::get_s_addr(void) { return (_address.sin_addr.s_addr); }
 
-Request*    Client::get_request(){return _request;}
+Request*    Client::get_request(void) {return (_request); }
 
-Response*	Client::get_response(void) {return _response;}
+Response*	Client::get_response(void) { return (_response); }
 
 void		Client::set_response(Response* r) {_response = r;};
 
-int			Client::get_status() const {return _status;}
+int			Client::get_status(void) const { return (_status); }
 
-long		Client::get_start_time() const {return _time_start;}
+long		Client::get_start_time(void) const {return (_time_start); }
 
-void		Client::accept_connection()
-{
+void		Client::accept_connection(void) {
     int addrlen = sizeof(_address);
 
 	if ((_fd = accept(_listen_sock->get_fd(), (struct sockaddr*)&_address, (socklen_t*)&addrlen)) == -1)
@@ -53,6 +52,13 @@ void		Client::accept_connection()
     _status = Client::ALIVE;
 }
 
+void		Client::verify_request_timeout(int timeout_client) {
+	if ((current_time() - _time_start) > timeout_client * 1000) {
+		_request->set_request_status(Request::BAD_REQ);
+		_request->set_status_code(408);
+	}
+}
+
 void Client::read_run_request(const int i) {
 	int		buf_size = BUFFER_SIZE;
 	int		to_recieve;
@@ -63,7 +69,7 @@ void Client::read_run_request(const int i) {
 	** In case of chunk request we changing BUFFER_SIZE to chunk_size
 	** if remain len < buffer size -> change buffer size
     */
-    while (1)
+    while (true)
     {
         if (_request->get_status() == Request::BODY_PARSE && _request->get_remain_len() > 0)
             buf_size = _request->get_remain_len() < BUFFER_SIZE ? _request->get_remain_len() : BUFFER_SIZE;
@@ -85,6 +91,7 @@ void Client::read_run_request(const int i) {
 			else
 				_request->set_request_status(Request::BAD_REQ);
         }
+		verify_request_timeout(60);
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {
             std::cout << "Status: " << _request->get_status() << std::endl;
