@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/21 13:54:00 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/21 13:58:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,9 +247,12 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 		}
 	}
 	//If there is no needed location / method or uri contains file that not in index 
-	if ((!loc) || (!_method.length()) 
-		|| (tmp.length() && (!_requested_index.length()))) {
+	if ((!loc) || (tmp.length() && (!_requested_index.length()))) {
 		_status_code = 501;
+		return (false);
+	}
+	if (!_method.length()) {
+		_status_code = 405;
 		return (false);
 	}
 	_status = Request::HEADERS;
