@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 17:47:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/21 13:54:00 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,15 +187,10 @@ bool Request::set_up_headers(std::string &lines) {
             }
             catch(const std::exception& e) {
                 error_message(e.what());
-				_status = Request::BAD_REQ;
-				_status_code = 400;
 				return (false);
             }
-			if (_content_len < 0) {
-				_status = Request::BAD_REQ;
-				_status_code = 400;
-				return (false);			
-			}
+			if (_content_len < 0)
+				return (false);
         }
         if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED))
             _chunk = true;
@@ -213,12 +208,16 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	std::string	tmp;
 
     /* check number of arguments */
-    if (start_line.size() != 3)
+    if (start_line.size() != 3) {
+		_status_code = 400;
         return (false);
+	}
     /* check version of protocol: */
     _version = start_line[2];
-    if (_version != HTTP)
+    if (_version != HTTP) {
+		_status_code = 400;
         return (false);
+	}
     /* check _uri: if contains "?" -> fill_in query_string() */
     _uri = start_line[1];
     if (_uri.find("?") != std::string::npos) {
@@ -249,8 +248,10 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	}
 	//If there is no needed location / method or uri contains file that not in index 
 	if ((!loc) || (!_method.length()) 
-		|| (tmp.length() && (!_requested_index.length())))
+		|| (tmp.length() && (!_requested_index.length()))) {
+		_status_code = 501;
 		return (false);
+	}
 	_status = Request::HEADERS;
     return (true);
 }
@@ -266,11 +267,8 @@ bool Request::parse_chunk_size(std::string &lines) {
         return (false);
     _remain_len = std::strtol(tmp.c_str(), 0, 16);
 	//in case of overflow
-	if ((errno == ERANGE) || (_remain_len < 0)) {
-		_status = Request::BAD_REQ;
-		_status_code = 400;
+	if ((errno == ERANGE) || (_remain_len < 0))
 		return (false);
-	}
     lines.erase(0, lines.find(CRLF) + 2);
     _status = Request::CHUNK_DATA;
     return (true);
@@ -339,6 +337,7 @@ void Request::verify_body() {
 	else {
 		//in case of less body data only
 		error_message("Bad request sent by client: wrong content length");
+		_status_code = 400;
 		_status = Request::BAD_REQ;
 	}
 }
@@ -411,8 +410,10 @@ void Request::parse_request(std::string &lines) {
 			return ;
         }
         if ((_status == Request::HEADERS) && pos) {
-            if (!(set_up_headers(lines)))
+            if (!(set_up_headers(lines))) {
+				_status_code = 400;
                 _status = Request::BAD_REQ;
+			}
 			return ;
         }
 		if (!pos) {
@@ -446,6 +447,7 @@ void Request::parse_request(std::string &lines) {
     if ((_status == Request::CHUNK) && pos) {
         if (!(parse_chunk_size(lines))) {
 			error_message("Bad request sent by client: wrong chunk size");
+			_status_code = 400;
 			_status = Request::BAD_REQ;
 			return ;
 		}
