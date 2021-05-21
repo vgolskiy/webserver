@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/21 10:33:00 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/21 10:37:14 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void		Client::accept_connection(void) {
 
 void		Client::verify_request_timeout(int timeout_client) {
 	if ((_request->get_status() == Request::CHUNK) || (_request->get_status() == Request::CHUNK_DATA)) 
-		//need some time to fill the line manually
+		//need some time to fill the line manually: 30 seconds
 		timeout_client *= 3;
 	if ((current_time() - _time_start) > timeout_client * 1000) {
 		_request->set_request_status(Request::BAD_REQ);
@@ -88,7 +88,8 @@ void Client::read_run_request(const int i) {
 			if (to_recieve) {
             	buffer[to_recieve] = '\0';
             	_to_parse += buffer;
-				//!!!to prevent timeout during manual input/big file reading we can place start time update here!!!
+				//!!!to prevent timeout during manual input/big file reading we placing start time update here!!!
+				_time_start = current_time();
 			}
 			if (_to_parse.length())
             	_request->parse_request(_to_parse);
