@@ -21,6 +21,7 @@ server {
 		index	    index.html;
 		cgi			.bla;
 		cgi_path    ./content/cgi_tester;
+		autoindex	off;
     }
 
     location /put_test	{
@@ -68,7 +69,8 @@ server {
 	location /photo {
 		methods		GET;
 		root		./content/photo;
-		index		cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg, telegram01.jpeg;
+		index		directory.html, cwindom.jpeg, mskinner.jpeg, rmanfred.jpeg, telegram01.jpeg;
+		autoindex	off;
 	}
 
 	location /content {
@@ -87,5 +89,11 @@ server {
 		methods		GET;
 		root		./content/error/4xx/error_images;
 		index		error_400.png, error_401.png, error_404.jpeg, error_image.jpeg;
+	}
+	location /error {
+		methods		GET;
+		root		./content/error;
+		index		directory.html;
+		autoindex	on;
 	}
 }

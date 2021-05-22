@@ -248,7 +248,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	}
 	//If there is no needed location / method or uri contains file that not in index 
 	if ((!loc) || (tmp.length() && (!_requested_index.length()))) {
-		_status_code = 501;
+		_status_code = 404;
 		return (false);
 	}
 	if (!_method.length()) {

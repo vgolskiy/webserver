@@ -3,7 +3,7 @@
 #define HTML_TITLE "<html>\n<head>\n<title>Listing of directories</title>\n</head>"
 #define HTML_HEADER "<body>\n<h1>Autoindex: </h1>\n"
 #define HYPER_REF "<a href=\""
-#define HYPER_END "</a><br>\""
+#define HYPER_END "</a><br>"
 #define HTML_CLOSE "</body>\n</html>\n"
 
 Response::Response(Client *client, t_server *server, std::string loc, std::string requested_index) : _client(client), _requested_index(requested_index) {
@@ -112,7 +112,7 @@ std::string	Response::get_page_body(void) {
 	std::ifstream	inf(file);
 
 	if (!inf){
-		throw std::runtime_error(file);
+		return res;
 	}
 	ss << inf.rdbuf();
 	res += ss.str();
@@ -134,7 +134,7 @@ void	Response::create_autoindex(){
 	while ((curr = readdir(directory))) {
 		if (curr->d_name[0] != '.') {
 			_body += HYPER_REF;
-			_body += _requested_index.length() ? _loc->root + _requested_index : _loc->root + _loc->index[0]; // full name of file?
+			_body += curr->d_name;
 			_body += "\">";
 			_body += curr->d_name;
 			_body += HYPER_END;
@@ -203,19 +203,6 @@ bool Response::auth_by_header(void) {
 void Response::create_response(void) {
 	std::string tmp;
 
-	if (_client->get_request()->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
-	{
-		_status_code = 400;
-		get_status_line();
-		fill_response_body();
-		_response += CRLF;
-		//send html => _response += get_page_body() + CRLF;
-	}
-
-	//set status according to the request's method:
-	// GET - if Request::BADREQ -> _status_code = NOT_FOUND
-	// GET - else if loc.auth != empty -> 
-
 	//_headers["Allow"] =
 	//_headers["Location"] =
 	_headers["Retry-After"] = "1";
@@ -226,7 +213,16 @@ void Response::create_response(void) {
 	//	_headers["Content-Length"] = std::to_string(_content_len);
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
-	if (_method == "HEAD") {
+	if (_client->get_request()->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
+	{
+		if (_client->get_request()->get_status_code() == 0)
+			_status_code = 400;
+		get_status_line();
+		fill_response_body();
+		_response += get_page_body();
+		_response += CRLF;
+	}
+	else if (_method == "HEAD") {
 		get_status_line();
 		fill_response_body();
 	}
@@ -235,11 +231,13 @@ void Response::create_response(void) {
 			if ((!auth_by_header()) && (!auth_by_uri_param()))
 				_status_code = 401;
 		}
-		if (_status_code != 401 && _loc->auto_index)
+		else if (_status_code != 401 && _loc->auto_index)
 			create_autoindex();
 		get_status_line();
 		fill_response_body();
-		_response += get_page_body() + CRLF;
+		_response += _body;
+		if (!_loc->auto_index)
+			_response += get_page_body();
 	}
 	else if (_method == "PUT")
 	{
@@ -262,14 +260,12 @@ void Response::create_response(void) {
 		}
 		else
 		{
-			// turn on or off directory listing - autoindex (subject)
-			// need to check if the request is a directory (subject)
 			// make the route able to accept uploaded files and configure where it should be saved (subject)
-			if (_loc->auto_index)
+			if (_status_code != 401 && _loc->auto_index)
 				create_autoindex();
 			get_status_line();
 			fill_response_body();
-			_response += get_page_body() + CRLF;
+			_response += _client->get_request()->get_body();
 		}
 	}
 	else
