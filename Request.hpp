@@ -110,7 +110,7 @@ POST:
 # define CRLF			"\r\n"
 # define CRLF_2X		"\r\n\r\n"
 
-#define TMP "tmp_file"
+#define TMP "content/tmp_file"
 
 class Response;
 class Client;

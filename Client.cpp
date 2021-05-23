@@ -17,7 +17,7 @@ void	Client::clear_request(void) {
 }
 
 Client::Client(Socket *listen_sock) 
-: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _request(NULL), _time_start(current_time()) {}
+: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _to_parse(""), _request(NULL), _time_start(current_time()) {}
 
 Client::~Client() {
 	if (_fd != -1)
@@ -80,7 +80,7 @@ void Client::read_run_request(const int i) {
         memset(buffer, 0, buf_size);
         to_recieve = 0;
         to_recieve = recv(_fd, &buffer, buf_size, 0);
-        if (!to_recieve)
+        if (!to_recieve && !_to_parse.length())
             _status = Client::EMPTY;
         if ((to_recieve == -1) && (_to_parse.length())) //prevention of parse circle with empty lines
             _request->parse_request(_to_parse);
@@ -97,7 +97,7 @@ void Client::read_run_request(const int i) {
 				_request->set_request_status(Request::BAD_REQ);
         }
 		//10 seconds for request parse
-		verify_request_timeout(30);
+		// verify_request_timeout(30);
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {
             std::cout << "Status: " << _request->get_status() << std::endl;

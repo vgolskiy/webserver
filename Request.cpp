@@ -252,7 +252,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 		return (false);
 	}
 	if (!_method.length()) {
-		_status_code = 405;
+		_status_code = 501;
 		return (false);
 	}
 	_status = Request::HEADERS;
@@ -371,6 +371,7 @@ void Request::standard_body_parse(std::string &lines, std::size_t &pos) {
 		_status_code = 400;
 		return ;	
 	}
+	verify_body();
 }
 
 void Request::curl_body_parse(std::string &lines, std::size_t &pos) {
@@ -398,7 +399,11 @@ void Request::parse_request(std::string &lines) {
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
 	if (((pos = lines.find(CRLF)) == std::string::npos) && !_curl)
-		return ;
+	{
+		if ((size_t)_remain_len > lines.length())
+			return ;
+		pos = lines.length();
+	}
     if (_status == Request::REQUEST_METHOD || _status == Request::HEADERS) {
         if ((_status == Request::REQUEST_METHOD) && pos) {
             std::vector<std::string>    start_line;
@@ -463,7 +468,7 @@ void Request::parse_request(std::string &lines) {
     if (_status == Request::CHUNK_DATA)
         parse_chunk_data(lines);
 	return ;
-}
+	}
 
 // TODO: coding special signs from URL: !#%^&()=+ и пробел
 std::string* Request::find_header(std::string header) {

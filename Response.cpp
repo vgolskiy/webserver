@@ -250,23 +250,23 @@ void Response::create_response(void) {
 	{
 		_client->get_request()->parse_script_file_name();
 		_client->get_request()->set_cgi_meta_vars();
-		if (_client->get_request()->get_script_name())
-		{
-			_client->get_request()->run_cgi_request(); // TODO: add if-condition in case of error
+		// if (_client->get_request()->get_script_name())
+		// {
+			_client->get_request()->run_cgi_request(); // TODO: add if-condition in case of error (erno)
 			_client->get_request()->read_cgi();
 			get_status_line();
 			fill_response_body();
 			_response += _client->get_request()->get_body();
-		}
-		else
-		{
-			// make the route able to accept uploaded files and configure where it should be saved (subject)
-			if (_status_code != 401 && _loc->auto_index)
-				create_autoindex();
-			get_status_line();
-			fill_response_body();
-			_response += _client->get_request()->get_body();
-		}
+		// }
+		// else
+		// {
+		// 	// make the route able to accept uploaded files and configure where it should be saved (subject)
+		// 	if (_status_code != 401 && _loc->auto_index)
+		// 		create_autoindex();
+		// 	get_status_line();
+		// 	fill_response_body();
+		// 	_response += _client->get_request()->get_body();
+		// }
 	}
 	else
 	{
@@ -361,9 +361,9 @@ void Response::set_status()
 		// PUT /user/1234567890 HTTP/1.1
 		//Host: localhost
 		// {
-		//	"name": "Kevin Sookocheff",
-		//	"website": "http://kevinsookocheff.com"
-		//}
+		// 	"name": "Kevin Sookocheff",
+		// 	"website": "http://kevinsookocheff.com"
+		// }
 		//ответы:
 		//HTTP/1.1 201 Created 200 OK 204 No Content
 		//Location: /user/1234567890
@@ -371,7 +371,19 @@ void Response::set_status()
 		//PUT /user/1234567890 HTTP/1.1
 		//Host: http://sookocheff.com
 		//
-		//{
-		//	"name": "Kevin Sookocheff",
-		//	"website": "http://sookocheff.com"
-		//}
+		// {
+		// 	"name": "Kevin Sookocheff",
+		// 	"website": "http://sookocheff.com"
+		// }
+
+
+/*
+4.3.1 Для метода GET
+Получить значение переменной QUERY_STRING
+Декодировать имена и их значения (учитывая, что все пробелы при декодировании сервером были заменены символом "+" и все символы с десятичным кодом больше 128 преобразованы в символ "%" и следующим за ним шестнадцатеричным кодом символа.)
+Сформировать структуру соответствия "имя - значение" для дальнейшего использования в cgi-модуле
+4.3.2 Для метода POST
+Получить из стандартного входного потока CONTENT_LENGTH символов
+Декодировать имена и их значения (учитывая, что все пробелы при декодировании сервером были заменены символом "+" и все символы с десятичным кодом больше 128 преобразованы в символ "%" и следующим за ним шестнадцатеричным кодом символа.)
+Сформировать структуру соответствия "имя - значение" для дальнейшего использования в cgi-модуле
+*/
