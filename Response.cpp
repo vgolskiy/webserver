@@ -250,23 +250,28 @@ void Response::create_response(void) {
 	{
 		_client->get_request()->parse_script_file_name();
 		_client->get_request()->set_cgi_meta_vars();
-		// if (_client->get_request()->get_script_name())
-		// {
-			_client->get_request()->run_cgi_request(); // TODO: add if-condition in case of error (erno)
-			_client->get_request()->read_cgi();
+		if ((_client->get_request()->get_script_path().length()) > 0)
+		{
+			_client->get_request()->run_cgi_request();
+			try{
+				_client->get_request()->read_cgi();
+			}
+			catch(const std::exception& e){
+				error_message("Failed to open file for cgi.\n");
+			}
 			get_status_line();
 			fill_response_body();
 			_response += _client->get_request()->get_body();
-		// }
-		// else
-		// {
-		// 	// make the route able to accept uploaded files and configure where it should be saved (subject)
-		// 	if (_status_code != 401 && _loc->auto_index)
-		// 		create_autoindex();
-		// 	get_status_line();
-		// 	fill_response_body();
-		// 	_response += _client->get_request()->get_body();
-		// }
+		}
+		else
+		{
+			// make the route able to accept uploaded files and configure where it should be saved (subject)
+			if (_status_code != 401 && _loc->auto_index)
+				create_autoindex();
+			get_status_line();
+			fill_response_body();
+			_response += _client->get_request()->get_body();
+		}
 	}
 	else
 	{

@@ -24,8 +24,8 @@ Request::Request(Client *client, const int i) : _i(i) {
     _status = Request::REQUEST_METHOD;
     _content_len = 0;
     _chunk = false;
-	_script_path = NULL;
-	_script_name = NULL;
+	_script_path = "";
+	_script_name = "";
 	_requested_index = "";
 	_status_code = 0;
 	_curl = false;
@@ -85,8 +85,8 @@ std::string Request::get_method() const {
 	return (_method);
 }
 
-const char*	Request::get_script_name(void) const {
-	return (_script_name);
+std::string	Request::get_script_path(void) const {
+	return (_script_path);
 }
 
 std::string Request::get_location_name(void) const {
@@ -402,7 +402,7 @@ void Request::parse_request(std::string &lines) {
 	{
 		if ((size_t)_remain_len > lines.length())
 			return ;
-		pos = lines.length();
+		pos = lines.length();	
 	}
     if (_status == Request::REQUEST_METHOD || _status == Request::HEADERS) {
         if ((_status == Request::REQUEST_METHOD) && pos) {
@@ -532,7 +532,7 @@ void Request::set_cgi_meta_vars() {
 	//Full path name of the file to execute
 	// The leading "/" is not part of the path.  It is optional if the path is NULL
 	if (!php) {
-		_env["SCRIPT_NAME"] = _script_name ? _script_name : _uri;
+		_env["SCRIPT_NAME"] = (_script_name.length() > 0) ? _script_name : _uri;
 		// SERVER_NAME - get name from server[i]->get_name
 		_env["SERVER_NAME"] = g_servers[_i]->name;
     	//Just name of our program
@@ -560,11 +560,11 @@ void Request::parse_script_file_name() {
 	size_t		pos = _uri.rfind("/");
 
 	if ((tail(_uri, 4) == ".php") && (loc->php_path.length())) {
-		_script_path = loc->php_path.c_str();
-		_script_name = (_uri.substr(pos == std::string::npos ? 0 : pos + 1, std::string::npos)).c_str();
+		_script_path = loc->php_path;
+		_script_name = (_uri.substr(pos == std::string::npos ? 0 : pos + 1, std::string::npos));
 	}
 	else
-		_script_path = loc->cgi_path.c_str();
+		_script_path = loc->cgi_path;
 }
 
 // Functions to use: execve, dup2, pipe, fork, waitpid
@@ -584,17 +584,20 @@ void Request::run_cgi_request() {
 	** _script_path contains directory to php/cgi binary
 	** _script_name is NULL for cgi / gets php file name from _uri
 	*/
-	const char*	args[] = {_script_path, _script_name, NULL};
+	const char*	args[] = {_script_path.c_str(), _script_name.c_str(), NULL};
     int 		pipe_fds[2];
     pid_t 		pid;
     int 		tmp_fd;
+	t_location*	loc = get_location(g_servers[_i], _location);
+	std::string file = loc->root + TMP;
 
 	//In case of any problems during fork: exit with errno code
     //Opening file to write in
 	// TODO: change all exit_errors to throw error -> write appropriate response
 
 	// TODO: the cgi should be run in the correct directory for relativ path file access (subject)
-    if (((tmp_fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
+    // TODO: tmp file location - check
+	if (((tmp_fd = open(file.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
 		|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);
     pid = fork();
@@ -608,7 +611,7 @@ void Request::run_cgi_request() {
         close(pipe_fds[PIPE_OUT]);
 		// stdout подключается к временному файлу - происходит запись во временный файл
 		if ((dup2(tmp_fd, STDOUT_FILENO) < 0)
-			|| (execve(_script_path, (char *const *)args, (char *const *)&envp[0]) < 0))
+			|| (execve(_script_path.c_str(), (char *const *)args, (char *const *)&envp[0]) < 0))
 			exit_error(errno);
     }
     else {
@@ -627,13 +630,16 @@ void Request::read_cgi()
 	std::string			header = "";
 	std::stringstream 	ss;
 
-    std::ifstream		inf(TMP);
+	t_location*	loc = get_location(g_servers[_i], _location);
+	std::string file = loc->root + TMP;
+
+    std::ifstream		inf(file);
 	if (!inf)
-		throw std::runtime_error(TMP); // add try in upper level
+		throw std::runtime_error(file);
 	ss << inf.rdbuf();
 	res += ss.str();
 	res += "\n";
-	unlink(TMP); // the same as rm
+	unlink(file.c_str()); // the same as rm
 	header = res.substr(0, res.find(CRLF_2X));
 	// CGI programs can send status information as part of a virtual document (example below)
 	if (header.find(status_line) != std::string::npos)

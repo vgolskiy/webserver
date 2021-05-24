@@ -110,7 +110,7 @@ POST:
 # define CRLF			"\r\n"
 # define CRLF_2X		"\r\n\r\n"
 
-#define TMP "content/tmp_file"
+#define TMP "tmp_file"
 
 class Response;
 class Client;
@@ -127,8 +127,8 @@ private:
 	std::string 						_body;
 	std::map<std::string, std::string>	_env;
 	std::string							_location;
-	const char*							_script_name;
-	const char*							_script_path;
+	std::string							_script_name;
+	std::string							_script_path;
 	std::string							_requested_index;
 	int									_max_body_size;
 	bool								_curl;
@@ -161,7 +161,7 @@ public:
 	int			get_remain_len(void) const;
 	int 		get_status(void) const;
 	std::string	get_body(void) const;
-	const char*	get_script_name(void) const;
+	std::string	get_script_path(void) const;
 	std::string get_method(void) const;
 	std::string get_location_name(void) const;
 	std::string	get_requested_index(void) const;

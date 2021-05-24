@@ -37,6 +37,8 @@ void		Client::set_response(Response* r) {_response = r;};
 
 int			Client::get_status(void) const { return (_status); }
 
+void		Client::set_status(int status) { _status = status; }
+
 long		Client::get_start_time(void) const {return (_time_start); }
 
 void		Client::accept_connection(void) {
