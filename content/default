@@ -16,7 +16,7 @@ server {
 	}
 
     location /	{
-		methods	    GET,POST,HEAD,PUT;
+		methods	    GET;
         root	    ./content;
 		index	    index.html;
 		cgi			.bla;
@@ -95,7 +95,7 @@ server {
 	}
 
     location /	{
-		methods	    GET,POST,HEAD,PUT;
+		methods	    GET;
         root	    ./content;
 		index	    index.html;
 		cgi			.bla;
