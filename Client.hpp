@@ -66,6 +66,7 @@ public:
 	void	set_response(Response* r);
 	void	clear_request(void);
 	int		get_status(void) const;
+	void	set_status(int status);
 	long	get_start_time(void) const;
 	void	verify_request_timeout(int timeout_client);
 };

@@ -131,7 +131,7 @@ struct									t_location
 	std::map<std::string, std::string>	auth;
 	int									auto_index;
 	int									max_body;
-	t_location() : auto_index(-1), max_body(-1) {}
+	t_location() : auto_index(false), max_body(-1) {}
 };
 
 class Socket;

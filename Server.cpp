@@ -154,7 +154,11 @@ void	deal_request(std::vector<t_server*> &servers,
 		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
 				Response r(*it, servers[i], (*it)->get_request()->get_location_name(), (*it)->get_request()->get_requested_index());
 				r.create_response();
-				send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
+				int ret = send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
+				if (ret < 0)
+					error_message("Failed to send a response. System call error.\n");
+				else
+					(*it)->set_status(Client::DONE);
 		//	}
 		}
 	}

@@ -374,7 +374,7 @@ void Response::makeResponse()
 			this->_body = req->getBody();
 			if (this->_statusCode.empty())
 				this->_statusCode = OK;
-			writeResponse();
+			writeResponse() ;
 		}
 		else
 		{

@@ -126,7 +126,7 @@ void		Config::clear_server(t_server &server) {
 
 void		Config::clear_location(t_location &location) {
 	location.auth.clear();
-	location.auto_index = -1;
+	location.auto_index = false;
 	location.cgi = "";
 	location.cgi_path = "";
 	location.index.clear();
@@ -445,7 +445,7 @@ int		Config::parse_servers_locations(std::vector<std::string> &to_parse, t_locat
 	else if ((to_parse[0] == CGI) && (!location.cgi.length()) && (to_parse[1][0] == '.')
 		&& (std::count(to_parse[1].begin(), to_parse[1].end(), 46) == 1)) //file extention verification
 		location.cgi = to_parse[1];
-	else if ((to_parse[0] == AUTO_INDEX) && (location.auto_index == -1)) {
+	else if ((to_parse[0] == AUTO_INDEX) && (location.auto_index == false)) {
 		if (parse_autoindex(location, to_parse[1]))
 			return (EXIT_FAILURE);
 	}
