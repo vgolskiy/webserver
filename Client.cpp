@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/24 18:44:42 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 00:15:39 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,14 @@ void Client::read_run_request(const int i) {
    			    _request->print_parsed_request();
    			    std::cout << "Body: " << _request->get_body() << std::endl;
    			}
+			//Need to read request till the end even if it is meaningless to prevent connection reset by peer
+			//https://stackoverflow.com/questions/1434451/what-does-connection-reset-by-peer-mean
+			if (_request->get_status() == Request::BAD_REQ) {
+				//preventing "slamming the phone back on the hook" effect
+				usleep(1000);
+				while ((to_recieve = recv(_fd, &buffer, buf_size, 0)) > 0)
+					;
+			}
             break ;
         }
     }

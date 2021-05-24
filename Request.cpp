@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/24 19:03:29 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:54:14 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,7 +252,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 		return (false);
 	}
 	if (!_method.length()) {
-		_status_code = 501;
+		_status_code = 405;
 		return (false);
 	}
 	_status = Request::HEADERS;
@@ -406,7 +406,6 @@ void Request::parse_request(std::string &lines) {
 
             start_line = split(lines.substr(0, pos), " ");
             if (!check_start_line(start_line)) {
-                error_message("Bad request sent by client: wrong request first line");
                 _status = Request::BAD_REQ;
 				return ;
             }
