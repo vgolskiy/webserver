@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:28:49 by mskinner          #+#    #+#             */
-/*   Updated: 2021/04/15 21:11:01 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/24 16:34:55 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ Socket::Socket(int port, std::string host) : _port(port), _opt(1), _host(host) {
 void Socket::init_socket() {
     _address.sin_family = AF_INET;
     _address.sin_port = _port;
-    if((_address.sin_addr.s_addr = inet_addr(_host.c_str())) == INADDR_NONE)
+	_address.sin_addr.s_addr = inet_addr(_host.c_str());
+    if (_address.sin_addr.s_addr == INADDR_NONE)
 		exit_error(errno);
 }
 

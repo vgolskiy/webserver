@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/17 22:42:03 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/24 16:34:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ bool	Config::verify_port(std::string &s) {
 
 // Replacing "localhost" key name with IP "127.0.0.1"
 std::string	Config::replace_localhost(std::string &s) {
-	if (s == LOCALHOST)
+	if ((s == LOCALHOST) || (!s.length()))
 		return (LOCALHOST_IP);
 	return (s);
 }
@@ -124,8 +124,8 @@ bool		Config::verify_localhost(std::string &s) {
 		if ((n < 0) || (n > 255))
 			return (false);
 	}
-	if ((s == ZEROES_IP) || (s == BROADCAST_IP))
-		return (false);
+	//if ((s == ZEROES_IP) || (s == BROADCAST_IP))
+	//	return (false);
 	return (true);
 }
 
