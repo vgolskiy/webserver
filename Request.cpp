@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/21 13:58:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/24 19:03:29 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,11 +399,7 @@ void Request::parse_request(std::string &lines) {
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
 	if (((pos = lines.find(CRLF)) == std::string::npos) && !_curl)
-	{
-		if ((size_t)_remain_len > lines.length())
-			return ;
-		pos = lines.length();	
-	}
+		pos = lines.length();
     if (_status == Request::REQUEST_METHOD || _status == Request::HEADERS) {
         if ((_status == Request::REQUEST_METHOD) && pos) {
             std::vector<std::string>    start_line;
@@ -431,11 +427,11 @@ void Request::parse_request(std::string &lines) {
 				return ;
 			}
 			lines.erase(0, 2); //second CRLF remove
-            if ((_content_len > 0) || (_method == "POST")
+			if (_chunk == true)
+                _status = Request::CHUNK;
+            else if ((_content_len > 0) || (_method == "POST")
 				|| (_method == "PUT"))
                 _status = Request::BODY_PARSE;
-            else if (_chunk == true)
-                _status = Request::CHUNK;
             else
                 _status = Request::DONE;
 			return ;
