@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 22:47:59 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 11:20:21 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ int		start_servers(std::vector<t_server*> &servers)
     {
 		servers[i]->socket->to_bind();
 		servers[i]->socket->to_listen(SOMAXCONN);
-		std::cout << "Server " << servers[i]->name << " is litening to port " << ntohs(servers[i]->port.front()) << std::endl;
+		std::cout << "Server " << *(servers[i]->names.begin()) << " ("
+			<< servers[i]->host << ')' << " is litening to port " << ntohs(servers[i]->port.front()) << std::endl;
     }
 	return (EXIT_SUCCESS);
 }
@@ -76,7 +77,7 @@ void	add_new_client(std::vector<t_server*> &servers, const fd_set &read_fd_sets)
 			try {
 				new_cl->accept_connection();
 				servers[i]->clients.push_back(new_cl);
-				std::cout << "Client connected with a " << servers[i]->name << std::endl;
+				std::cout << "Client connected with a " << *(servers[i]->names.begin()) << std::endl;
 			}
 			catch (int e) {
 				error_message("Failed to connect with a client: " + std::string(strerror(e)));

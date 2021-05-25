@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 11:37:37 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/24 16:34:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 10:50:32 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ void	Config::init_servers_configuration(void)
 	for (size_t i = 0; i < _servers.size(); ++i) {
 		t_server *server = new t_server;
 
-		server->name = _servers[i].name;
+		server->names = _servers[i].names;
 		server->location = _servers[i].location;
 		server->port = _servers[i].port;
 		server->host = _servers[i].host;

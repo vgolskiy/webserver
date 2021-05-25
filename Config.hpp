@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 11:34:32 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 10:58:14 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ class Client;
 //Default config parsing is used instead of initiation function
 struct									t_server
 {
-	std::string							name;
+	std::vector<std::string>			names;
 	std::map<std::string, std::string>	error_page;
 	std::vector<t_location> 			location;
 	std::string							host;
@@ -182,6 +182,7 @@ private:
 	bool						verify_port(std::string &s);
 	int							convert_localhost(std::string &s, t_server &server);
 	bool						verify_method(std::string &s);
+	bool						verify_server_name(t_server &server, std::string &s);
 	int							parse_method(t_location &location, std::string &s);
 	int							parse_autoindex(t_location &location, std::string &s);
 	int							parse_directory(std::string &dir, std::string &s);

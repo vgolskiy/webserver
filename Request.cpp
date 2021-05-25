@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/24 20:54:14 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 10:55:53 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -529,9 +529,9 @@ void Request::set_cgi_meta_vars() {
 	if (!php) {
 		_env["SCRIPT_NAME"] = (_script_name.length() > 0) ? _script_name : _uri;
 		// SERVER_NAME - get name from server[i]->get_name
-		_env["SERVER_NAME"] = g_servers[_i]->name;
+		_env["SERVER_NAME"] = *(g_servers[_i]->names.begin());
     	//Just name of our program
-    	_env["SERVER_SOFTWARE"] = g_servers[_i]->name;
+    	_env["SERVER_SOFTWARE"] = *(g_servers[_i]->names.begin());
 	}
     // SERVER_PORT - get port from server[i]->get_port
     _env["SERVER_PORT"] = std::to_string(ntohs(g_servers[_i]->port.front()));

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 16:10:20 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 10:58:14 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ std::vector<std::string>	Config::parse_line(std::string &line) {
 void		Config::clear_server(t_server &server) {
 	server.error_page.clear();
 	server.host = "";
-	server.name = "";
+	server.names.clear();
 	server.port.clear();
 	server.location.clear();
 };
@@ -250,6 +250,17 @@ int		Config::parse_error_pages(t_server &server, std::string err, std::string er
 	return (EXIT_SUCCESS);
 };
 
+bool	Config::verify_server_name(t_server &server, std::string &s) {
+	if (s[0] == '.')
+		return (false);
+	for (size_t i = 0; i < s.length(); ++i)
+		if ((!isalnum(s[i]) && (s[i] != '.'))
+			|| ((s[i - 1] == '.') && (s[i] == '.')))
+			return (false);
+	server.names.push_back(s);
+	return (true);
+}
+
 /*
 ** There could be a few servers configurations in one configuration file
 ** so we are using a vector container to store information
@@ -261,17 +272,23 @@ int		Config::parse_error_pages(t_server &server, std::string err, std::string er
 */
 int		Config::parse_servers_configurations(std::vector<std::string> &to_parse, t_server &server) {
 	if ((to_parse.size() == 1) || ((to_parse.size() > 2) && (to_parse[2][0] != 35) 
-		&& (to_parse[0] != ERR_PAGE))) {
+		&& ((to_parse[0] != ERR_PAGE) && (to_parse[0] != NAME)))) {
 		error_message("Invalid arguments in configurations file");
 		return (EXIT_FAILURE);
 	}
 	if (to_parse[to_parse.size() - 1].back() != 59) {
-		error_message("directive " + to_parse[0] + " is not terminated by ;");
+		error_message("Directive " + to_parse[0] + " is not terminated by ;");
 		return (EXIT_FAILURE);
 	}
 	to_parse[to_parse.size() - 1].erase(to_parse[to_parse.size() - 1].size()-1);
-	if ((to_parse[0] == NAME) && (!server.name.length()))
-		server.name = to_parse[1];
+	if (to_parse[0] == NAME) {
+		for (size_t i = 1; i != to_parse.size() - 1; ++i) {
+			if (!verify_server_name(server, to_parse[i])) {
+				error_message("Server name " + to_parse[i] + " is not valid");
+				return (EXIT_FAILURE);
+			}
+		}
+	}
 	else if (to_parse[0] == PORT) {
 		if (verify_port(to_parse[1]))
 			server.port.push_back(htons(atoi(to_parse[1].c_str())));

@@ -1,6 +1,6 @@
 server {
     listen 		8080;
-	server_name	webserv;
+	server_name	testing.ru www.testing.ru;
 
 	error_page  400 401 404 405 408 413 /4xx.html;
 
@@ -79,7 +79,7 @@ server {
 server {
     listen 		8000;
 	listen 		0.0.0.0:8000;
-	server_name	webserv;
+	server_name	webserv.com www.webserv.com;
 
 	error_page  400 401 404 405 408 413 /4xx.html;
 
