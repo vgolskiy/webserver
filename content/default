@@ -43,7 +43,7 @@ server {
 		cgi_path    ./content/cgi_tester;
 	}
 
-	location /auth	{
+	location /auth/	{
 		methods	    GET;
 		index		auth.html, harryp_webfont.woff, harryp_webfont.woff2, hp_chamber.jpeg;
 		root 		./content/auth;

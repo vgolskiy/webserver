@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 11:16:22 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/25 10:58:14 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 19:40:34 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,11 @@ std::string const	Config::_headers[] = {
 };
 
 
+void	Config::fix_last_uri_slash(std::string &s) {
+	if (s.length() > 1)
+		s = s.length() == s.rfind("/") + 1 ?  s.substr(0, s.rfind("/")) : s;
+}
+
 /*
 ** File content line by line is parsed into server
 ** or server location parameters
@@ -196,6 +201,7 @@ int		Config::parse_configuration_file(std::vector<std::string> &file_lines) {
 				|| ((tokens.size() == 2) && (tokens[1][tokens[1].length() - 1] == 123))
 				|| ((tokens.size() == 4) && (tokens[1][0] == 61) && (tokens[3][0] == 123))) {
 				location.uri = tokens[1][0] != 61 ? tokens[1] : tokens[2];
+				fix_last_uri_slash(location.uri);//all uri in saved locations does not contain last slash
 				it++;
 				tokens = parse_line(*it);
 				while (tokens[0][0] != 125) {
@@ -365,6 +371,7 @@ bool	verify_file(std::string &file_path) {
 		close(fd);
 		return (false);
 	}
+	close(fd);
 	return (true);
 }
 

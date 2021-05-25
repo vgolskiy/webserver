@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/20 17:42:34 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 18:57:30 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,9 +127,10 @@ private:
 	std::string 						_body;
 	std::map<std::string, std::string>	_env;
 	std::string							_location;
+	std::string							_subfolder;
 	std::string							_script_name;
 	std::string							_script_path;
-	std::string							_requested_index;
+	std::string							_requested_file;
 	int									_max_body_size;
 	bool								_curl;
 	static std::string const			methods[];
@@ -164,7 +165,8 @@ public:
 	std::string	get_script_path(void) const;
 	std::string get_method(void) const;
 	std::string get_location_name(void) const;
-	std::string	get_requested_index(void) const;
+	std::string	get_requested_file(void) const;
+	std::string	get_subfolder(void) const;
 	std::string	get_uri_parameters(void) const;
 	std::string	get_authorization(void) const;
 	std::map<std::string, std::string>	get_headers(void) const;

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/25 11:20:21 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 18:32:35 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ void	deal_request(std::vector<t_server*> &servers,
 					return ;
 		//	}
 		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
-				Response r(*it, servers[i], (*it)->get_request()->get_location_name(), (*it)->get_request()->get_requested_index());
+				Response r(servers[i], (*it)->get_request());
 				r.create_response();
 				int ret = send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
 				if (ret < 0)

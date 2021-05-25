@@ -6,18 +6,25 @@
 #define HYPER_END "</a><br>"
 #define HTML_CLOSE "</body>\n</html>\n"
 
-Response::Response(Client *client, t_server *server, std::string loc, std::string requested_index) : _client(client), _requested_index(requested_index) {
-	_status_code = client->get_request()->get_status_code() ?
-		client->get_request()->get_status_code() : 200;
+Response::Response(t_server *server, Request *request)
+	: _request(request) {
+	_status_code = _request->get_status_code() ? _request->get_status_code() : 200;
 	set_status();
 	_response = "";
-	_method = client->get_request()->get_method();
+	_method = _request->get_method();
 	_body = "";
-	_loc = get_location(server, loc);
-	_param = client->get_request()->get_uri_parameters();
-	_authorize = client->get_request()->get_authorization();
+	_loc = get_location(server, _request->get_location_name());
+	_param = _request->get_uri_parameters();
+	_authorize = _request->get_authorization();
 	_error_page = server->error_page;
-	_content_len = client->get_request()->get_content_length();
+	_content_len = _request->get_content_length();
+	_requested_file = _request->get_requested_file();
+	_subfolder = _request->get_subfolder();
+	if (_subfolder.length()) {
+		_subfolder = _subfolder[0] == '/' ? _subfolder.substr(1) : _subfolder;
+		if (_subfolder[_subfolder.length() - 1] != '/')
+			_subfolder += "/";
+	}
 	
 	std::vector<std::string> v;
 	const char* ss[4] = {".gif", ".jpeg", ".jpg", ".png"};
@@ -99,20 +106,35 @@ void Response::fill_response_body(void) {
 	return ;
 }
 
+//Need to read page body once more because of error while reading
 std::string	Response::get_page_body(void) {
+	std::string res;
+
+	res = read_page_body();
+	if ((!res.length()) && (_status_code != 200))
+		res = read_page_body();
+	return (res);
+}
+
+std::string	Response::read_page_body(void) {
 	std::string		res = "";
 	std::string		file;
 	std::stringstream ss;
 
-	if (_status_code == 200)
-		file = _requested_index.length() ? _loc->root + _requested_index : _loc->root + _loc->index[0];
+	if (_status_code == 200) {
+		if (_requested_file.length())
+			file = _loc->root + _subfolder + _requested_file;
+		else
+			file = _loc->root + _loc->index[0];
+	}
 	else
 		file = _error_page[std::to_string(_status_code)];
 
 	std::ifstream	inf(file);
 
-	if (!inf){
-		return res;
+	if (!inf) {
+		_status_code = 404;
+		return (res);
 	}
 	ss << inf.rdbuf();
 	res += ss.str();
@@ -146,8 +168,8 @@ void	Response::create_autoindex(){
 
 std::string	Response::get_content_type() {
 	std::string	tmp;
-	if (_requested_index.length()) {
-		tmp = _requested_index.substr(_requested_index.rfind("."));
+	if (_requested_file.length()) {
+		tmp = _requested_file.substr(_requested_file.rfind("."));
 
 		std::map<std::string, std::vector<std::string> >::iterator	itm;
 		for (itm = _content_types.begin(); itm != _content_types.end(); ++itm) {
@@ -213,9 +235,9 @@ void Response::create_response(void) {
 	//	_headers["Content-Length"] = std::to_string(_content_len);
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
-	if (_client->get_request()->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
+	if (_request->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
 	{
-		if (_client->get_request()->get_status_code() == 0)
+		if (_request->get_status_code() == 0)
 			_status_code = 400;
 		get_status_line();
 		fill_response_body();
@@ -227,7 +249,7 @@ void Response::create_response(void) {
 		fill_response_body();
 	}
 	else if (_method == "GET") {
-		if (_loc->auth.size()) {
+		if (!_loc->auth.empty()) {
 			if ((!auth_by_header()) && (!auth_by_uri_param()))
 				_status_code = 401;
 		}
@@ -244,24 +266,24 @@ void Response::create_response(void) {
 		// know the file to change
 		// check everything about file (lstat, opendir, etc)
 		// ...
-		_response += _client->get_request()->get_body();
+		_response += _request->get_body();
 	}
 	else if (_method == "POST")
 	{
-		_client->get_request()->parse_script_file_name();
-		_client->get_request()->set_cgi_meta_vars();
-		if ((_client->get_request()->get_script_path().length()) > 0)
+		_request->parse_script_file_name();
+		_request->set_cgi_meta_vars();
+		if ((_request->get_script_path().length()) > 0)
 		{
-			_client->get_request()->run_cgi_request();
+			_request->run_cgi_request();
 			try{
-				_client->get_request()->read_cgi();
+				_request->read_cgi();
 			}
 			catch(const std::exception& e){
 				error_message("Failed to open file for cgi.\n");
 			}
 			get_status_line();
 			fill_response_body();
-			_response += _client->get_request()->get_body();
+			_response += _request->get_body();
 		}
 		else
 		{
@@ -270,7 +292,7 @@ void Response::create_response(void) {
 				create_autoindex();
 			get_status_line();
 			fill_response_body();
-			_response += _client->get_request()->get_body();
+			_response += _request->get_body();
 		}
 	}
 	else
@@ -278,7 +300,7 @@ void Response::create_response(void) {
 		_status_code = 1; // not implemented;
 		get_status_line();
 		fill_response_body();
-		_response += _client->get_request()->get_body(); // ?
+		_response += _request->get_body(); // ?
 	}
 }
 

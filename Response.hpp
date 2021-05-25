@@ -22,12 +22,13 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 struct	t_location;
 struct	t_server;
 class	Client;
+class	Request;
 class	Response
 {
 private:
 	std::string							_response;
 	std::map<std::string, std::string>	_headers;
-	Client*								_client;
+	Request*							_request;
 	std::string							_method;
 	std::string							_param;
 	std::string							_authorize;
@@ -35,14 +36,15 @@ private:
 	int									_status_code;
 	std::map<int, std::string>			_status;
 	t_location*							_loc;
-	std::string							_requested_index;
+	std::string							_subfolder;
+	std::string							_requested_file;
 	int									_content_len;
 	std::map<std::string, std::vector<std::string> >	_content_types;
 	std::list<std::string>				_headers_sequence;
 	std::map<std::string, std::string>	_error_page;
 
 public:
-	Response(Client *client, t_server *server, std::string loc, std::string requested_index);
+	Response(t_server *server, Request *request);
 	~Response();
 
 	void set_status();
@@ -51,6 +53,7 @@ public:
 	void		create_response(void);
 	void		fill_response_body(void);
 	std::string get_response_body(void);
+	std::string	read_page_body(void);
 	std::string	get_page_body(void);
 	std::string	get_content_type(void);
 	void		get_status_line(void);

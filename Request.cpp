@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/25 10:55:53 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 19:25:39 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,10 @@ Request::Request(Client *client, const int i) : _i(i) {
     _chunk = false;
 	_script_path = "";
 	_script_name = "";
-	_requested_index = "";
+	_requested_file = "";
 	_status_code = 0;
 	_curl = false;
+	_subfolder = "";
 }
 
 Request::~Request() {}
@@ -93,8 +94,12 @@ std::string Request::get_location_name(void) const {
 	return (_location);
 }
 
-std::string	Request::get_requested_index(void) const {
-	return (_requested_index);
+std::string	Request::get_requested_file(void) const {
+	return (_requested_file);
+}
+
+std::string	Request::get_subfolder(void) const {
+	return (_subfolder);
 }
 
 std::string	Request::get_uri_parameters(void) const {
@@ -224,30 +229,39 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
         _param = _uri.substr(_uri.find("?") + 1, std::string::npos);
         _uri.erase(_uri.find("?"), std::string::npos);
     }
+
+	//Getting file name from uri and removing that part of string
+	if (_uri.find(".") != std::string::npos) {
+		//cut the file name without CLRF
+		_requested_file = _uri.substr(_uri.rfind("/") + 1, _uri.length() - 4);
+		_uri = _uri.substr(0, _uri.rfind("/"));
+	}
 	/*
 	** Verification that location is among available in server config
 	** Method is available in found location
 	*/
-	_location = _uri.rfind("/") ? _uri.substr(0, _uri.rfind("/")) : _uri;
-	if ((loc = get_location(g_servers[_i], _location))) {
-    	/* check the validity of the method from the location methods list */
+	tmp = _uri;
+	loc = get_location(g_servers[_i], tmp);
+	if (loc)
+		_location = tmp;
+	while ((!loc) && (tmp.length() > 1)) {
+		_location = tmp.rfind("/") ? tmp.substr(0, tmp.rfind("/")) : tmp;
+		_subfolder = tmp.substr(tmp.rfind("/")) + _subfolder;
+		tmp = tmp.substr(0, tmp.rfind("/"));
+		loc = get_location(g_servers[_i], _location);
+	}
+	tmp.clear();
+    /* check the validity of the method from the location methods list */
+	if (loc) {
     	for (std::size_t i = 0; i < loc->methods.size(); ++i) {
         	if (start_line[0] == loc->methods[i]) {
             	_method = loc->methods[i];
 				break ;
 			}
 		}
-		if (_uri.find(".") != std::string::npos) {
-			//cut the file name without CLRF
-			tmp = _uri.substr(_uri.rfind("/") + 1, _uri.length() - 4);
-			for (std::size_t i = 0; i < loc->index.size(); ++i) {
-				if (loc->index[i] == tmp)
-					_requested_index = tmp;
-			}
-		}
 	}
 	//If there is no needed location / method or uri contains file that not in index 
-	if ((!loc) || (tmp.length() && (!_requested_index.length()))) {
+	if (!loc) {
 		_status_code = 404;
 		return (false);
 	}

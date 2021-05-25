@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/25 10:58:14 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/25 13:23:23 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ private:
 	int							parse_auth(t_location &location, std::string &s);
 	int							parse_error_pages(t_server &server, std::string err, std::string err_page);
 	int							parse_location_index(t_location &location, std::string &s);
+	void						fix_last_uri_slash(std::string &s);
 };
 
 void						*ft_memset(void *dest, int c, size_t len);
