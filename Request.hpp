@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/25 18:57:30 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/26 15:54:11 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ POST:
 
 #define TMP "tmp_file"
 
+struct	t_location;
 class Response;
 class Client;
 class Request
@@ -181,6 +182,9 @@ public:
 	void		parse_script_file_name(void);
 	std::vector<const char*>	convert_cgi_meta_vars(void);
 	void		read_cgi();
+	void		set_uri_parameters(void);
+	void		set_uri_file_name(void);
+	void		verify_subfolder(t_location *loc);
 
 	enum status
 	{

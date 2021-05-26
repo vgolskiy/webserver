@@ -19,6 +19,12 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 # include "Request.hpp"
 # include <dirent.h>
 
+# define HTML_TITLE		"<html>\n<head>\n<title>Listing of directories</title>\n</head>"
+# define HTML_HEADER	"<body>\n<h1>Autoindex: </h1>\n"
+# define HYPER_REF		"<a href=\" /autoindex"
+# define HYPER_END		"</a><br>"
+# define HTML_CLOSE		"</body>\n</html>\n"
+
 struct	t_location;
 struct	t_server;
 class	Client;
@@ -38,6 +44,7 @@ private:
 	t_location*							_loc;
 	std::string							_subfolder;
 	std::string							_requested_file;
+	std::string							_server_name;
 	int									_content_len;
 	std::map<std::string, std::vector<std::string> >	_content_types;
 	std::list<std::string>				_headers_sequence;

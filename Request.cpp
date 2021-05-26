@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/25 19:25:39 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/26 16:05:10 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,40 @@ bool Request::set_up_headers(std::string &lines) {
     return (true);
 }
 
+/* check _uri: if contains "?" -> fill_in query_string() */
+void Request::set_uri_parameters(void) {
+	if (_uri.find("?") != std::string::npos) {
+		_param = _uri.substr(_uri.find("?") + 1, std::string::npos);
+		_uri.erase(_uri.find("?"), std::string::npos);
+    }
+}
+
+//Getting file name from uri and removing that part of string
+void Request::set_uri_file_name(void) {
+	if (_uri.find(".") != std::string::npos) {
+		//cut the file name without CLRF
+		_requested_file = _uri.substr(_uri.rfind("/") + 1, _uri.length() - 4);
+		_uri = _uri.substr(0, _uri.rfind("/"));
+	}
+}
+
+void Request::verify_subfolder(t_location *loc) {
+	if (_subfolder.length()) {
+		_subfolder = _subfolder[0] == '/' ? _subfolder.substr(1) : _subfolder;
+		DIR *directory = opendir((loc->root + _subfolder).c_str());
+		if (!directory) {
+			if (!_requested_file.length()) {
+				_requested_file = _subfolder;
+				_subfolder.clear();
+			}
+			else {
+				_status_code = 400;
+				_status = Request::BAD_REQ;
+			}
+		}
+	}
+}
+
 bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	t_location	*loc;
 	std::string	tmp;
@@ -223,19 +257,11 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 		_status_code = 400;
         return (false);
 	}
-    /* check _uri: if contains "?" -> fill_in query_string() */
-    _uri = start_line[1];
-    if (_uri.find("?") != std::string::npos) {
-        _param = _uri.substr(_uri.find("?") + 1, std::string::npos);
-        _uri.erase(_uri.find("?"), std::string::npos);
-    }
 
-	//Getting file name from uri and removing that part of string
-	if (_uri.find(".") != std::string::npos) {
-		//cut the file name without CLRF
-		_requested_file = _uri.substr(_uri.rfind("/") + 1, _uri.length() - 4);
-		_uri = _uri.substr(0, _uri.rfind("/"));
-	}
+    _uri = start_line[1];
+	set_uri_parameters();
+	set_uri_file_name();
+
 	/*
 	** Verification that location is among available in server config
 	** Method is available in found location
@@ -253,6 +279,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 	tmp.clear();
     /* check the validity of the method from the location methods list */
 	if (loc) {
+		verify_subfolder(loc);
     	for (std::size_t i = 0; i < loc->methods.size(); ++i) {
         	if (start_line[0] == loc->methods[i]) {
             	_method = loc->methods[i];

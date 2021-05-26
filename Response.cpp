@@ -1,11 +1,5 @@
 #include "Response.hpp"
 
-#define HTML_TITLE "<html>\n<head>\n<title>Listing of directories</title>\n</head>"
-#define HTML_HEADER "<body>\n<h1>Autoindex: </h1>\n"
-#define HYPER_REF "<a href=\""
-#define HYPER_END "</a><br>"
-#define HTML_CLOSE "</body>\n</html>\n"
-
 Response::Response(t_server *server, Request *request)
 	: _request(request) {
 	_status_code = _request->get_status_code() ? _request->get_status_code() : 200;
@@ -21,10 +15,11 @@ Response::Response(t_server *server, Request *request)
 	_requested_file = _request->get_requested_file();
 	_subfolder = _request->get_subfolder();
 	if (_subfolder.length()) {
-		_subfolder = _subfolder[0] == '/' ? _subfolder.substr(1) : _subfolder;
+		//_subfolder = _subfolder[0] == '/' ? _subfolder.substr(1) : _subfolder;
 		if (_subfolder[_subfolder.length() - 1] != '/')
 			_subfolder += "/";
 	}
+	_server_name = *(server->names.begin());
 	
 	std::vector<std::string> v;
 	const char* ss[4] = {".gif", ".jpeg", ".jpg", ".png"};
@@ -124,6 +119,10 @@ std::string	Response::read_page_body(void) {
 	if (_status_code == 200) {
 		if (_requested_file.length())
 			file = _loc->root + _subfolder + _requested_file;
+		else if (_loc->auto_index) {
+			create_autoindex();
+			return (_body);
+		}
 		else
 			file = _loc->root + _loc->index[0];
 	}
@@ -143,12 +142,12 @@ std::string	Response::read_page_body(void) {
 	return (res);
 }
 
-void	Response::create_autoindex(){
+void	Response::create_autoindex() {
 	//root - is a full path for a current location
-	DIR *directory = opendir(_loc->root.c_str());
+	DIR *directory = opendir((_loc->root + _subfolder).c_str());
 	if (!directory)
 		return ;
-	
+
 	struct dirent *curr;
 
 	_body += HTML_TITLE;
@@ -156,6 +155,9 @@ void	Response::create_autoindex(){
 	while ((curr = readdir(directory))) {
 		if (curr->d_name[0] != '.') {
 			_body += HYPER_REF;
+			_body += "/";
+			if (_subfolder.length())
+				_body += _subfolder;
 			_body += curr->d_name;
 			_body += "\">";
 			_body += curr->d_name;
@@ -169,17 +171,21 @@ void	Response::create_autoindex(){
 std::string	Response::get_content_type() {
 	std::string	tmp;
 	if (_requested_file.length()) {
-		tmp = _requested_file.substr(_requested_file.rfind("."));
+		if (_requested_file.rfind(".") != std::string::npos) {
+			tmp = _requested_file.substr(_requested_file.rfind("."));
 
-		std::map<std::string, std::vector<std::string> >::iterator	itm;
-		for (itm = _content_types.begin(); itm != _content_types.end(); ++itm) {
-			std::vector<std::string>::iterator	itv;
+			std::map<std::string, std::vector<std::string> >::iterator	itm;
+			for (itm = _content_types.begin(); itm != _content_types.end(); ++itm) {
+				std::vector<std::string>::iterator	itv;
 
-			for (itv = (*itm).second.begin(); itv != (*itm).second.end(); ++itv) {
-				if (tmp == (*itv))
-					return ((*itm).first);
+				for (itv = (*itm).second.begin(); itv != (*itm).second.end(); ++itv) {
+					if (tmp == (*itv))
+						return ((*itm).first);
+				}
 			}
 		}
+		else
+			return ("application/octet-stream");
 	}
 	return ("text/html");
 }
@@ -228,7 +234,7 @@ void Response::create_response(void) {
 	//_headers["Allow"] =
 	//_headers["Location"] =
 	_headers["Retry-After"] = "1";
-	_headers["Server"] = "webserv";
+	_headers["Server"] = _server_name;
 	_headers["Date"] = get_server_date();
 	_headers["Content-Type"] = get_content_type();
 	//if (_content_len)
@@ -253,13 +259,9 @@ void Response::create_response(void) {
 			if ((!auth_by_header()) && (!auth_by_uri_param()))
 				_status_code = 401;
 		}
-		else if (_status_code != 401 && _loc->auto_index)
-			create_autoindex();
 		get_status_line();
 		fill_response_body();
-		_response += _body;
-		if (!_loc->auto_index)
-			_response += get_page_body();
+		_response += get_page_body();
 	}
 	else if (_method == "PUT")
 	{
