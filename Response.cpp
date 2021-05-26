@@ -119,6 +119,7 @@ std::string	Response::read_page_body(void) {
 	std::string		res = "";
 	std::string		file;
 	std::stringstream ss;
+	//DIR*			directory;
 
 	if (_status_code == 200) {
 		if (_requested_file.length())
@@ -127,6 +128,15 @@ std::string	Response::read_page_body(void) {
 			create_autoindex();
 			return (_body);
 		}
+		/*else if ((_subfolder.length())
+			&& ((directory = opendir((_loc->root + _subfolder).c_str())))) {
+			closedir(directory);
+			_status_code = 404;
+			_response.clear();
+			get_status_line();
+			fill_response_body();
+			return ("Sorry, this is a directory");
+		}*/
 		else
 			file = _loc->root + _loc->index[0];
 	}
