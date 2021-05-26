@@ -106,8 +106,12 @@ std::string	Response::get_page_body(void) {
 	std::string res;
 
 	res = read_page_body();
-	if ((!res.length()) && (_status_code != 200))
-		res = read_page_body();
+	if ((!res.length()) && (_status_code != 200)) {
+		_response.clear();
+		get_status_line();
+		fill_response_body();
+		res = (_method != "HEAD") ? read_page_body() : "";
+	}
 	return (res);
 }
 
@@ -242,16 +246,7 @@ void Response::create_response(void) {
 	//	_headers["Content-Length"] = std::to_string(_content_len);
 	//_headers["WWW-Authenticate"] =
 	//_headers["Last-Modified"] = get_last_modified_date();
-	if (_request->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
-	{
-		if (_request->get_status_code() == 0)
-			_status_code = 400;
-		get_status_line();
-		fill_response_body();
-		_response += get_page_body();
-		_response += CRLF;
-	}
-	else if (_method == "HEAD") {
+	if (_method == "HEAD") {
 		get_status_line();
 		fill_response_body();
 	}
@@ -297,6 +292,15 @@ void Response::create_response(void) {
 			fill_response_body();
 			_response += _request->get_body();
 		}
+	}
+	else if (_request->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
+	{
+		if (_request->get_status_code() == 0)
+			_status_code = 400;
+		get_status_line();
+		fill_response_body();
+		_response += get_page_body();
+		_response += CRLF;
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/26 16:05:10 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/26 20:10:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 Request::Request(Client *client, const int i) : _i(i) {
     _method = "";
+	_method_allowed = false;
     _param = "";
     _version = "";
     _uri = "";
@@ -280,9 +281,10 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
     /* check the validity of the method from the location methods list */
 	if (loc) {
 		verify_subfolder(loc);
+		_method = start_line[0];
     	for (std::size_t i = 0; i < loc->methods.size(); ++i) {
-        	if (start_line[0] == loc->methods[i]) {
-            	_method = loc->methods[i];
+        	if (_method == loc->methods[i]) {
+            	_method_allowed = true;
 				break ;
 			}
 		}
@@ -292,7 +294,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 		_status_code = 404;
 		return (false);
 	}
-	if (!_method.length()) {
+	if (!_method_allowed) {
 		_status_code = 405;
 		return (false);
 	}
@@ -439,8 +441,11 @@ void Request::parse_request(std::string &lines) {
     
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
-	if (((pos = lines.find(CRLF)) == std::string::npos) && !_curl)
+	if (((pos = lines.find(CRLF)) == std::string::npos) && !_curl) {
+		if (_status < Request::BODY_PARSE)
+			return ;
 		pos = lines.length();
+	}
     if (_status == Request::REQUEST_METHOD || _status == Request::HEADERS) {
         if ((_status == Request::REQUEST_METHOD) && pos) {
             std::vector<std::string>    start_line;

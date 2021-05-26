@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/26 15:54:11 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/26 20:10:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ private:
 	const int							_i;
 	std::string							_param;
 	std::string							_method;
+	bool								_method_allowed;
 	std::string							_uri;
 	std::string							_version;
 	std::map<std::string, std::string>	_headers;
@@ -188,12 +189,12 @@ public:
 
 	enum status
 	{
-		BODY_PARSE,
-		HEADERS,
-		C_G_I,
 		REQUEST_METHOD,
+		HEADERS,
+		BODY_PARSE,
 		CHUNK,
 		CHUNK_DATA,
+		C_G_I,
 		BAD_REQ,
 		DONE
 	};
