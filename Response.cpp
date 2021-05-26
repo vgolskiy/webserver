@@ -155,6 +155,7 @@ void	Response::create_autoindex() {
 	while ((curr = readdir(directory))) {
 		if (curr->d_name[0] != '.') {
 			_body += HYPER_REF;
+			_body += _loc->uri;
 			_body += "/";
 			if (_subfolder.length())
 				_body += _subfolder;

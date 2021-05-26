@@ -21,7 +21,7 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 
 # define HTML_TITLE		"<html>\n<head>\n<title>Listing of directories</title>\n</head>"
 # define HTML_HEADER	"<body>\n<h1>Autoindex: </h1>\n"
-# define HYPER_REF		"<a href=\" /autoindex"
+# define HYPER_REF		"<a href=\""
 # define HYPER_END		"</a><br>"
 # define HTML_CLOSE		"</body>\n</html>\n"
 
