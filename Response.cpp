@@ -115,6 +115,14 @@ std::string	Response::get_page_body(void) {
 	return (res);
 }
 
+/*
+** Cases:
+** - have requested file name, so just add subfolder and get it
+** - have autoindex mark - create index on the way and return it
+** - have subfolder only - verify that subfolder contains at least one file from index and return it,
+** else return status code 404 with excuses
+** - have location only - return the first one index
+*/
 std::string	Response::read_page_body(void) {
 	std::string		res = "";
 	std::string		file = "";
