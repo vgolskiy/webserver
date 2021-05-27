@@ -117,9 +117,9 @@ std::string	Response::get_page_body(void) {
 
 std::string	Response::read_page_body(void) {
 	std::string		res = "";
-	std::string		file;
+	std::string		file = "";
 	std::stringstream ss;
-	//DIR*			directory;
+	DIR*			directory;
 
 	if (_status_code == 200) {
 		if (_requested_file.length())
@@ -128,15 +128,28 @@ std::string	Response::read_page_body(void) {
 			create_autoindex();
 			return (_body);
 		}
-		/*else if ((_subfolder.length())
+		else if ((_subfolder.length())
 			&& ((directory = opendir((_loc->root + _subfolder).c_str())))) {
-			closedir(directory);
-			_status_code = 404;
-			_response.clear();
-			get_status_line();
-			fill_response_body();
-			return ("Sorry, this is a directory");
-		}*/
+			struct dirent	*ent;
+			std::vector<std::string>::iterator	it;
+
+			while ((ent = readdir(directory)) && (!file.length())) {
+				for (it = _loc->index.begin(); it != _loc->index.end(); ++it) {
+					if (*it == ent->d_name) {
+						file = _loc->root + *it;
+						closedir(directory);
+						break ;
+					}
+				}
+			}
+			if (!file.length()) {
+				_status_code = 404;
+				_response.clear();
+				get_status_line();
+				fill_response_body();
+				return ("Sorry, this is a directory");
+			}
+		}
 		else
 			file = _loc->root + _loc->index[0];
 	}
