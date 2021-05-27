@@ -310,7 +310,7 @@ bool Request::parse_chunk_size(std::string &lines) {
 	//If there is no content / length is not hexadecimal value
     if (((pos = lines.find(CRLF)) == std::string::npos)
 		|| (!is_hex(tmp = lines.substr(0, pos))))
-        return (false);
+        	return (false);
     _remain_len = std::strtol(tmp.c_str(), 0, 16);
 	//in case of overflow
 	if ((errno == ERANGE) || (_remain_len < 0))
@@ -496,7 +496,7 @@ void Request::parse_request(std::string &lines) {
     if ((_status == Request::CHUNK) && pos) {
         if (!(parse_chunk_size(lines))) {
 			error_message("Bad request sent by client: wrong chunk size");
-			_status_code = 400;
+			_status_code = 200;
 			_status = Request::BAD_REQ;
 			return ;
 		}

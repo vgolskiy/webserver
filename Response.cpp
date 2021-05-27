@@ -265,6 +265,25 @@ bool Response::auth_by_header(void) {
     return (false);
 }
 
+void Response::put_method()
+{
+	std::string path = _loc->root + _subfolder + _requested_file;
+	int to_ret;
+	int fd;
+	struct stat	buf;
+
+	to_ret = stat(path.c_str(), &buf);
+	if (to_ret == 0){
+		fd = open(path.c_str(), O_CREAT | O_RDWR | O_APPEND, 0666);
+		_status_code = 200;
+	}
+	else{
+		fd = open(path.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
+		_status_code = 201;
+	}
+	write(fd, _request->get_body().c_str(), _request->get_body().length());
+}
+
 void Response::create_response(void) {
 	std::string tmp;
 
@@ -293,10 +312,9 @@ void Response::create_response(void) {
 	}
 	else if (_method == "PUT")
 	{
-		// know the file to change
-		// check everything about file (lstat, opendir, etc)
-		// ...
-		_response += _request->get_body();
+		put_method();
+		get_status_line();
+		fill_response_body();
 	}
 	else if (_method == "POST")
 	{
@@ -309,6 +327,7 @@ void Response::create_response(void) {
 				_request->read_cgi();
 			}
 			catch(const std::exception& e){
+				_status_code = 500;
 				error_message("Failed to open file for cgi.\n");
 			}
 			get_status_line();
