@@ -151,6 +151,7 @@ std::string	Response::read_page_body(void) {
 				}
 			}
 			if (!file.length()) {
+				closedir(directory);
 				_status_code = 404;
 				_response.clear();
 				get_status_line();
