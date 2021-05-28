@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/26 20:10:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/28 15:33:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,9 +325,9 @@ void Request::parse_chunk_data(std::string &lines) {
 	std::string	tmp;
 	t_location*	loc = get_location(g_servers[_i], _location);
 
-    if ((!_remain_len) && (lines == CRLF)) {
+    if (!_remain_len) {
 		_content_len = _body.length();
-        _status = Request::DONE;
+        _status = Request::CHUNK_DONE;
         return ;
     }
 	//string was not fully readed from the first time
@@ -339,12 +339,7 @@ void Request::parse_chunk_data(std::string &lines) {
 	lines.erase(0, pos + 2);
 	//write to body string by string
 	if (_remain_len) {
-		if (_body.length()) {
-			_body += "\n";
-			_body += tmp;
-		}
-		else
-        	_body += tmp;
+		_body += tmp;
 		if ((loc->max_body > 0) && ((int)_body.length() > loc->max_body)) {
 			_status = Request::BAD_REQ;
 			_status_code = 400;
@@ -442,7 +437,7 @@ void Request::parse_request(std::string &lines) {
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
 	if (((pos = lines.find(CRLF)) == std::string::npos) && !_curl) {
-		if (_status < Request::BODY_PARSE)
+		if (_status != Request::BODY_PARSE)
 			return ;
 		pos = lines.length();
 	}

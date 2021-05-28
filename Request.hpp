@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/26 20:10:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/28 15:33:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,7 @@ public:
 		BODY_PARSE,
 		CHUNK,
 		CHUNK_DATA,
+		CHUNK_DONE,
 		C_G_I,
 		BAD_REQ,
 		DONE

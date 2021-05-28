@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/26 20:20:35 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/28 15:33:13 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,17 @@ void Client::read_run_request(const int i) {
         }
 		//10 seconds for request parse
 		//verify_request_timeout(30); //TESTING
+		//Need to read request till the end even if it is meaningless to prevent connection reset by peer
+		//https://stackoverflow.com/questions/1434451/what-does-connection-reset-by-peer-mean
+		if ((_request->get_status() == Request::BAD_REQ)
+			|| (_request->get_status() == Request::CHUNK_DONE)) {
+			//preventing "slamming the phone back on the hook" effect
+			usleep(1000);
+			while ((to_recieve = recv(_fd, &buffer, buf_size, 0)) > 0)
+					;
+			if (_request->get_status() == Request::CHUNK_DONE)
+				_request->set_request_status(Request::DONE);
+		}
         if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
         {
             std::cout << "Status: " << _request->get_status() << std::endl;
@@ -112,14 +123,6 @@ void Client::read_run_request(const int i) {
    			    _request->print_parsed_request();
    			    // std::cout << "Body: " << _request->get_body() << std::endl;
    			}
-			//Need to read request till the end even if it is meaningless to prevent connection reset by peer
-			//https://stackoverflow.com/questions/1434451/what-does-connection-reset-by-peer-mean
-			if (_request->get_status() == Request::BAD_REQ) {
-				//preventing "slamming the phone back on the hook" effect
-				usleep(1000);
-				while ((to_recieve = recv(_fd, &buffer, buf_size, 0)) > 0)
-					;
-			}
             break ;
         }
     }
