@@ -165,6 +165,7 @@ public:
 	int 		get_status(void) const;
 	std::string	get_body(void) const;
 	std::string	get_script_path(void) const;
+	std::string	get_script_name(void) const;
 	std::string get_method(void) const;
 	std::string get_location_name(void) const;
 	std::string	get_requested_file(void) const;

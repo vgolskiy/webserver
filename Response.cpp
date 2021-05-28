@@ -273,14 +273,8 @@ void Response::put_method()
 	struct stat	buf;
 
 	to_ret = stat(path.c_str(), &buf);
-	if (to_ret == 0){
-		fd = open(path.c_str(), O_CREAT | O_RDWR | O_APPEND, 0666);
-		_status_code = 200;
-	}
-	else{
-		fd = open(path.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
-		_status_code = 201;
-	}
+	fd = open(path.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
+	_status_code = (to_ret == 0) ? 200 : 201;
 	write(fd, _request->get_body().c_str(), _request->get_body().length());
 }
 
@@ -320,7 +314,7 @@ void Response::create_response(void) {
 	{
 		_request->parse_script_file_name();
 		_request->set_cgi_meta_vars();
-		if ((_request->get_script_path().length()) > 0)
+		if ((_request->get_script_path().length()) > 0 && _request->get_script_name() == "cgi_tester")
 		{
 			_request->run_cgi_request();
 			try{
@@ -336,19 +330,22 @@ void Response::create_response(void) {
 		}
 		else
 		{
-			// make the route able to accept uploaded files and configure where it should be saved (subject)
+			if (_requested_file.length())
+				put_method();
 			if (_status_code != 401 && _loc->auto_index)
 				create_autoindex();
 			get_status_line();
 			fill_response_body();
-			_response += _request->get_body();
+			std::cout << "body size: " << _content_len << std::endl;
+			// if (_requested_file.empty())
+			_response += _body;
 		}
 	}
 	else if (_request->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
 	{
 		if (_request->get_status_code() == 0)
 			_status_code = 400;
-		get_status_line();
+		get_status_line();	
 		fill_response_body();
 		_response += get_page_body();
 		_response += CRLF;

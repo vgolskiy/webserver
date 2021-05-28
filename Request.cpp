@@ -91,6 +91,10 @@ std::string	Request::get_script_path(void) const {
 	return (_script_path);
 }
 
+std::string	Request::get_script_name(void) const {
+	return (_script_name);
+}
+
 std::string Request::get_location_name(void) const {
 	return (_location);
 }
