@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/28 15:33:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/29 19:32:57 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -666,9 +666,9 @@ void Request::run_cgi_request() {
 	_script_name = "./content/YoupiBanane/youpi.bla";
 
 	const char*	args[] = {_script_path.c_str(), _script_name.c_str(), NULL};
-    int 		pipe_fds[2];
+   // int 		pipe_fds[2];
     pid_t 		pid;
-    int 		tmp_fd;
+    int 		output_fd, input_fd;
 	t_location*	loc = get_location(g_servers[_i], _location);
 	std::string file = loc->root + TMP;
 
@@ -683,12 +683,6 @@ void Request::run_cgi_request() {
 
 	std::string file_2 = "./content/file_2";
 
-	// std::ofstream 		outf(file_2);
-	// if (!outf)
-	// 	throw std::runtime_error(file_2); // add try
-    // outf << _body;
-	int input_fd;
-
 	if (((input_fd = open(file_2.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0))
 		return ;
 	
@@ -698,32 +692,37 @@ void Request::run_cgi_request() {
 
 	// TODO: the cgi should be run in the correct directory for relativ path file access (subject)
     // TODO: tmp file location - check
-	if (((tmp_fd = open(file.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0)
-		|| ((pipe(pipe_fds)) < 0))
+	if ((output_fd = open(file.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0)
+		//|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);
     pid = fork();
     if (pid < 0)
         exit_error(errno);
     else if (!pid) {
-		input_fd = open(file_2.c_str(), O_RDONLY | S_IRUSR, 0666);
-		dup2(input_fd, 0);
-		close(pipe_fds[PIPE_IN]);
-		// stdin подключается к выходу канала
-        if (dup2(pipe_fds[PIPE_OUT], STDIN_FILENO) < 0)
+		if ((input_fd = open(file_2.c_str(), O_RDONLY | S_IRUSR, 0666)) < 0)
 			exit_error(errno);
-        close(pipe_fds[PIPE_OUT]);
-		// stdout подключается к временному файлу - происходит запись во временный файл
-		if ((dup2(tmp_fd, STDOUT_FILENO) < 0))
+		if (dup2(input_fd, STDIN_FILENO) < 0)
 			exit_error(errno);
+		close(input_fd);
+        if (dup2(output_fd, STDOUT_FILENO) < 0)
+			exit_error(errno);
+        close(output_fd);
+
 		execve(_script_path.c_str(), (char *const *)args, final);
 		exit_error(errno);
     }
     else {
+		std::stringstream 	ss;
 		int	status = 0;
-        close(pipe_fds[PIPE_OUT]);
+        //close(pipe_fds[PIPE_OUT]);
         waitpid(pid, &status, 0);
-        close(pipe_fds[PIPE_IN]);
-        close(tmp_fd);
+		std::ifstream		inf(file);
+		if (!inf)
+			throw std::runtime_error(file);
+		ss << inf.rdbuf();
+		_response += ss.str();
+		_response += "\n";
+        //close(pipe_fds[PIPE_IN]);
     }
 	free(final); // free each massive as well
 }
