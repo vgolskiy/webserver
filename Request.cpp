@@ -681,6 +681,21 @@ void Request::run_cgi_request() {
     //Opening file to write in
 	// TODO: change all exit_errors to throw error -> write appropriate response
 
+	std::string file_2 = "./content/file_2";
+
+	// std::ofstream 		outf(file_2);
+	// if (!outf)
+	// 	throw std::runtime_error(file_2); // add try
+    // outf << _body;
+	int input_fd;
+
+	if (((input_fd = open(file_2.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0))
+		return ;
+	
+	write(input_fd, _body.c_str(), _body.size());
+	close(input_fd);
+
+
 	// TODO: the cgi should be run in the correct directory for relativ path file access (subject)
     // TODO: tmp file location - check
 	if (((tmp_fd = open(file.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0)
@@ -690,6 +705,8 @@ void Request::run_cgi_request() {
     if (pid < 0)
         exit_error(errno);
     else if (!pid) {
+		input_fd = open(file_2.c_str(), O_RDONLY | S_IRUSR, 0666);
+		dup2(input_fd, 0);
 		close(pipe_fds[PIPE_IN]);
 		// stdin подключается к выходу канала
         if (dup2(pipe_fds[PIPE_OUT], STDIN_FILENO) < 0)
