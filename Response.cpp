@@ -314,7 +314,7 @@ void Response::create_response(void) {
 	{
 		_request->parse_script_file_name();
 		_request->set_cgi_meta_vars();
-		if ((_request->get_script_path().length()) > 0)
+		if ((_request->get_script_path().length()) > 0 && _request->get_body().size() > 0)
 		{
 			_request->run_cgi_request();
 			try{

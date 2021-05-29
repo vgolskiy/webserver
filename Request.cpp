@@ -541,10 +541,10 @@ void Request::set_cgi_meta_vars() {
 
 	//Defines location (uri)
 	//Subject: Because you wont call the cgi directly use the full path as PATH_INFO
-    _env["PATH_INFO"] = _uri;
+    // _env["PATH_INFO"] = _uri;
 
 	//Full path to content: folder with script + script file name
-    _env["PATH_TRANSLATED"] = _script_path;
+    // _env["PATH_TRANSLATED"] = _script_path;
 
 	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
     if (!_param.empty())
@@ -553,7 +553,7 @@ void Request::set_cgi_meta_vars() {
         _env["QUERY_STRING"];
     
 	//Internet host address convertion from binary form into the IPv4 numbers-and-dots notation
-    _env["REMOTE_ADDR"] + inet_ntoaddr(_client->get_s_addr());
+    _env["REMOTE_ADDR"] = inet_ntoaddr(_client->get_s_addr());
     
     // REMOTE_IDENT - location authentification
     // REMOTE_USER
@@ -567,12 +567,16 @@ void Request::set_cgi_meta_vars() {
 		_env["REQUEST_METHOD"] = _method;
 
     // REQUEST_URI - location path (uri in Request) 
-	_env["REQUEST_URI"] = _uri;
+	// _env["REQUEST_URI"] = _uri;
+	_env["REQUEST_URI"] = "/directory/youpi.bla";
+	_env["REQUEST_FILENAME"] = "/directory/youpi.bla";
+	_env["SCRIPT_FILENAME"] = "./content/YoupiBanane/youpi.bla";
 
 	//Full path name of the file to execute
 	// The leading "/" is not part of the path.  It is optional if the path is NULL
 	if (!php) {
-		_env["SCRIPT_NAME"] = (_script_name.length() > 0) ? _script_name : _uri;
+		// _env["SCRIPT_NAME"] = (_script_name.length() > 0) ? _script_name : _uri;
+		_env["SCRIPT_NAME"] = "./content/YoupiBanane/youpi.bla";
 		// SERVER_NAME - get name from server[i]->get_name
 		_env["SERVER_NAME"] = *(g_servers[_i]->names.begin());
     	//Just name of our program
@@ -580,7 +584,15 @@ void Request::set_cgi_meta_vars() {
 	}
     // SERVER_PORT - get port from server[i]->get_port
     _env["SERVER_PORT"] = std::to_string(ntohs(g_servers[_i]->port.front()));
+    _env["HOST"] = "localhost:8080";
     _env["SERVER_PROTOCOL"] = _version;
+
+    _env["TRANSFER_ENCODING"] = "chunked";
+    _env["USER_AGENT"] = "Go-http-client/1.1";
+    _env["ACCEPT_ENCODING"] = "gzip";
+    _env["PATH_INFO"] = "/directory/youpi.bla";
+    _env["REQUEST_TARGET"] = "/directory/youpi.bla";
+    _env["PATH_TRANSLATED"] = "/Users/rmanfred/Desktop/web_serv./content/YoupiBanane/youpi.bla";
 }
 
 //Changing way of data storage map<string,string> -> vector<const char*>
@@ -645,6 +657,14 @@ void Request::run_cgi_request() {
 	** _script_path contains directory to php/cgi binary
 	** _script_name is NULL for cgi / gets php file name from _uri
 	*/
+
+	/*
+	script path: test_dir/testers/ubuntu_cgi_tester
+	script name: YoupiBanane/youpi.bla
+	*/
+	_script_path = "./content/cgi_tester";
+	_script_name = "./content/YoupiBanane/youpi.bla";
+
 	const char*	args[] = {_script_path.c_str(), _script_name.c_str(), NULL};
     int 		pipe_fds[2];
     pid_t 		pid;
@@ -676,9 +696,10 @@ void Request::run_cgi_request() {
 			exit_error(errno);
         close(pipe_fds[PIPE_OUT]);
 		// stdout подключается к временному файлу - происходит запись во временный файл
-		if ((dup2(tmp_fd, STDOUT_FILENO) < 0)
-			|| (execve(_script_path.c_str(), (char *const *)args, final) < 0))
+		if ((dup2(tmp_fd, STDOUT_FILENO) < 0))
 			exit_error(errno);
+		execve(_script_path.c_str(), (char *const *)args, final);
+		exit_error(errno);
     }
     else {
 		int	status = 0;
