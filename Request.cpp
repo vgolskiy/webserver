@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/29 20:33:03 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/29 20:49:17 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -731,7 +731,6 @@ void Request::read_cgi()
 		throw std::runtime_error(file);
 	ss << inf.rdbuf();
 	res += ss.str();
-	res += "\n";
 	// unlink(file.c_str()); // the same as rm
 	header = res.substr(0, res.find(CRLF_2X));
 	// CGI programs can send status information as part of a virtual document (example below)

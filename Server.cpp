@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/25 18:32:35 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/29 21:12:34 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,7 @@ void	deal_request(std::vector<t_server*> &servers,
 				Response r(servers[i], (*it)->get_request());
 				r.create_response();
 				int ret = send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
+				std::cout << ret << "|" << r.get_response_body().length() << std::endl;
 				if (ret < 0)
 					error_message("Failed to send a response. System call error.\n");
 				else
