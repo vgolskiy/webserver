@@ -182,7 +182,7 @@ public:
 	void		standard_body_parse(std::string &lines, std::size_t &pos);
 	void		curl_body_parse(std::string &lines, std::size_t &pos);
 	void		parse_script_file_name(void);
-	std::vector<const char*>	convert_cgi_meta_vars(void);
+	std::vector<std::string>	convert_cgi_meta_vars(void);
 	void		read_cgi();
 	void		set_uri_parameters(void);
 	void		set_uri_file_name(void);

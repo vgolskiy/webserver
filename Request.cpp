@@ -584,13 +584,17 @@ void Request::set_cgi_meta_vars() {
 }
 
 //Changing way of data storage map<string,string> -> vector<const char*>
-std::vector<const char*>	Request::convert_cgi_meta_vars() {
+std::vector<std::string>	Request::convert_cgi_meta_vars() {
 	std::map<std::string, std::string>::const_iterator	it;
-	std::vector<const char*>	env;
+	std::vector<std::string>	env;
+	std::string to_ret;
 
 	for (it = _env.begin(); it != _env.end(); ++it)
-		env.push_back(((*it).first + "=" + (*it).second).c_str());
-	return (env);
+	{
+		to_ret = ((*it).first + "=" + (*it).second);
+		env.push_back(to_ret);
+	}
+	return env;
 }
 
 // _uri = /<location>/<arg>
@@ -614,7 +618,24 @@ void Request::run_cgi_request() {
     ** form key=value, which are passed as the environment of the new
     ** program.  The envp array must be terminated by a NULL pointer.
 	*/
-	std::vector<const char*>	envp = convert_cgi_meta_vars();
+	std::vector<std::string>	envp = convert_cgi_meta_vars();
+
+	std::vector<std::string>::const_iterator	it = envp.begin();
+	std::vector<std::string>::const_iterator	it_e = envp.end();
+
+	char **final = NULL;
+
+	int size = (int)envp.size();
+	final = (char **)malloc(sizeof(char *) * (size + 1));
+	size_t i = 0;
+
+	for (; it != it_e; it++)
+	{
+		final[i] = strdup(it->c_str());
+		i++;
+	}
+	final[i] = NULL;
+	
 	/*
 	** argv is an array of pointers to strings passed to the new program
     ** as its command-line arguments.  By convention, the first of these
@@ -631,13 +652,18 @@ void Request::run_cgi_request() {
 	t_location*	loc = get_location(g_servers[_i], _location);
 	std::string file = loc->root + TMP;
 
+	std::cout << "script path: " << _script_path << std::endl;
+	std::cout << "script name: " << _script_name << std::endl;
+	std::cout << "file: " << file << std::endl;
+	// std::cout << "script name: " << _script_name << std::endl;
+
 	//In case of any problems during fork: exit with errno code
     //Opening file to write in
 	// TODO: change all exit_errors to throw error -> write appropriate response
 
 	// TODO: the cgi should be run in the correct directory for relativ path file access (subject)
     // TODO: tmp file location - check
-	if (((tmp_fd = open(file.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
+	if (((tmp_fd = open(file.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0)
 		|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);
     pid = fork();
@@ -651,7 +677,7 @@ void Request::run_cgi_request() {
         close(pipe_fds[PIPE_OUT]);
 		// stdout подключается к временному файлу - происходит запись во временный файл
 		if ((dup2(tmp_fd, STDOUT_FILENO) < 0)
-			|| (execve(_script_path.c_str(), (char *const *)args, (char *const *)&envp[0]) < 0))
+			|| (execve(_script_path.c_str(), (char *const *)args, final) < 0))
 			exit_error(errno);
     }
     else {
@@ -661,6 +687,7 @@ void Request::run_cgi_request() {
         close(pipe_fds[PIPE_IN]);
         close(tmp_fd);
     }
+	free(final); // free each massive as well
 }
 
 void Request::read_cgi()
@@ -679,7 +706,7 @@ void Request::read_cgi()
 	ss << inf.rdbuf();
 	res += ss.str();
 	res += "\n";
-	unlink(file.c_str()); // the same as rm
+	// unlink(file.c_str()); // the same as rm
 	header = res.substr(0, res.find(CRLF_2X));
 	// CGI programs can send status information as part of a virtual document (example below)
 	if (header.find(status_line) != std::string::npos)
@@ -689,6 +716,7 @@ void Request::read_cgi()
 	}
 	res.erase(0, res.find(CRLF_2X) + 4);
 	_body = res;
+	std::cout << "body: " << _body << std::endl;
 }
 
 /* 
