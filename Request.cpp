@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/29 19:32:57 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/29 20:33:03 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -666,7 +666,6 @@ void Request::run_cgi_request() {
 	_script_name = "./content/YoupiBanane/youpi.bla";
 
 	const char*	args[] = {_script_path.c_str(), _script_name.c_str(), NULL};
-   // int 		pipe_fds[2];
     pid_t 		pid;
     int 		output_fd, input_fd;
 	t_location*	loc = get_location(g_servers[_i], _location);
@@ -693,7 +692,6 @@ void Request::run_cgi_request() {
 	// TODO: the cgi should be run in the correct directory for relativ path file access (subject)
     // TODO: tmp file location - check
 	if ((output_fd = open(file.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0)
-		//|| ((pipe(pipe_fds)) < 0))
     	exit_error(errno);
     pid = fork();
     if (pid < 0)
@@ -701,28 +699,19 @@ void Request::run_cgi_request() {
     else if (!pid) {
 		if ((input_fd = open(file_2.c_str(), O_RDONLY | S_IRUSR, 0666)) < 0)
 			exit_error(errno);
-		if (dup2(input_fd, STDIN_FILENO) < 0)
+		if (dup2(input_fd, 0) < 0)
 			exit_error(errno);
 		close(input_fd);
-        if (dup2(output_fd, STDOUT_FILENO) < 0)
+        if (dup2(output_fd, 1) < 0)
 			exit_error(errno);
-        close(output_fd);
 
 		execve(_script_path.c_str(), (char *const *)args, final);
+		close(output_fd);
 		exit_error(errno);
     }
     else {
-		std::stringstream 	ss;
 		int	status = 0;
-        //close(pipe_fds[PIPE_OUT]);
         waitpid(pid, &status, 0);
-		std::ifstream		inf(file);
-		if (!inf)
-			throw std::runtime_error(file);
-		ss << inf.rdbuf();
-		_response += ss.str();
-		_response += "\n";
-        //close(pipe_fds[PIPE_IN]);
     }
 	free(final); // free each massive as well
 }
@@ -753,7 +742,7 @@ void Request::read_cgi()
 	}
 	res.erase(0, res.find(CRLF_2X) + 4);
 	_body = res;
-	std::cout << "body: " << _body << std::endl;
+	_content_len = _body.length();
 }
 
 /* 

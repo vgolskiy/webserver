@@ -319,6 +319,8 @@ void Response::create_response(void) {
 			_request->run_cgi_request();
 			try{
 				_request->read_cgi();
+				if (_content_len)
+					_headers["Content-Length"] = std::to_string(_content_len);
 			}
 			catch(const std::exception& e){
 				_status_code = 500;
