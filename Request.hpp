@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/29 20:30:59 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/30 18:19:19 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ private:
 	int									_max_body_size;
 	bool								_curl;
 	static std::string const			methods[];
-	static std::string const			headers[];
+	std::vector<std::string>			_headers_set;
 
 	int									_status_code;
 
@@ -151,6 +151,7 @@ public:
 	Request(Client *client, const int i);
 	~Request(void);
 
+	void		init_headers_set(void);
 	void		parse_request(std::string &lines);
 	bool		parse_chunk_size(std::string &lines);
 	void		parse_chunk_data(std::string &lines);

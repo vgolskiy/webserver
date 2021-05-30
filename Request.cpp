@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/29 20:49:17 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/30 18:45:04 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ Request::Request(Client *client, const int i) : _i(i) {
 	_status_code = 0;
 	_curl = false;
 	_subfolder = "";
+	init_headers_set();
 }
 
 Request::~Request() {}
@@ -42,26 +43,27 @@ std::string const Request::methods[] = {
 	"PUT",
 };
 
-std::string const Request::headers[] = {
-	"Accept-Charsets",
-	"Accept-Language",
-	"Allow", //
-	"X-Secret-Header-For-Test",
-	"Authorization",
-	"Content-Language",
-	"Content-Length",
-	"Content-Location",
-	"Content-Type",
-	"Date",
-	"Host",
-	"Last-Modified",
-	"Location", //
-	"Referer",
-	"Retry-After", //
-	"Server", //
-	"Transfer-Encoding",
-	"User-Agent",
-	"WWW-Authenticate", //
+void Request::init_headers_set(void) {
+	_headers_set.push_back("Accept-Charsets");
+	_headers_set.push_back("Accept-Encoding");
+	_headers_set.push_back("Accept-Language");
+	_headers_set.push_back("Allow");
+	_headers_set.push_back("Authorization");
+	_headers_set.push_back("Content-Language");
+	_headers_set.push_back("Content-Length");
+	_headers_set.push_back("Content-Location");
+	_headers_set.push_back("Content-Type");
+	_headers_set.push_back("Date");
+	_headers_set.push_back("Host");
+	_headers_set.push_back("Last-Modified");
+	_headers_set.push_back("Location");
+	_headers_set.push_back("Referer");
+	_headers_set.push_back("Retry-After");
+	_headers_set.push_back("Server");
+	_headers_set.push_back("Transfer-Encoding");
+	_headers_set.push_back("User-Agent");
+	_headers_set.push_back("WWW-Authenticate");
+	_headers_set.push_back("X-Secret-Header-For-Test");
 };
 
 int Request::get_remain_len() const {
@@ -146,6 +148,7 @@ bool Request::set_up_headers(std::string &lines) {
 	t_location*	loc = get_location(g_servers[_i], _location);
     std::vector<std::string>	tmp;
 	std::size_t					pos = lines.find(CRLF) == std::string::npos ? 0 : lines.find(CRLF);
+	std::vector<std::string>::iterator	it;
 
 	//Cycle is not ending until closing "/r/n" for HEADER (in case of one time recv reading)
 	//Cycle starts in case of available header for parsing "<header>/r/n"
@@ -157,8 +160,8 @@ bool Request::set_up_headers(std::string &lines) {
         }
         for (size_t i = 0; i < tmp.size(); ++i)
             remove_spaces(tmp[i]);
-        for (size_t j = 0; j != headers->size(); ++j) {
-            if (tmp[0] == headers[j]) {
+        for (it = _headers_set.begin(); it != _headers_set.end(); ++it) {
+            if (tmp[0] == *it) {
                 if (find_header(tmp[0])) {
                     error_message("Repetitive header in the request");
                     return (false);
@@ -185,10 +188,10 @@ bool Request::set_up_headers(std::string &lines) {
                     to_ret.append(tmp[1]);
                     to_ret += ":";
                     to_ret.append(tmp[2]);
-                    _headers[headers[j]] = to_ret;
+                    _headers[*it] = to_ret;
                 }
                 else
-                    _headers[headers[j]] = tmp[1];
+                    _headers[*it] = tmp[1];
             }
         }
         if (tmp[0] == CONTENT_LEN) {
@@ -540,13 +543,6 @@ void Request::set_cgi_meta_vars() {
 	if (!php)
     	_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 
-	//Defines location (uri)
-	//Subject: Because you wont call the cgi directly use the full path as PATH_INFO
-    // _env["PATH_INFO"] = _uri;
-
-	//Full path to content: folder with script + script file name
-    // _env["PATH_TRANSLATED"] = _script_path;
-
 	// the QUERY_STRING MUST be defined as an empty string ("") - RFC3875 (4.1.7)
     if (!_param.empty())
         _env["QUERY_STRING"] = _param;
@@ -568,20 +564,18 @@ void Request::set_cgi_meta_vars() {
 		_env["REQUEST_METHOD"] = _method;
 
     // REQUEST_URI - location path (uri in Request) 
-	// _env["REQUEST_URI"] = _uri;
-	_env["REQUEST_URI"] = "/directory/youpi.bla";
-	_env["REQUEST_FILENAME"] = "/directory/youpi.bla";
-	_env["SCRIPT_FILENAME"] = "./content/YoupiBanane/youpi.bla";
+	_env["REQUEST_URI"] = _uri + _subfolder + _requested_file;
+	_env["REQUEST_FILENAME"] = _uri + _subfolder + _requested_file;
 
 	// SECRET header
 	if ((header_found = find_header("X-Secret-Header-For-Test")))
-        _env["X_SECRET_HEADER_FOR_TEST"] = (*header_found);
+        _env["HTTP_X_SECRET_HEADER_FOR_TEST"] = (*header_found);
 
 	//Full path name of the file to execute
 	// The leading "/" is not part of the path.  It is optional if the path is NULL
 	if (!php) {
-		// _env["SCRIPT_NAME"] = (_script_name.length() > 0) ? _script_name : _uri;
-		_env["SCRIPT_NAME"] = "./content/YoupiBanane/youpi.bla";
+		_env["SCRIPT_FILENAME"] = loc->root + _subfolder + _requested_file;
+		_env["SCRIPT_NAME"] = loc->root + _subfolder + _requested_file;
 		// SERVER_NAME - get name from server[i]->get_name
 		_env["SERVER_NAME"] = *(g_servers[_i]->names.begin());
     	//Just name of our program
@@ -589,15 +583,21 @@ void Request::set_cgi_meta_vars() {
 	}
     // SERVER_PORT - get port from server[i]->get_port
     _env["SERVER_PORT"] = std::to_string(ntohs(g_servers[_i]->port.front()));
-    _env["HOST"] = "localhost:8080";
+	_env["HOST"] = g_servers[_i]->host + ":" + std::to_string(ntohs(g_servers[_i]->port.front()));
     _env["SERVER_PROTOCOL"] = _version;
 
-    _env["TRANSFER_ENCODING"] = "chunked";
-    _env["USER_AGENT"] = "Go-http-client/1.1";
-    _env["ACCEPT_ENCODING"] = "gzip";
-    _env["PATH_INFO"] = "/directory/youpi.bla";
-    _env["REQUEST_TARGET"] = "/directory/youpi.bla";
-    _env["PATH_TRANSLATED"] = "/Users/rmanfred/Desktop/web_serv./content/YoupiBanane/youpi.bla";
+	if ((header_found = find_header("Transfer-Encoding")))
+		_env["TRANSFER_ENCODING"] = *header_found;
+	if ((header_found = find_header("User-Agent")))
+		_env["USER_AGENT"] = *header_found;
+	if ((header_found = find_header("Accept-Encoding")))
+		_env["ACCEPT_ENCODING"] = *header_found;
+	//Defines location (uri)
+	//Subject: Because you wont call the cgi directly use the full path as PATH_INFO
+	_env["PATH_INFO"] = _uri + _subfolder + _requested_file;
+	_env["REQUEST_TARGET"] = _uri + _subfolder + _requested_file;
+	//Full path to content: folder with script + script file name
+	_env["PATH_TRANSLATED"] = loc->root + _subfolder + _requested_file;
 }
 
 //Changing way of data storage map<string,string> -> vector<const char*>

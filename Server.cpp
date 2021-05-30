@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/29 21:12:34 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/30 18:51:00 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,45 +156,41 @@ void	deal_request(std::vector<t_server*> &servers,
 				if ((*it)->get_status() == Client::EMPTY)
 					return ;
 			}	
-		if (FD_ISSET((*it)->get_fd(), &write_fd_sets)) {
-			if ((*it)->get_status() == Client::NOT_DONE)
-			{
-				int ret = send((*it)->get_fd(), (*it)->get_response()->get_response_body().c_str(), (*it)->get_response()->get_response_body().length(), 0);
-				if (ret < 0)
+			if (FD_ISSET((*it)->get_fd(), &write_fd_sets)) {
+				if ((*it)->get_status() == Client::NOT_DONE)
 				{
-					error_message("Failed to send a response. System call error.\n");
-					(*it)->set_status(Client::DONE);
+					int ret = send((*it)->get_fd(), (*it)->get_response()->get_response_body().c_str(), (*it)->get_response()->get_response_body().length(), 0);
+					if (ret < 0) {
+						error_message("Failed to send a response. System call error.\n");
+						(*it)->set_status(Client::DONE);
+					}
+					else if (ret < (int)(*it)->get_response()->get_response_body().length()) {
+						(*it)->set_status(Client::NOT_DONE);
+						(*it)->get_response()->cut_length(ret);
+						std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
+					}
+					else
+						(*it)->set_status(Client::DONE);
 				}
-				else if (ret < (int)(*it)->get_response()->get_response_body().length())
-				{
-					(*it)->set_status(Client::NOT_DONE);
-					(*it)->get_response()->cut_length(ret);
-					std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
-				}
-				else
-					(*it)->set_status(Client::DONE);
-			}
-			else
-			{
-				Response r(servers[i], (*it)->get_request());
-				if ((*it)->get_status() != Client::NOT_DONE)
-					r.create_response();
-				int ret = send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
-				std::cout << ret << "|" << r.get_response_body().length() << std::endl; // TESTING
-				if (ret < 0)
-				{
-					error_message("Failed to send a response. System call error.");
-					(*it)->set_status(Client::DONE);
-				}
-				else if (ret < (int)r.get_response_body().length())
-				{
-					(*it)->set_status(Client::NOT_DONE);
-					r.cut_length(ret);
-					(*it)->set_response(&r);
-					std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
-				}
-				else
-					(*it)->set_status(Client::DONE);
+				else {
+					Response r(servers[i], (*it)->get_request());
+					if ((*it)->get_status() != Client::NOT_DONE)
+						r.create_response();
+					int ret = send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
+					std::cout << ret << "|" << r.get_response_body().length() << std::endl; // TESTING
+					if (ret < 0) {
+						error_message("Failed to send a response. System call error.");
+						(*it)->set_status(Client::DONE);
+					}
+					else if (ret < (int)r.get_response_body().length())
+					{
+						(*it)->set_status(Client::NOT_DONE);
+						r.cut_length(ret);
+						(*it)->set_response(&r);
+						std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
+					}
+					else
+						(*it)->set_status(Client::DONE);
 				}
 			}
 		}
