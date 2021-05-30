@@ -46,6 +46,7 @@ std::string const Request::headers[] = {
 	"Accept-Charsets",
 	"Accept-Language",
 	"Allow", //
+	"X-Secret-Header-For-Test",
 	"Authorization",
 	"Content-Language",
 	"Content-Length",
@@ -571,6 +572,10 @@ void Request::set_cgi_meta_vars() {
 	_env["REQUEST_URI"] = "/directory/youpi.bla";
 	_env["REQUEST_FILENAME"] = "/directory/youpi.bla";
 	_env["SCRIPT_FILENAME"] = "./content/YoupiBanane/youpi.bla";
+
+	// SECRET header
+	if ((header_found = find_header("X-Secret-Header-For-Test")))
+        _env["X_SECRET_HEADER_FOR_TEST"] = (*header_found);
 
 	//Full path name of the file to execute
 	// The leading "/" is not part of the path.  It is optional if the path is NULL

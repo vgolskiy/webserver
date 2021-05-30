@@ -128,7 +128,7 @@ void	delete_clients(std::vector<t_server*> &servers) {
 		std::list<Client*>::iterator ite = servers[j]->clients.end();
 		for (; it != ite; it++)
 		{
-			if ((*it)->get_status() == Client::DONE)
+			if ((*it)->get_status() == Client::DONE || (*it)->get_status() == Client::EMPTY)
 			{
 				std::cout << "we're in delete\n"; // TESTING
 				delete *it;
@@ -161,7 +161,10 @@ void	deal_request(std::vector<t_server*> &servers,
 			{
 				int ret = send((*it)->get_fd(), (*it)->get_response()->get_response_body().c_str(), (*it)->get_response()->get_response_body().length(), 0);
 				if (ret < 0)
+				{
 					error_message("Failed to send a response. System call error.\n");
+					(*it)->set_status(Client::DONE);
+				}
 				else if (ret < (int)(*it)->get_response()->get_response_body().length())
 				{
 					(*it)->set_status(Client::NOT_DONE);
@@ -179,7 +182,10 @@ void	deal_request(std::vector<t_server*> &servers,
 				int ret = send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
 				std::cout << ret << "|" << r.get_response_body().length() << std::endl; // TESTING
 				if (ret < 0)
-					error_message("Failed to send a response. System call error.\n");
+				{
+					error_message("Failed to send a response. System call error.");
+					(*it)->set_status(Client::DONE);
+				}
 				else if (ret < (int)r.get_response_body().length())
 				{
 					(*it)->set_status(Client::NOT_DONE);
