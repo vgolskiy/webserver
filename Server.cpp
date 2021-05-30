@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/30 19:17:42 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/30 19:20:34 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ void	deal_request(std::vector<t_server*> &servers,
 					buffer_size = (*it)->get_response()->get_response_body().length() > SEND_BUFFER ? SEND_BUFFER : (*it)->get_response()->get_response_body().length();
 					ret = send((*it)->get_fd(), (*it)->get_response()->get_response_body().c_str(), buffer_size, 0);
 					if (ret < 0) {
-						error_message("Failed to send a response. System call error.\n");
+						error_message("Failed to send a response. System call error");
 						(*it)->set_status(Client::DONE);
 					}
 					else if ((int)(*it)->get_response()->get_response_body().length() - ret > 0) {
@@ -180,7 +180,7 @@ void	deal_request(std::vector<t_server*> &servers,
 					ret = send((*it)->get_fd(), r.get_response_body().c_str(), buffer_size, 0);
 					std::cout << ret << "|" << r.get_response_body().length() << std::endl; // TESTING
 					if (ret < 0) {
-						error_message("Failed to send a response. System call error.");
+						error_message("Failed to send a response. System call error");
 						(*it)->set_status(Client::DONE);
 					}
 					else if ((int)r.get_response_body().length() - ret > 0) {
