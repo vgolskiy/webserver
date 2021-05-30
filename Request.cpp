@@ -713,7 +713,7 @@ void Request::run_cgi_request() {
 		int	status = 0;
         waitpid(pid, &status, 0);
     }
-	free(final); // free each massive as well
+	free(final); // TODO: free each massive as well
 }
 
 void Request::read_cgi()

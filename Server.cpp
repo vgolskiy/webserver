@@ -95,9 +95,9 @@ void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
 	{
 		if (!(FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets)))
 		{
-			FD_SET(servers[i]->socket->get_fd(), &read_fd_sets);
 			if (servers[i]->socket->get_fd() > nfds)
 				nfds = servers[i]->socket->get_fd();
+			FD_SET(servers[i]->socket->get_fd(), &read_fd_sets);
 		}
 
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
@@ -105,17 +105,17 @@ void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
 		{	
 			if (!(FD_ISSET((*it)->get_fd(), &read_fd_sets)))
 			{
-				FD_SET((*it)->get_fd(), &read_fd_sets);
 				if ((*it)->get_fd() > nfds)
 					nfds = (*it)->get_fd();
+				FD_SET((*it)->get_fd(), &read_fd_sets);
 			}
 			if ((*it)->get_request()) // TODO: add conditions
 			{
 				if (!(FD_ISSET((*it)->get_fd(), &write_fd_sets)))
 				{
-					FD_SET((*it)->get_fd(), &write_fd_sets);
 					if ((*it)->get_fd() > nfds)
 						nfds = (*it)->get_fd();
+					FD_SET((*it)->get_fd(), &write_fd_sets);
 				}
 			}
 		}
@@ -128,9 +128,13 @@ void	delete_clients(std::vector<t_server*> &servers) {
 		std::list<Client*>::iterator ite = servers[j]->clients.end();
 		for (; it != ite; it++)
 		{
-			delete *it;
-			it =  servers[j]->clients.erase(it);
-			std::cout << "Client is disconnected!\n";
+			if ((*it)->get_status() == Client::DONE)
+			{
+				std::cout << "we're in delete\n"; // TESTING
+				delete *it;
+				it =  servers[j]->clients.erase(it);
+				std::cout << "Client is disconnected!\n";
+			}
 		}
 	}
 }
@@ -147,23 +151,49 @@ void	deal_request(std::vector<t_server*> &servers,
 	for (size_t i = 0; i != servers.size(); i++) {
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
 		for (; it != servers[i]->clients.end(); ++it) {
-		//	if (FD_ISSET((*it)->get_fd(), &read_fd_sets) {
+			if (FD_ISSET((*it)->get_fd(), &read_fd_sets) && (*it)->get_status() != Client::NOT_DONE) {
 				(*it)->read_run_request(i);
 				if ((*it)->get_status() == Client::EMPTY)
 					return ;
-		//	}
-		//if (FD_ISSET((*it)->get_fd(), &write_fd_sets) {
-				Response r(servers[i], (*it)->get_request());
-				r.create_response();
-				int ret = send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
-				std::cout << ret << "|" << r.get_response_body().length() << std::endl;
+			}	
+		if (FD_ISSET((*it)->get_fd(), &write_fd_sets)) {
+			if ((*it)->get_status() == Client::NOT_DONE)
+			{
+				int ret = send((*it)->get_fd(), (*it)->get_response()->get_response_body().c_str(), (*it)->get_response()->get_response_body().length(), 0);
 				if (ret < 0)
 					error_message("Failed to send a response. System call error.\n");
+				else if (ret < (int)(*it)->get_response()->get_response_body().length())
+				{
+					(*it)->set_status(Client::NOT_DONE);
+					(*it)->get_response()->cut_length(ret);
+					std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
+				}
 				else
 					(*it)->set_status(Client::DONE);
-		//	}
+			}
+			else
+			{
+				Response r(servers[i], (*it)->get_request());
+				if ((*it)->get_status() != Client::NOT_DONE)
+					r.create_response();
+				int ret = send((*it)->get_fd(), r.get_response_body().c_str(), r.get_response_body().length(), 0);
+				std::cout << ret << "|" << r.get_response_body().length() << std::endl; // TESTING
+				if (ret < 0)
+					error_message("Failed to send a response. System call error.\n");
+				else if (ret < (int)r.get_response_body().length())
+				{
+					(*it)->set_status(Client::NOT_DONE);
+					r.cut_length(ret);
+					(*it)->set_response(&r);
+					std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
+				}
+				else
+					(*it)->set_status(Client::DONE);
+				}
+			}
 		}
 	}
+	std::cout << "not here\n"; // TESTING
 }
 
 // struct timeval *restrict timeout - specifies the interval that select() should block

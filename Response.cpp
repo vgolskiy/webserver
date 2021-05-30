@@ -54,6 +54,11 @@ Response::~Response() {}
 
 std::string Response::get_response_body(void) { return (_response); }
 
+void Response::cut_length(int size)
+{
+	_response = _response.substr(size, _response.length());
+}
+
 std::string Response::get_server_date(void)	{
 	struct tm		info;
 	struct timeval	time;

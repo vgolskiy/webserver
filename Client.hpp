@@ -50,6 +50,7 @@ public:
 		INIT,
 		ALIVE,
 		DONE,
+		NOT_DONE,
 		EMPTY
 	};
 

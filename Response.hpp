@@ -68,6 +68,8 @@ public:
 	bool		auth_by_header(void);
 	void		create_autoindex();
 	void		put_method();
+
+	void		cut_length(int size);
 };
 
 
