@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/25 13:23:23 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/30 19:16:40 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@
 
 //GET NEXT LINE
 # define	BUFFER_SIZE	1024
+# define	SEND_BUFFER	1000000
 
 //PARSER CHARACTERS SET
 # define	SPACES		" \f\n\r\t\v"
