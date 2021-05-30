@@ -60,3 +60,7 @@ Config
 .idea/
 cmake-build-debug/
 CMakeLists.txt
+
+#FILES
+file_2
+file_should_exist_after
