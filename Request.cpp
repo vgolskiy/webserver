@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/30 18:45:04 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/05/31 23:36:10 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -350,7 +350,9 @@ void Request::parse_chunk_data(std::string &lines) {
 		_body += tmp;
 		if ((loc->max_body > 0) && ((int)_body.length() > loc->max_body)) {
 			_status = Request::BAD_REQ;
-			_status_code = 400;
+			_status_code = 413;
+			_body.clear();
+			_content_len = 0;
 			return ;
 		}
 		_remain_len -= tmp.length();
@@ -414,7 +416,9 @@ void Request::standard_body_parse(std::string &lines, std::size_t &pos) {
 	if ((_content_len > 0) && (((int)_body.length() > _content_len)
 		|| ((loc->max_body > 0) && (_content_len > loc->max_body)))) {
 		_status = Request::BAD_REQ;
-		_status_code = 400;
+		_status_code = 413;
+		_body.clear();
+		_content_len = 0;
 		return ;	
 	}
 	verify_body();
@@ -432,7 +436,9 @@ void Request::curl_body_parse(std::string &lines, std::size_t &pos) {
 	}
 	if ((loc->max_body > 0) && (_content_len > loc->max_body)) {
 		_status = Request::BAD_REQ;
-		_status_code = 400;
+		_status_code = 413;
+		_body.clear();
+		_content_len = 0;
 		return ;	
 	}
 	verify_body();

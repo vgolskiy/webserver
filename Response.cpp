@@ -335,17 +335,14 @@ void Response::create_response(void) {
 			fill_response_body();
 			_response += _request->get_body();
 		}
-		else
-		{
+		else {
 			if (_requested_file.length())
 				put_method();
 			if (_status_code != 401 && _loc->auto_index)
 				create_autoindex();
 			get_status_line();
 			fill_response_body();
-			std::cout << "body size: " << _content_len << std::endl;
-			// if (_requested_file.empty())
-			_response += _body;
+			_response += _request->get_body();
 		}
 	}
 	else if (_request->get_status() == Request::BAD_REQ) // Bad_Req - for everything not defined
