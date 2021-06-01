@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 09:14:43 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 12:50:31 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int		start_servers(std::vector<t_server*> &servers)
     for (size_t i = 0; i < servers.size(); i++)
     {
 		servers[i]->socket->to_bind();
-		servers[i]->socket->to_listen(SOMAXCONN);
+		servers[i]->socket->to_listen(-1);
 		std::cout << "Server " << *(servers[i]->names.begin()) << " ("
 			<< servers[i]->host << ')' << " is litening to port " << ntohs(servers[i]->port.front()) << std::endl;
     }
