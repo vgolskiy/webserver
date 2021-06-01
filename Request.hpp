@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/30 18:19:19 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 22:35:44 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,6 +191,7 @@ public:
 
 	enum status
 	{
+		RECEIVE,
 		REQUEST_METHOD,
 		HEADERS,
 		BODY_PARSE,

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:28:49 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/24 16:34:55 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 22:02:54 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ int		Socket::get_fd(void) const {
 Socket::Socket(int port, std::string host) : _port(port), _opt(1), _host(host) {
     init_socket();
 
-    if((_fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) //After that moment we are closing fds' during global structure cleaning
+	//After that moment we are closing fds' during global structure cleaning
+    if((_fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
 		exit_error(errno);
     if (fcntl(_fd, F_SETFL, O_NONBLOCK) < 0)
 		exit_error(errno);

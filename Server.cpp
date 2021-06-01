@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 16:37:32 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/02 01:46:40 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,20 +48,17 @@ int nfds:
 ** Starting servers services
 ** Servers not empty verification
 */
-int		start_servers(std::vector<t_server*> &servers)
-{
+int		start_servers(std::vector<t_server*> &servers) {
 	if (servers.empty())
 		return (EXIT_FAILURE);
 	
 	//initialization should be separate - to avoid segfault in case of (to_bind || to_listen)'s error
-	for (size_t i = 0; i < servers.size(); i++)
-    {
+	for (size_t i = 0; i < servers.size(); ++i) {
 		unsigned short port = servers[i]->port.front();
 		std::string host = servers[i]->host;
 		servers[i]->socket = new Socket(port, host);
 	}
-    for (size_t i = 0; i < servers.size(); i++)
-    {
+    for (size_t i = 0; i < servers.size(); ++i) {
 		servers[i]->socket->to_bind();
 		servers[i]->socket->to_listen(-1);
 		std::cout << "Server " << *(servers[i]->names.begin()) << " ("
@@ -71,7 +68,7 @@ int		start_servers(std::vector<t_server*> &servers)
 }
 
 void	add_new_client(std::vector<t_server*> &servers, const fd_set &read_fd_sets) {
-    for (size_t i = 0; i < servers.size(); i++) {
+    for (size_t i = 0; i < servers.size(); ++i) {
         if (FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets)) {
 			Client *new_cl = new Client(servers[i]->socket);
 			try {
@@ -86,31 +83,30 @@ void	add_new_client(std::vector<t_server*> &servers, const fd_set &read_fd_sets)
     }
 }
 
+void	set_server_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets, int &nfds) {
+	for (size_t i = 0; i < servers.size(); i++) {
+		if (!FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets))
+			FD_SET(servers[i]->socket->get_fd(), &read_fd_sets);
+		if (servers[i]->socket->get_fd() > nfds)
+			nfds = servers[i]->socket->get_fd();
+	}
+}
+
 // Set socket fds for every server: read_fd_set for servers and both write_and_read_fds for clients
-void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
+void	set_client_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
 				fd_set &write_fd_sets, int &nfds) {
 	for (size_t i = 0; i < servers.size(); i++) {
-		if (!(FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets))) {
-			if (servers[i]->socket->get_fd() > nfds)
-				nfds = servers[i]->socket->get_fd();
-			FD_SET(servers[i]->socket->get_fd(), &read_fd_sets);
-		}
-
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
-		for (; it != servers[i]->clients.end(); ++it) {	
-			if (!(FD_ISSET((*it)->get_fd(), &read_fd_sets))) {
-				if ((*it)->get_fd() > nfds)
-					nfds = (*it)->get_fd();
+		for (; it != servers[i]->clients.end(); ++it) {
+			if ((*it)->get_fd() > nfds)
+				nfds = (*it)->get_fd();
+			if (((*it)->get_status() < Client::DONE)
+				&& (!FD_ISSET((*it)->get_fd(), &read_fd_sets)))
 				FD_SET((*it)->get_fd(), &read_fd_sets);
-			}
 			if ((*it)->get_request()
-				&& (((*it)->get_request()->get_status() == Request::BAD_REQ) 
-				|| ((*it)->get_request()->get_status() == Request::DONE))) {
-				if (!(FD_ISSET((*it)->get_fd(), &write_fd_sets))) {
-					if ((*it)->get_fd() > nfds)
-						nfds = (*it)->get_fd();
+				&& ((*it)->get_request()->get_status() >= Request::BAD_REQ)) {
+				if (!FD_ISSET((*it)->get_fd(), &write_fd_sets))
 					FD_SET((*it)->get_fd(), &write_fd_sets);
-				}
 			}
 		}
 	}
@@ -124,10 +120,35 @@ void	delete_clients(std::vector<t_server*> &servers) {
 			if ((*it)->get_status() == Client::DONE || (*it)->get_status() == Client::EMPTY) {
 				delete *it;
 				it =  servers[i]->clients.erase(it);
-				std::cout << "Client is disconnected!\n";
+				std::cout << "Client is disconnected\n";
 			}
 		}
 	}
+}
+
+void	send_response(Client *client, t_server *server) {
+	int buffer_size, ret;
+
+	client->set_response(server);
+	buffer_size = client->get_response()->get_response_body().length() > SEND_BUFFER ?
+	SEND_BUFFER : client->get_response()->get_response_body().length();
+	ret = send(client->get_fd(), client->get_response()->get_response_body().c_str(), buffer_size, 0);
+	// TESTING			
+	std::cout << ret << "|" << client->get_response()->get_response_body().length() << std::endl;
+	
+	if (ret < 0) {
+		error_message("Failed to send a response. System call error");
+		client->set_status(Client::DONE);
+	}
+	else if ((int)client->get_response()->get_response_body().length() - ret > 0) {
+		client->get_response()->cut_length(ret);
+		client->set_starttime();
+		// TESTING
+		std::cout << "length new: " << client->get_response()->get_response_body().length() << std::endl;
+	
+	}
+	else
+		client->set_status(Client::DONE);
 }
 
 /*
@@ -135,55 +156,26 @@ void	delete_clients(std::vector<t_server*> &servers) {
 ** all file descriptors except for those that are ready for reading
 */
 void	deal_request(std::vector<t_server*> &servers,
-					const fd_set &read_fd_sets, const fd_set &write_fd_sets) // doesnt work appropriately
-{
-	int buffer_size, ret;
-
-	for (size_t i = 0; i != servers.size(); i++) {
+					const fd_set &read_fd_sets, const fd_set &write_fd_sets) {
+	for (size_t i = 0; i != servers.size(); ++i) {
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
+
 		for (; it != servers[i]->clients.end(); ++it) {
-			if (FD_ISSET((*it)->get_fd(), &read_fd_sets) && (*it)->get_status() != Client::NOT_DONE) {
-				(*it)->read_run_request(i);
-				if ((*it)->get_status() == Client::EMPTY)
-					return ;
-			}	
-			if (FD_ISSET((*it)->get_fd(), &write_fd_sets)) {
-				if ((*it)->get_status() == Client::NOT_DONE) {
-					buffer_size = (*it)->get_response()->get_response_body().length() > SEND_BUFFER ? SEND_BUFFER : (*it)->get_response()->get_response_body().length();
-					ret = send((*it)->get_fd(), (*it)->get_response()->get_response_body().c_str(), buffer_size, 0);
-					if (ret < 0) {
-						error_message("Failed to send a response. System call error");
-						(*it)->set_status(Client::DONE);
-					}
-					else if ((int)(*it)->get_response()->get_response_body().length() - ret > 0) {
-						(*it)->get_response()->cut_length(ret);
-						(*it)->set_starttime();
-						std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
-					}
-					else
-						(*it)->set_status(Client::DONE);
-				}
+			if (FD_ISSET((*it)->get_fd(), &read_fd_sets) 
+				|| (FD_ISSET((*it)->get_fd(), &write_fd_sets))) {
 				if ((*it)->get_status() == Client::ALIVE
-					&& ((*it)->get_request()->get_status() == Request::DONE
-					|| (*it)->get_request()->get_status() == Request::BAD_REQ)) {
-					(*it)->set_response(servers[i]);
-					buffer_size = (*it)->get_response()->get_response_body().length() > SEND_BUFFER ?
-						SEND_BUFFER : (*it)->get_response()->get_response_body().length();
-					ret = send((*it)->get_fd(), (*it)->get_response()->get_response_body().c_str(), buffer_size, 0);
-					std::cout << ret << "|" << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
-					if (ret < 0) {
-						error_message("Failed to send a response. System call error");
-						(*it)->set_status(Client::DONE);
-					}
-					else if ((int)(*it)->get_response()->get_response_body().length() - ret > 0) {
-						(*it)->set_status(Client::NOT_DONE);
-						(*it)->get_response()->cut_length(ret);
-						(*it)->set_starttime();
-						std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
-					}
-					else
-						(*it)->set_status(Client::DONE);
+					&& (*it)->get_request()) {
+						if ((*it)->get_request()->get_status() >= Request::DONE) {
+							(*it)->set_status(Client::SEND_RESP);
+							send_response(*it, servers[i]);
+						}
+						else
+							(*it)->read_run_request(i);
 				}
+				else if ((*it)->get_status() == Client::SEND_RESP)
+					send_response(*it, servers[i]);
+				else
+					(*it)->read_run_request(i);
 			}
 		}
 	}
@@ -210,8 +202,9 @@ int		select_loop(std::vector<t_server*> &servers) {
 		FD_ZERO(&read_fd_sets);
 		FD_ZERO(&write_fd_sets);
 		nfds = 0;
+		set_server_fds(servers, read_fd_sets, nfds);
     	// setting fds: adding readFD and writeFD for each server
-		set_fds(servers, read_fd_sets, write_fd_sets, nfds);
+		set_client_fds(servers, read_fd_sets, write_fd_sets, nfds);
     	// call select
     	to_select = select(nfds + 1, &read_fd_sets, &write_fd_sets, 0, &timeout);
     	if (!to_select)
@@ -224,11 +217,9 @@ int		select_loop(std::vector<t_server*> &servers) {
 			errno = 0;
 			continue ;
 		}
-        else {
-			add_new_client(servers, read_fd_sets);
-			deal_request(servers, read_fd_sets, write_fd_sets); // ad conditions;
-			delete_clients(servers);
-        }
+		add_new_client(servers, read_fd_sets);
+		deal_request(servers, read_fd_sets, write_fd_sets);
+		delete_clients(servers);
 	}
 	return (EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:28:29 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/12 18:22:29 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 22:15:09 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@
 void		signals(void) {
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGINT, signal_handler);
+}
+
+int			got_signal(void) {
+	static int signal = 0;
+	return (signal);
 }
 
 void		signal_handler(int signal)

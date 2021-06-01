@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 16:36:27 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 22:47:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,66 +74,67 @@ void		Client::verify_request_timeout(int timeout_client) {
 	}
 }
 
-void Client::read_run_request(const int i) {
-	int		buf_size = BUFFER_SIZE;
-	int		to_recieve;
+void		Client::print_request_debug(void) {
+	std::cout << "Status: " << _request->get_status() << std::endl;
+	if (_request->get_status() == Request::BAD_REQ) {
+		std::cout << "BAD REQUEST CLIENT: " << std::endl;
+		_request->print_parsed_request();
+   	}
+	if (_request->get_status() == Request::DONE) {
+   		_request->print_parsed_request();
+   		std::cout << "Body length: " << _request->get_body().length() << std::endl;
+   	}
+}
 
-    if (!_request)
-        _request = new Request(this, i);
+void		Client::read_run_request(const int i) {
+	int		buf_size = BUFFER_SIZE;
+	int		to_receive = 0;
+
+	if (!_request)
+		_request = new Request(this, i);
     /*
 	** In case of chunk request we changing BUFFER_SIZE to chunk_size
 	** if remain len < buffer size -> change buffer size
     */
-    while (true)
-    {
-        if (_request->get_status() == Request::BODY_PARSE && _request->get_remain_len() > 0)
-            buf_size = _request->get_remain_len() < BUFFER_SIZE ? _request->get_remain_len() : BUFFER_SIZE;
-        char	buffer[buf_size + 1];
-        memset(buffer, 0, buf_size);
-        to_recieve = 0;
-        to_recieve = recv(_fd, &buffer, buf_size, 0);
-        if (!to_recieve && !_to_parse.length())
-            _status = Client::EMPTY;
-        if ((to_recieve == -1) && (_to_parse.length())) //prevention of parse circle with empty lines
-            _request->parse_request(_to_parse);
-        else if (to_recieve != -1) { //prevention of parse circle with empty lines
-			if (to_recieve) {
-            	buffer[to_recieve] = '\0';
-            	_to_parse += buffer;
-				//!!!to prevent timeout during manual input/big file reading we placing start time update here!!!
-				_time_start = current_time();
-			}
-			if (_to_parse.length())
-            	_request->parse_request(_to_parse);
-			else
-				_request->set_request_status(Request::BAD_REQ);
-        }
-		//10 seconds for request parse
-		verify_request_timeout(30); //TESTING
-		//Need to read request till the end even if it is meaningless to prevent connection reset by peer
-		//https://stackoverflow.com/questions/1434451/what-does-connection-reset-by-peer-mean
-		if ((_request->get_status() == Request::BAD_REQ)
-			|| (_request->get_status() == Request::CHUNK_DONE)) {
-			//preventing "slamming the phone back on the hook" effect
-			usleep(1000);
-			while ((to_recieve = recv(_fd, &buffer, buf_size, 0)) > 0)
-					;
-			if (_request->get_status() == Request::CHUNK_DONE)
-				_request->set_request_status(Request::DONE);
+	if (_request->get_status() == Request::BODY_PARSE && _request->get_remain_len() > 0)
+		buf_size = _request->get_remain_len() < BUFFER_SIZE ? _request->get_remain_len() : BUFFER_SIZE;
+	char	buffer[buf_size + 1];
+
+	memset(buffer, 0, buf_size);
+	to_receive = recv(_fd, &buffer, buf_size, 0);
+	if (!to_receive && !_to_parse.length()) {
+		_status = Client::EMPTY;
+		return ;
+	}
+	//preventing empty lines parcing try
+	if ((to_receive == -1) && (_to_parse.length()))
+		_request->parse_request(_to_parse);
+	else if (to_receive != -1) {
+		if (to_receive) {
+			buffer[to_receive] = '\0';
+			_to_parse += buffer;
+			//!!!to prevent timeout during manual input/big file reading we placing start time update here!!!
+			_time_start = current_time();
 		}
-        if (_request->get_status() == Request::DONE || _request->get_status() == Request::BAD_REQ)
-        {
-            std::cout << "Status: " << _request->get_status() << std::endl;
-			// TESTING check-print request - delete later,  turn bach return after BAD REQ
-   			if (_request->get_status() == Request::BAD_REQ) {
-   			    std::cout << "BAD REQUEST CLIENT: " << std::endl;
-   			    _request->print_parsed_request();
-   			}
-   			if (_request->get_status() == Request::DONE) {
-   			    _request->print_parsed_request();
-   			    // std::cout << "Body: " << _request->get_body() << std::endl;
-   			}
-            break ;
-        }
+		if (_to_parse.length())
+			_request->parse_request(_to_parse);
+		else
+			_request->set_request_status(Request::BAD_REQ);
     }
+	//10 seconds for request parse
+	verify_request_timeout(30); //TESTING
+	//Need to read request till the end even if it is meaningless to prevent connection reset by peer
+	//https://stackoverflow.com/questions/1434451/what-does-connection-reset-by-peer-mean
+	if ((_request->get_status() == Request::BAD_REQ)
+		|| (_request->get_status() == Request::CHUNK_DONE)) {
+		//preventing "slamming the phone back on the hook" effect
+		usleep(1000);
+		to_receive = recv(_fd, &buffer, buf_size, 0);
+		if ((to_receive <= 0) && _request->get_status() == Request::CHUNK_DONE)
+			_request->set_request_status(Request::DONE);
+	}
+	//TESTING
+	if (_request->get_status() == Request::DONE 
+		|| _request->get_status() == Request::BAD_REQ)
+        print_request_debug();
 }

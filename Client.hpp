@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 16:36:27 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 21:32:03 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ public:
 	Statuses:
 		INIT - in a constructor;
 		ALIVE - connection accepted
-		NOT_DONE - response sent in progress
+		SEND_RESP - response sent in progress
 		DONE - response sent and nothing left (send returns >= 0) or if recv returns 0 or if send returns (<0)
 		EMPTY - client without request
 	*/
@@ -52,8 +52,8 @@ public:
 	enum status {
 		INIT,
 		ALIVE,
+		SEND_RESP,
 		DONE,
-		NOT_DONE,
 		EMPTY
 	};
 
@@ -74,6 +74,7 @@ public:
 	void	set_status(int status);
 	long	get_start_time(void) const;
 	void	verify_request_timeout(int timeout_client);
+	void	print_request_debug(void);
 };
 
 #endif

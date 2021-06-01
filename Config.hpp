@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 14:10:05 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/30 19:16:40 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 22:15:09 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,6 +216,7 @@ void						exit_error(int err);
 void						exit_error_msg(std::string msg);
 void						signal_handler(int signal);
 void						signals(void);
+int							got_signal(void);
 long						current_time(void);
 std::string					tail(const std::string &s, const size_t length);
 std::string					inet_ntoaddr(int n);
