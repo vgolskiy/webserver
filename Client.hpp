@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/21 09:51:02 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 09:50:56 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include "Request.hpp"
 # include "Response.hpp"
 
+struct	t_location;
+struct	t_server;
 class Config;
 class Socket;
 class Request;
@@ -64,8 +66,8 @@ public:
 	int		get_s_addr(void);
 	Request	*get_request(void);
 	Response *get_response(void);
-	void	set_response(Response* r);
-	void	clear_request(void);
+	void	set_response(t_server *server);
+	void	clear_client(void);
 	int		get_status(void) const;
 	void	set_status(int status);
 	long	get_start_time(void) const;

@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/30 19:20:34 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 09:14:43 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,20 +173,18 @@ void	deal_request(std::vector<t_server*> &servers,
 						(*it)->set_status(Client::DONE);
 				}
 				else {
-					Response r(servers[i], (*it)->get_request());
-					
-					r.create_response();
-					buffer_size = r.get_response_body().length() > SEND_BUFFER ? SEND_BUFFER : r.get_response_body().length();
-					ret = send((*it)->get_fd(), r.get_response_body().c_str(), buffer_size, 0);
-					std::cout << ret << "|" << r.get_response_body().length() << std::endl; // TESTING
+					(*it)->set_response(servers[i]);
+					buffer_size = (*it)->get_response()->get_response_body().length() > SEND_BUFFER ?
+						SEND_BUFFER : (*it)->get_response()->get_response_body().length();
+					ret = send((*it)->get_fd(), (*it)->get_response()->get_response_body().c_str(), buffer_size, 0);
+					std::cout << ret << "|" << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
 					if (ret < 0) {
 						error_message("Failed to send a response. System call error");
 						(*it)->set_status(Client::DONE);
 					}
-					else if ((int)r.get_response_body().length() - ret > 0) {
+					else if ((int)(*it)->get_response()->get_response_body().length() - ret > 0) {
 						(*it)->set_status(Client::NOT_DONE);
-						r.cut_length(ret);
-						(*it)->set_response(&r);
+						(*it)->get_response()->cut_length(ret);
 						std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
 					}
 					else

@@ -6,23 +6,25 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/28 15:33:13 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 09:50:56 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-void	Client::clear_request(void) {
+void	Client::clear_client(void) {
 	delete _request;
+	delete _response;
 }
 
 Client::Client(Socket *listen_sock) 
-: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _to_parse(""), _request(NULL), _time_start(current_time()) {}
+: _fd(-1), _status(Client::INIT), _port(0), _listen_sock(listen_sock), _to_parse(""),
+_request(NULL), _response(NULL), _time_start(current_time()) {}
 
 Client::~Client() {
 	if (_fd != -1)
 		close(_fd);
-	clear_request();
+	clear_client();
 }
 
 int         Client::get_fd(void) { return (_fd); }
@@ -33,7 +35,12 @@ Request*    Client::get_request(void) {return (_request); }
 
 Response*	Client::get_response(void) { return (_response); }
 
-void		Client::set_response(Response* r) {_response = r;};
+void		Client::set_response(t_server *server) {
+	if (!_response)
+		_response = new Response(server, _request);
+
+	_response->create_response();
+};
 
 int			Client::get_status(void) const { return (_status); }
 
