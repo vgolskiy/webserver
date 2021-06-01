@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/05/31 23:36:10 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 11:06:31 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -668,24 +668,11 @@ void Request::run_cgi_request() {
 	** _script_path contains directory to php/cgi binary
 	** _script_name is NULL for cgi / gets php file name from _uri
 	*/
-
-	/*
-	script path: test_dir/testers/ubuntu_cgi_tester
-	script name: YoupiBanane/youpi.bla
-	*/
-	_script_path = "./content/cgi_tester";
-	_script_name = "./content/YoupiBanane/youpi.bla";
-
 	const char*	args[] = {_script_path.c_str(), _script_name.c_str(), NULL};
     pid_t 		pid;
     int 		output_fd, input_fd;
 	t_location*	loc = get_location(g_servers[_i], _location);
 	std::string file = loc->root + TMP;
-
-	std::cout << "script path: " << _script_path << std::endl;
-	std::cout << "script name: " << _script_name << std::endl;
-	std::cout << "file: " << file << std::endl;
-	// std::cout << "script name: " << _script_name << std::endl;
 
 	//In case of any problems during fork: exit with errno code
     //Opening file to write in
