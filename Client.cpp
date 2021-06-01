@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 14:08:05 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 16:36:27 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ int			Client::get_status(void) const { return (_status); }
 void		Client::set_status(int status) { _status = status; }
 
 long		Client::get_start_time(void) const {return (_time_start); }
+
+void		Client::set_starttime(void) { _time_start = current_time(); }
 
 void		Client::accept_connection(void) {
     int addrlen = sizeof(_address);

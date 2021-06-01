@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 15:23:35 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 16:36:27 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ public:
 	Request	*get_request(void);
 	Response *get_response(void);
 	void	set_response(t_server *server);
+	void	set_starttime(void);
 	void	clear_client(void);
 	int		get_status(void) const;
 	void	set_status(int status);

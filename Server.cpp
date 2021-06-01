@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 15:19:15 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 16:37:32 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,7 @@ void	deal_request(std::vector<t_server*> &servers,
 					}
 					else if ((int)(*it)->get_response()->get_response_body().length() - ret > 0) {
 						(*it)->get_response()->cut_length(ret);
+						(*it)->set_starttime();
 						std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
 					}
 					else
@@ -177,6 +178,7 @@ void	deal_request(std::vector<t_server*> &servers,
 					else if ((int)(*it)->get_response()->get_response_body().length() - ret > 0) {
 						(*it)->set_status(Client::NOT_DONE);
 						(*it)->get_response()->cut_length(ret);
+						(*it)->set_starttime();
 						std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
 					}
 					else
