@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 12:50:31 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 15:19:15 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,31 +88,25 @@ void	add_new_client(std::vector<t_server*> &servers, const fd_set &read_fd_sets)
 
 // Set socket fds for every server: read_fd_set for servers and both write_and_read_fds for clients
 void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
-				fd_set &write_fd_sets, int &nfds)
-{
-	(void)write_fd_sets;
-	for (size_t i = 0; i < servers.size(); i++)
-	{
-		if (!(FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets)))
-		{
+				fd_set &write_fd_sets, int &nfds) {
+	for (size_t i = 0; i < servers.size(); i++) {
+		if (!(FD_ISSET(servers[i]->socket->get_fd(), &read_fd_sets))) {
 			if (servers[i]->socket->get_fd() > nfds)
 				nfds = servers[i]->socket->get_fd();
 			FD_SET(servers[i]->socket->get_fd(), &read_fd_sets);
 		}
 
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
-		for (; it != servers[i]->clients.end(); ++it)
-		{	
-			if (!(FD_ISSET((*it)->get_fd(), &read_fd_sets)))
-			{
+		for (; it != servers[i]->clients.end(); ++it) {	
+			if (!(FD_ISSET((*it)->get_fd(), &read_fd_sets))) {
 				if ((*it)->get_fd() > nfds)
 					nfds = (*it)->get_fd();
 				FD_SET((*it)->get_fd(), &read_fd_sets);
 			}
-			if ((*it)->get_request()) // TODO: add conditions
-			{
-				if (!(FD_ISSET((*it)->get_fd(), &write_fd_sets)))
-				{
+			if ((*it)->get_request()
+				&& (((*it)->get_request()->get_status() == Request::BAD_REQ) 
+				|| ((*it)->get_request()->get_status() == Request::DONE))) {
+				if (!(FD_ISSET((*it)->get_fd(), &write_fd_sets))) {
 					if ((*it)->get_fd() > nfds)
 						nfds = (*it)->get_fd();
 					FD_SET((*it)->get_fd(), &write_fd_sets);
@@ -123,16 +117,13 @@ void	set_fds(std::vector<t_server*> &servers, fd_set &read_fd_sets,
 }
 
 void	delete_clients(std::vector<t_server*> &servers) {
-	for (size_t j = 0; j < servers.size(); ++j) {
-		std::list<Client*>::iterator it = servers[j]->clients.begin();
-		std::list<Client*>::iterator ite = servers[j]->clients.end();
-		for (; it != ite; it++)
-		{
-			if ((*it)->get_status() == Client::DONE || (*it)->get_status() == Client::EMPTY)
-			{
-				std::cout << "we're in delete\n"; // TESTING
+	for (size_t i = 0; i < servers.size(); ++i) {
+		std::list<Client*>::iterator it = servers[i]->clients.begin();
+		std::list<Client*>::iterator ite = servers[i]->clients.end();
+		for (; it != ite; it++) {
+			if ((*it)->get_status() == Client::DONE || (*it)->get_status() == Client::EMPTY) {
 				delete *it;
-				it =  servers[j]->clients.erase(it);
+				it =  servers[i]->clients.erase(it);
 				std::cout << "Client is disconnected!\n";
 			}
 		}
@@ -165,14 +156,15 @@ void	deal_request(std::vector<t_server*> &servers,
 						(*it)->set_status(Client::DONE);
 					}
 					else if ((int)(*it)->get_response()->get_response_body().length() - ret > 0) {
-						(*it)->set_status(Client::NOT_DONE);
 						(*it)->get_response()->cut_length(ret);
 						std::cout << "length new: " << (*it)->get_response()->get_response_body().length() << std::endl; // TESTING
 					}
 					else
 						(*it)->set_status(Client::DONE);
 				}
-				else {
+				if ((*it)->get_status() == Client::ALIVE
+					&& ((*it)->get_request()->get_status() == Request::DONE
+					|| (*it)->get_request()->get_status() == Request::BAD_REQ)) {
 					(*it)->set_response(servers[i]);
 					buffer_size = (*it)->get_response()->get_response_body().length() > SEND_BUFFER ?
 						SEND_BUFFER : (*it)->get_response()->get_response_body().length();
@@ -193,7 +185,6 @@ void	deal_request(std::vector<t_server*> &servers,
 			}
 		}
 	}
-	std::cout << "not here\n"; // TESTING
 }
 
 // struct timeval *restrict timeout - specifies the interval that select() should block

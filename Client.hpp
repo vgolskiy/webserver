@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 17:35:07 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 09:50:56 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 15:23:35 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,10 @@ public:
 	/*
 	Statuses:
 		INIT - in a constructor;
-		ALIVE - once connection accepted
-		DONE - once response sent and nothing left (send returns >= 0) + TODO: delete request+response
-		DEAD - if recv returns 0 or if send returns (<0)
+		ALIVE - connection accepted
+		NOT_DONE - response sent in progress
+		DONE - response sent and nothing left (send returns >= 0) or if recv returns 0 or if send returns (<0)
+		EMPTY - client without request
 	*/
 
 	enum status {

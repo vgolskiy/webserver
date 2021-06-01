@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 13:41:07 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/01 14:08:05 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void		Client::verify_request_timeout(int timeout_client) {
 	if ((current_time() - _time_start) > timeout_client * 1000) {
 		_request->set_request_status(Request::BAD_REQ);
 		_request->set_status_code(408);
+		error_message("Request timed out");
 	}
 }
 
