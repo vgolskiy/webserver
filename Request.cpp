@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 11:06:31 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/02 20:01:50 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(Client *client, const int i) : _i(i) {
+Request::Request(Client *client, const int i) : _i(i), _pos(0) {
     _method = "";
 	_method_allowed = false;
     _param = "";
@@ -22,7 +22,7 @@ Request::Request(Client *client, const int i) : _i(i) {
 	_location = "";
     _client = client;
     _remain_len = 0;
-    _status = Request::REQUEST_METHOD;
+    _status = Request::INIT;
     _content_len = 0;
     _chunk = false;
 	_script_path = "";
@@ -144,77 +144,104 @@ void remove_spaces(std::string &str)
     str = std::string(&chr[i]);
 }
 
-bool Request::set_up_headers(std::string &lines) {
+bool Request::verify_header(std::string &s) {
+	std::vector<std::string>	tmp;
+
+    tmp = split(s, ":");
+    if (tmp.size() < 2) {
+        error_message("Invalid number of arguments for the header: " + tmp[0]);
+        return (false);
+    }
+	for (size_t i = 0; i < tmp.size(); ++i) {
+		remove_spaces(tmp[i]);
+		if (!tmp[i].length())
+			return (false);
+	}
+	return (true);
+}
+
+bool Request::add_header(std::string &s) {
+	std::vector<std::string>	tmp;
 	t_location*	loc = get_location(g_servers[_i], _location);
-    std::vector<std::string>	tmp;
-	std::size_t					pos = lines.find(CRLF) == std::string::npos ? 0 : lines.find(CRLF);
 	std::vector<std::string>::iterator	it;
 
-	//Cycle is not ending until closing "/r/n" for HEADER (in case of one time recv reading)
-	//Cycle starts in case of available header for parsing "<header>/r/n"
-    while (pos) {
-        tmp = split(lines.substr(0, lines.find(CRLF)), ":");
-        if(tmp.size() < 2) {
-            error_message("Invalid number of arguments for the header: " + tmp[0]);
-            return (false);
-        }
-        for (size_t i = 0; i < tmp.size(); ++i)
-            remove_spaces(tmp[i]);
-        for (it = _headers_set.begin(); it != _headers_set.end(); ++it) {
-            if (tmp[0] == *it) {
-                if (find_header(tmp[0])) {
-                    error_message("Repetitive header in the request");
-                    return (false);
-                }
-                if (tmp[0] == AUTHORIZATION) {
-					if (!loc->auth.size()) {
-					    error_message("Autorization error: excessive header for this location");
-                        return (false);
-					}
-                    tmp = split(tmp[1], " ");
-                    if (tmp.size() != 2) {
-                        error_message("Autorization error: invalid number of arguments");
-                        return (false);
-                    }
-					else if (tmp[0] != "Basic") {
-                        error_message("Autorization error: unsupported authorization type");
-                        return (false);
-					}
-					//encrypted pair <user>:<password>
-					_authorize = tmp[1];
-                }
-                else if ((tmp[0] == HOST) && (tmp.size() == 3)) {
-                    std::string to_ret;
-                    to_ret.append(tmp[1]);
-                    to_ret += ":";
-                    to_ret.append(tmp[2]);
-                    _headers[*it] = to_ret;
-                }
-                else
-                    _headers[*it] = tmp[1];
-            }
-        }
-        if (tmp[0] == CONTENT_LEN) {
-            try {
-                _content_len = std::stoi(tmp[1]);
-                _remain_len = _content_len;
-            }
-            catch(const std::exception& e) {
-                error_message(e.what());
+	tmp = split(s, ":");
+	for (size_t i = 0; i < tmp.size(); ++i)
+		remove_spaces(tmp[i]);
+	for (it = _headers_set.begin(); it != _headers_set.end(); ++it) {
+		if (tmp[0] == *it) {
+			if (find_header(tmp[0])) {
+				error_message("Repetitive header in the request");
 				return (false);
-            }
-			if (_content_len < 0)
-				return (false);
-        }
-        if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED))
-            _chunk = true;
-		if ((tmp[0] == USER_AGENT) && (tmp[1].find("curl") != std::string::npos))
-			_curl = true;
-        tmp.clear();
-		lines.erase(0, lines.find(CRLF) + 2);
-		pos = lines.find(CRLF) == std::string::npos ? 0 : lines.find(CRLF);
+			}
+			if (tmp[0] == AUTHORIZATION) {
+				if (!loc->auth.size()) {
+					error_message("Autorization error: excessive header for this location");
+					return (false);
+				}
+				tmp = split(tmp[1], " ");
+				if (tmp.size() != 2) {
+					error_message("Autorization error: invalid number of arguments");
+					return (false);
+				}
+				else if (tmp[0] != "Basic") {
+					error_message("Autorization error: unsupported authorization type");
+					return (false);
+				}
+				//encrypted pair <user>:<password>
+				_authorize = tmp[1];
+			}
+			else if ((tmp[0] == HOST) && (tmp.size() == 3)) {
+				std::string to_ret;
+				to_ret.append(tmp[1]);
+				to_ret += ":";
+				to_ret.append(tmp[2]);
+				_headers[*it] = to_ret;
+			}
+			else if (tmp[0] == CONTENT_LEN) {
+				try {
+					_content_len = std::stoi(tmp[1]);
+					if (_content_len < 0)
+						return (false);
+					_remain_len = _content_len;
+				}
+				catch(const std::exception& e) {
+					error_message(e.what());
+					return (false);
+				}
+			}
+			else if ((tmp[0] == TRANSF_ENCODE) && (tmp[1] == CHUNKED))
+				_chunk = true;
+			else if ((tmp[0] == USER_AGENT) && (tmp[1].find("curl") != std::string::npos))
+				_curl = true;
+			else
+				_headers[*it] = tmp[1];
+			break ;
+		}
     }
-    return (true);
+	return (true);
+}
+
+//bool Request::set_up_headers(std::string &lines) {
+bool Request::set_up_headers(std::string &lines, std::vector<std::string> &to_parse) {
+	while ((!to_parse[_pos].empty()) && (_pos < to_parse.size())) {
+		if (!verify_header(to_parse[_pos]))
+			return (false);
+		if (!add_header(to_parse[_pos]))
+			return (false);
+		_pos++;
+	}
+	if ((to_parse[_pos].empty()) && (_pos + 1 < to_parse.size())) {
+		lines.erase(0, lines.find(CRLF_2X) + 4);
+		if (_content_len)
+			_status = Request::BODY_PARSE;
+		else if (_chunk)
+			_status = Request::CHUNK;
+		else
+			_status = Request::DONE;
+		_pos++;
+	}
+	return (true);
 }
 
 /* check _uri: if contains "?" -> fill_in query_string() */
@@ -306,6 +333,7 @@ bool Request::check_start_line(const std::vector<std::string> &start_line) {
 		_status_code = 405;
 		return (false);
 	}
+	_pos++;
 	_status = Request::HEADERS;
     return (true);
 }
@@ -328,7 +356,7 @@ bool Request::parse_chunk_size(std::string &lines) {
     return (true);
 }
 
-void Request::parse_chunk_data(std::string &lines) {
+bool Request::parse_chunk_data(std::string &lines) {
 	std::size_t	pos;
 	std::string	tmp;
 	t_location*	loc = get_location(g_servers[_i], _location);
@@ -336,11 +364,11 @@ void Request::parse_chunk_data(std::string &lines) {
     if (!_remain_len) {
 		_content_len = _body.length();
         _status = Request::CHUNK_DONE;
-        return ;
+        return (true);
     }
 	//string was not fully readed from the first time
 	if ((pos = lines.find(CRLF)) == std::string::npos)
-		return ;
+		return (false);
 	tmp = lines.substr(0, pos);
     if (_remain_len < (int)tmp.length())
 		tmp = lines.substr(0, _remain_len);
@@ -353,12 +381,12 @@ void Request::parse_chunk_data(std::string &lines) {
 			_status_code = 413;
 			_body.clear();
 			_content_len = 0;
-			return ;
+			return (false);
 		}
 		_remain_len -= tmp.length();
 	}
     _status = Request::CHUNK;
-    return ;
+    return (true);
 }
 
 void Request::print_parsed_request()
@@ -395,9 +423,10 @@ void Request::verify_body() {
 
 //adding tmp strings to body until remain length is above zero
 //in case of max_body > content_length or content_length < body length -> bad request
-void Request::standard_body_parse(std::string &lines, std::size_t &pos) {
+void Request::standard_body_parse(std::string &lines) {
 	t_location*	loc = get_location(g_servers[_i], _location);
 	std::string	tmp;
+	std::size_t	pos = lines.rfind(CRLF);
 
 	tmp = lines.substr(0, pos);
 	if ((_method != "POST") && (_method != "PUT")
@@ -424,9 +453,10 @@ void Request::standard_body_parse(std::string &lines, std::size_t &pos) {
 	verify_body();
 }
 
-void Request::curl_body_parse(std::string &lines, std::size_t &pos) {
+void Request::curl_body_parse(std::string &lines) {
 	t_location*	loc = get_location(g_servers[_i], _location);
 	std::string	tmp;
+	std::size_t	pos = lines.rfind(CRLF);
 
 	tmp = lines.substr(0, pos);
 	lines.erase(0, pos);
@@ -445,64 +475,51 @@ void Request::curl_body_parse(std::string &lines, std::size_t &pos) {
 	return ;
 }
 
+void Request::init_request(std::string &lines, std::vector<std::string> &to_parse) {
+	while (_pos < to_parse.size()) {
+		if (to_parse[_pos].empty()) {
+			to_parse.erase(to_parse.begin());
+			lines.substr(lines.find(CRLF) + 2);
+		}
+		else {
+			_status = Request::REQUEST_METHOD;
+			break ;
+		}
+	}
+}
+
 void Request::parse_request(std::string &lines) {
-	std::size_t pos;
-    
     if (_status == Request::DONE || _status == Request::BAD_REQ)
         return ;
-	if (((pos = lines.find(CRLF)) == std::string::npos) && !_curl) {
-		if (_status != Request::BODY_PARSE)
+    if (_status <= Request::HEADERS) {
+		std::vector<std::string>	to_parse = split(lines, CRLF);
+		if ((_status == Request::INIT) && (_pos < to_parse.size()))
+			init_request(lines, to_parse);
+		if ((_status != Request::BODY_PARSE) && (lines.find(CRLF_2X) == std::string::npos)
+			&& (lines.rfind(CRLF) != lines.size() - 2))
 			return ;
-		pos = lines.length();
-	}
-    if (_status == Request::REQUEST_METHOD || _status == Request::HEADERS) {
-        if ((_status == Request::REQUEST_METHOD) && pos) {
-            std::vector<std::string>    start_line;
-
-            start_line = split(lines.substr(0, pos), " ");
-            if (!check_start_line(start_line)) {
+        if ((_status == Request::REQUEST_METHOD) && (_pos < to_parse.size())
+			&& (!to_parse[_pos].empty())) {
+            if (!check_start_line(split(to_parse[_pos], " "))) {
                 _status = Request::BAD_REQ;
 				return ;
             }
-			lines.erase(0, pos + 2);
-			return ;
+			lines.erase(0, lines.find(CRLF) + 2);
         }
-        if ((_status == Request::HEADERS) && pos) {
-            if (!(set_up_headers(lines))) {
+        if ((_status == Request::HEADERS) && (_pos < to_parse.size())) {
+            if (!(set_up_headers(lines, to_parse))) {
 				_status_code = 400;
                 _status = Request::BAD_REQ;
 			}
-			return ;
         }
-		if (!pos) {
-			if (_status != Request::HEADERS) {
-				error_message("Bad request sent by client: empty line");
-				_status = Request::BAD_REQ;
-				return ;
-			}
-			lines.erase(0, 2); //second CRLF remove
-			if (_chunk == true)
-                _status = Request::CHUNK;
-            else if ((_content_len > 0) || (_method == "POST")
-				|| (_method == "PUT"))
-                _status = Request::BODY_PARSE;
-            else
-                _status = Request::DONE;
-			return ;
-		}
     }
-    if ((_status == Request::BODY_PARSE) && pos) {
+    if (_status == Request::BODY_PARSE) {
 		if (!_curl)
-			return (standard_body_parse(lines, pos));
+			return (standard_body_parse(lines));
 		else
-			return (curl_body_parse(lines, pos));
+			return (curl_body_parse(lines));
     }
-	//Quit in case double CLRF
-	if ((_status == Request::BODY_PARSE) && !pos) {
-		verify_body();
-		return ;
-	}
-    if ((_status == Request::CHUNK) && pos) {
+    if (_status == Request::CHUNK) {
         if (!(parse_chunk_size(lines))) {
 			error_message("Bad request sent by client: wrong chunk size");
 			_status_code = 200;
@@ -510,15 +527,13 @@ void Request::parse_request(std::string &lines) {
 			return ;
 		}
 	}
-	//Quit in case double CLRF
-	else if ((_status == Request::CHUNK) && !pos) {
-		verify_body();
-		return ;
+    if (_status == Request::CHUNK_DATA) {
+		if (!parse_chunk_data(lines))
+			return ;
+		else
+			return (parse_request(lines));
 	}
-    if (_status == Request::CHUNK_DATA)
-        parse_chunk_data(lines);
-	return ;
-	}
+}
 
 // TODO: coding special signs from URL: !#%^&()=+ и пробел
 std::string* Request::find_header(std::string header) {

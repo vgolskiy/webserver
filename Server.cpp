@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/02 01:46:40 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/02 20:25:06 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ void	deal_request(std::vector<t_server*> &servers,
 				|| (FD_ISSET((*it)->get_fd(), &write_fd_sets))) {
 				if ((*it)->get_status() == Client::ALIVE
 					&& (*it)->get_request()) {
-						if ((*it)->get_request()->get_status() >= Request::DONE) {
+						if ((*it)->get_request()->get_status() >= Request::BAD_REQ) {
 							(*it)->set_status(Client::SEND_RESP);
 							send_response(*it, servers[i]);
 						}
@@ -174,7 +174,7 @@ void	deal_request(std::vector<t_server*> &servers,
 				}
 				else if ((*it)->get_status() == Client::SEND_RESP)
 					send_response(*it, servers[i]);
-				else
+				else if ((*it)->get_status() != Client::EMPTY)
 					(*it)->read_run_request(i);
 			}
 		}

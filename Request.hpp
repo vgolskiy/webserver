@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:09 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 22:35:44 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/02 19:48:20 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,7 @@ class Request
 {
 private:
 	const int							_i;
+	size_t								_pos;
 	std::string							_param;
 	std::string							_method;
 	bool								_method_allowed;
@@ -151,12 +152,15 @@ public:
 	Request(Client *client, const int i);
 	~Request(void);
 
+	void		init_request(std::string &to_parse, std::vector<std::string> &lines);
 	void		init_headers_set(void);
-	void		parse_request(std::string &lines);
+	void		parse_request(std::string &to_parse);
 	bool		parse_chunk_size(std::string &lines);
-	void		parse_chunk_data(std::string &lines);
-	bool		check_start_line(const std::vector<std::string> &lines);
-	bool		set_up_headers(std::string &lines);
+	bool		parse_chunk_data(std::string &lines);
+	bool		check_start_line(const std::vector<std::string> &start_line);
+	bool		set_up_headers(std::string &to_parse, std::vector<std::string> &lines);
+	bool		verify_header(std::string &s);
+	bool		add_header(std::string &s);
 	void		set_cgi_meta_vars(void);
 	void		set_request_status(int status);
 	void		cut_remain_len(int to_cut);
@@ -180,8 +184,8 @@ public:
 	int			get_content_length(void) const;
 	void		print_parsed_request(void);
 	void		run_cgi_request(void);
-	void		standard_body_parse(std::string &lines, std::size_t &pos);
-	void		curl_body_parse(std::string &lines, std::size_t &pos);
+	void		standard_body_parse(std::string &lines);
+	void		curl_body_parse(std::string &lines);
 	void		parse_script_file_name(void);
 	std::vector<std::string>	convert_cgi_meta_vars(void);
 	void		read_cgi();
@@ -191,7 +195,7 @@ public:
 
 	enum status
 	{
-		RECEIVE,
+		INIT,
 		REQUEST_METHOD,
 		HEADERS,
 		BODY_PARSE,

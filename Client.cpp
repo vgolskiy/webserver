@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 22:47:48 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/02 20:09:59 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void		Client::read_run_request(const int i) {
 			_request->set_request_status(Request::BAD_REQ);
     }
 	//10 seconds for request parse
-	verify_request_timeout(30); //TESTING
+	//verify_request_timeout(30); //TESTING
 	//Need to read request till the end even if it is meaningless to prevent connection reset by peer
 	//https://stackoverflow.com/questions/1434451/what-does-connection-reset-by-peer-mean
 	if ((_request->get_status() == Request::BAD_REQ)
