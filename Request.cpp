@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/02 20:01:50 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/02 21:00:29 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,16 +231,14 @@ bool Request::set_up_headers(std::string &lines, std::vector<std::string> &to_pa
 			return (false);
 		_pos++;
 	}
-	if ((to_parse[_pos].empty()) && (_pos + 1 < to_parse.size())) {
-		lines.erase(0, lines.find(CRLF_2X) + 4);
-		if (_content_len)
-			_status = Request::BODY_PARSE;
-		else if (_chunk)
-			_status = Request::CHUNK;
-		else
-			_status = Request::DONE;
-		_pos++;
-	}
+	lines.erase(0, lines.find(CRLF_2X) + 4);
+	if (_content_len)
+		_status = Request::BODY_PARSE;
+	else if (_chunk)
+		_status = Request::CHUNK;
+	else
+		_status = Request::DONE;
+	_pos++;
 	return (true);
 }
 
@@ -510,6 +508,7 @@ void Request::parse_request(std::string &lines) {
             if (!(set_up_headers(lines, to_parse))) {
 				_status_code = 400;
                 _status = Request::BAD_REQ;
+				return ;
 			}
         }
     }
