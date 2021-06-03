@@ -6,7 +6,7 @@
 /*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/01 16:37:32 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/03 16:21:38 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void	deal_request(std::vector<t_server*> &servers,
 					else
 						(*it)->set_status(Client::DONE);
 				}
-				if ((*it)->get_status() == Client::ALIVE
+				if ((*it)->get_status() == Client::ALIVE && (*it)->get_request()
 					&& ((*it)->get_request()->get_status() == Request::DONE
 					|| (*it)->get_request()->get_status() == Request::BAD_REQ)) {
 					(*it)->set_response(servers[i]);
@@ -225,9 +225,9 @@ int		select_loop(std::vector<t_server*> &servers) {
 			continue ;
 		}
         else {
-			add_new_client(servers, read_fd_sets);
-			deal_request(servers, read_fd_sets, write_fd_sets); // ad conditions;
 			delete_clients(servers);
+			add_new_client(servers, read_fd_sets);
+			deal_request(servers, read_fd_sets, write_fd_sets);
         }
 	}
 	return (EXIT_SUCCESS);
