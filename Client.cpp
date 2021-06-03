@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:01:21 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/02 20:09:59 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/03 15:40:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void		Client::read_run_request(const int i) {
 	//verify_request_timeout(30); //TESTING
 	//Need to read request till the end even if it is meaningless to prevent connection reset by peer
 	//https://stackoverflow.com/questions/1434451/what-does-connection-reset-by-peer-mean
-	if ((_request->get_status() == Request::BAD_REQ)
+/*	if ((_request->get_status() == Request::BAD_REQ)
 		|| (_request->get_status() == Request::CHUNK_DONE)) {
 		//preventing "slamming the phone back on the hook" effect
 		usleep(1000);
@@ -133,6 +133,7 @@ void		Client::read_run_request(const int i) {
 		if ((to_receive <= 0) && _request->get_status() == Request::CHUNK_DONE)
 			_request->set_request_status(Request::DONE);
 	}
+	*/
 	//TESTING
 	if (_request->get_status() == Request::DONE 
 		|| _request->get_status() == Request::BAD_REQ)

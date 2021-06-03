@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 00:10:57 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/02 20:25:06 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/03 16:03:45 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,21 +161,23 @@ void	deal_request(std::vector<t_server*> &servers,
 		std::list<Client*>::iterator it = servers[i]->clients.begin();
 
 		for (; it != servers[i]->clients.end(); ++it) {
-			if (FD_ISSET((*it)->get_fd(), &read_fd_sets) 
-				|| (FD_ISSET((*it)->get_fd(), &write_fd_sets))) {
-				if ((*it)->get_status() == Client::ALIVE
-					&& (*it)->get_request()) {
-						if ((*it)->get_request()->get_status() >= Request::BAD_REQ) {
-							(*it)->set_status(Client::SEND_RESP);
-							send_response(*it, servers[i]);
-						}
-						else
-							(*it)->read_run_request(i);
+			if (FD_ISSET((*it)->get_fd(), &read_fd_sets)) {
+				if ((*it)->get_status() == Client::ALIVE && (*it)->get_request()) {
+					if ((*it)->get_request()->get_status() < Request::BAD_REQ)
+						(*it)->read_run_request(i);
+				}
+				else if ((*it)->get_status() != Client::EMPTY)
+					(*it)->read_run_request(i);
+			}
+			if (FD_ISSET((*it)->get_fd(), &write_fd_sets)) {
+				if ((*it)->get_status() == Client::ALIVE && (*it)->get_request()) {
+					if ((*it)->get_request()->get_status() >= Request::BAD_REQ) {
+						(*it)->set_status(Client::SEND_RESP);
+						send_response(*it, servers[i]);
+					}
 				}
 				else if ((*it)->get_status() == Client::SEND_RESP)
 					send_response(*it, servers[i]);
-				else if ((*it)->get_status() != Client::EMPTY)
-					(*it)->read_run_request(i);
 			}
 		}
 	}
@@ -217,9 +219,9 @@ int		select_loop(std::vector<t_server*> &servers) {
 			errno = 0;
 			continue ;
 		}
+		delete_clients(servers);
 		add_new_client(servers, read_fd_sets);
 		deal_request(servers, read_fd_sets, write_fd_sets);
-		delete_clients(servers);
 	}
 	return (EXIT_SUCCESS);
 }

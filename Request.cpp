@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mskinner <v.golskiy@yandex.ru>             +#+  +:+       +#+        */
+/*   By: mskinner <v.golskiy@ya.ru>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 19:29:16 by mskinner          #+#    #+#             */
-/*   Updated: 2021/06/02 21:00:29 by mskinner         ###   ########.fr       */
+/*   Updated: 2021/06/03 15:40:48 by mskinner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -361,7 +361,7 @@ bool Request::parse_chunk_data(std::string &lines) {
 
     if (!_remain_len) {
 		_content_len = _body.length();
-        _status = Request::CHUNK_DONE;
+        _status = Request::DONE;
         return (true);
     }
 	//string was not fully readed from the first time

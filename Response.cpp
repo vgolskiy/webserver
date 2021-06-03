@@ -174,6 +174,10 @@ std::string	Response::read_page_body(void) {
 
 	if (!inf) {
 		_status_code = 404;
+		_response.clear();
+		get_status_line();
+		fill_response_body();
+		res = read_page_body();
 		return (res);
 	}
 	ss << inf.rdbuf();
